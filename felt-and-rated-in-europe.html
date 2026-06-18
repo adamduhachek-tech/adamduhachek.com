@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Continent's Quiet Scissors</title>
+<meta name="description" content="How Europeans rate their lives and how their week actually felt mostly agree — but the calm-and-anxiety dimension pulls apart, and a handful of countries feel notably better or worse than their life-rating predicts. The evaluative-experiential gap inside one survey.">
+<style>
+  :root{
+    --paper:#f4efe6; --panel:#fffdf8; --panel-edge:#e1d8c5; --ink:#1f1b14;
+    --ink-dim:#574f43; --ink-faint:#897f6f; --hairline:#e6ddcc;
+    --eval:#13726a; --eval-soft:#cce5e1; --exp:#c2451c; --exp-soft:#f4d9cb;
+    --band:#3b3530; --gold:#c08a1e;
+    --maxw:730px; --figw:1000px;
+    --sans:"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --serif:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--paper); color:var(--ink); font:18px/1.66 var(--serif); overflow-x:hidden}
+  .skip{position:absolute; left:-9999px; top:0; background:var(--ink); color:var(--paper); padding:.5em 1em; z-index:40; font-family:var(--sans)}
+  .skip:focus{left:8px; top:8px}
+  a{color:var(--eval); text-underline-offset:3px}
+  a:focus-visible, button:focus-visible{outline:2.5px solid var(--exp); outline-offset:2px}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px}
+  .wrap-wide{max-width:var(--figw); margin:0 auto; padding:0 20px}
+
+  header{position:relative; padding:84px 0 8px; overflow:hidden}
+  .ghost{position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+    font:900 clamp(120px,26vw,280px)/0.9 var(--sans); letter-spacing:-.06em;
+    color:transparent; -webkit-text-stroke:1.5px rgba(31,27,20,.09); user-select:none; pointer-events:none}
+  .kicker{font:700 12px/1.5 var(--sans); letter-spacing:.26em; text-transform:uppercase; color:var(--exp)}
+  h1{font:900 clamp(36px,7vw,68px)/1.0 var(--sans); letter-spacing:-.028em; margin:.22em 0 .3em; text-wrap:balance}
+  .dek{font-size:clamp(19px,2.7vw,23px); line-height:1.46; color:var(--ink-dim); margin:0 0 22px; max-width:40em}
+  .byline{font:400 13px/1.7 var(--sans); color:var(--ink-faint); border-top:2px solid var(--ink); padding-top:12px; display:flex; gap:18px; flex-wrap:wrap}
+  .byline b{color:var(--ink-dim); font-weight:600}
+
+  main{position:relative; z-index:1}
+  h2{font:800 clamp(24px,3.7vw,32px)/1.16 var(--sans); letter-spacing:-.015em; margin:2.1em 0 .55em}
+  p{margin:0 0 1.15em}
+  strong{color:#000}
+  .tagline{font:700 11px/1 var(--sans); letter-spacing:.13em; text-transform:uppercase; padding:4px 8px; border-radius:3px; white-space:nowrap}
+  .tag-eval{background:var(--eval-soft); color:#0c544c} .tag-exp{background:var(--exp-soft); color:#8d3414}
+
+  .statrow{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:30px 0 8px}
+  .stat{background:var(--panel); border:1px solid var(--panel-edge); border-top:3px solid var(--band); padding:13px 14px 11px}
+  .stat.eval{border-top-color:var(--eval)} .stat.exp{border-top-color:var(--exp)}
+  .stat .lab{font:700 10.5px/1.4 var(--sans); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint)}
+  .stat .val{font:800 clamp(19px,2.6vw,27px)/1.12 var(--sans); margin-top:6px; font-variant-numeric:tabular-nums}
+  .stat.exp .val{color:var(--exp)} .stat.eval .val{color:var(--eval)}
+  .stat .sub{font:400 12px/1.45 var(--sans); color:var(--ink-dim); margin-top:4px}
+  @media(max-width:680px){ .statrow{grid-template-columns:1fr 1fr} }
+  @media(max-width:420px){ .statrow{grid-template-columns:1fr} }
+
+  figure{margin:38px 0}
+  .fig{background:var(--panel); border:1px solid var(--panel-edge); padding:20px 20px 14px; position:relative; box-shadow:0 24px 50px -36px rgba(60,45,20,.45)}
+  .figtitle{font:800 18px/1.3 var(--sans); margin:0 0 3px}
+  .figsub{font:400 13.5px/1.55 var(--sans); color:var(--ink-dim); margin:0 0 10px; max-width:58em}
+  figcaption{font:400 12.5px/1.6 var(--sans); color:var(--ink-faint); margin-top:10px}
+  .chart{position:relative}
+  .chart svg{display:block; width:100%; height:auto}
+
+  .controls{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:6px 0 8px; font-family:var(--sans)}
+  button.mbtn{font:700 12px/1.2 var(--sans); cursor:pointer; background:var(--paper); color:var(--ink-dim);
+    border:1.5px solid var(--panel-edge); border-radius:999px; padding:7px 13px; transition:all .15s}
+  button.mbtn:hover{border-color:var(--ink-dim)}
+  button.mbtn[aria-pressed="true"]{background:var(--exp); border-color:var(--exp); color:#fff}
+
+  .readout{font:400 13px/1.6 var(--sans); color:var(--ink-dim); border-top:1px dashed var(--hairline); padding-top:8px; margin-top:8px; min-height:2.4em}
+  .readout b{color:var(--ink); font-variant-numeric:tabular-nums}
+  .tip{position:absolute; pointer-events:none; z-index:20; display:none; background:#241f18; color:#f4efe4; border-radius:6px; padding:9px 11px; font:400 12.5px/1.5 var(--sans); max-width:230px; box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .tip b{color:#fff} .tip .num{font-variant-numeric:tabular-nums} .tip .trg{color:#cfc6b4; font-size:11px}
+
+  .moverbox{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:24px 0}
+  .mcol{background:var(--panel); border:1px solid var(--panel-edge); padding:14px 16px}
+  .mcol h3{font:800 12px/1.4 var(--sans); letter-spacing:.05em; text-transform:uppercase; margin:0 0 8px}
+  .mcol.up h3{color:var(--exp)} .mcol.down h3{color:var(--eval)}
+  .mcol ol{margin:0; padding-left:1.4em; font:400 14.5px/1.85 var(--serif)}
+  .mcol .d{font:700 12px/1 var(--sans); font-variant-numeric:tabular-nums; float:right; color:var(--ink-faint)}
+  @media(max-width:560px){ .moverbox{grid-template-columns:1fr} }
+
+  .notes{margin-top:60px; border-top:2px solid var(--ink); padding:26px 0 70px; font:400 14px/1.7 var(--sans); color:var(--ink-dim)}
+  .notes h2{font-size:19px; margin:0 0 14px}
+  .notes ul{padding-left:1.2em; margin:0} .notes li{margin-bottom:9px}
+  code{font:13px/1.4 ui-monospace,"Cascadia Code",Consolas,monospace; background:#efe7d6; padding:1px 4px; border-radius:3px}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to article</a>
+<header>
+  <div class="ghost" aria-hidden="true">✂</div>
+  <div class="wrap">
+    <p class="kicker">European Social Survey &middot; Round 6 &middot; 2012</p>
+    <h1>The Continent&rsquo;s Quiet Scissors</h1>
+    <p class="dek">Ask the same Europeans to <em>rate</em> their lives and to say how their <em>week felt</em>, and the two answers mostly track each other &mdash; until you look at calm and anxiety, where they quietly part.</p>
+    <div class="byline">
+      <span><b>Data</b> European Social Survey, round 6 (2012)</span>
+      <span><b>Sample</b> 29 countries, 54,673 respondents</span>
+      <span><b>Method</b> weighted country means; rated vs felt</span>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <p>Well-being researchers draw a sharp line between two questions. <span class="tagline tag-eval">Evaluative</span> &ldquo;How satisfied are you with your life as a whole?&rdquo; asks for a considered verdict. <span class="tagline tag-exp">Experiential</span> &ldquo;In the past week, how often did you feel depressed, sad, anxious, calm, lonely?&rdquo; asks for the texture of recent days. The European Social Survey puts both to the same people, which lets us see, country by country, how far the rating and the feeling drift apart.</p>
+    <p>Across 29 countries, they mostly don&rsquo;t. Average each measure to the national level and the felt-mood index tracks life satisfaction at a correlation of <strong>0.86</strong> &mdash; the places that rate their lives highest also tend to have had the calmest, least-low weeks. But that single number hides a split inside &ldquo;mood.&rdquo; Break the battery into its parts and one dimension breaks ranks.</p>
+
+    <div class="statrow" role="list" aria-label="Headline numbers">
+      <div class="stat eval" role="listitem"><div class="lab">Rated vs felt</div><div class="val">r = 0.86</div><div class="sub">life satisfaction vs felt mood</div></div>
+      <div class="stat exp" role="listitem"><div class="lab">Loneliness tracks it</div><div class="val">r = 0.84</div><div class="sub">not feeling lonely</div></div>
+      <div class="stat exp" role="listitem"><div class="lab">Calm doesn&rsquo;t</div><div class="val">r = 0.50</div><div class="sub">feeling calm and peaceful</div></div>
+      <div class="stat" role="listitem"><div class="lab">Countries</div><div class="val">29</div><div class="sub">ESS round 6, 2012</div></div>
+    </div>
+
+    <p>Sadness and loneliness move almost in lockstep with how people rate their lives (correlations of <strong>0.84</strong>). Anxiety tracks it more loosely (<strong>0.66</strong>); and feeling <em>calm and peaceful</em> barely tracks it at all (<strong>0.50</strong>). The slow, evaluative verdict and the low-arousal feeling of peace are close to independent at the national level &mdash; a country can rate its life highly and still not feel especially calm.</p>
+  </div>
+
+  <div class="wrap-wide">
+  <figure>
+    <div class="fig">
+      <p class="figtitle">How a continent rates its life vs how its week felt</p>
+      <p class="figsub">Each dot is a country: rated life satisfaction (horizontal) against a felt measure (vertical), 2012. The line is the European average relationship. Above it, people feel better than their rating predicts; below, worse. Switch the felt measure to watch the cloud tighten or scatter.</p>
+      <div class="controls" id="item-controls" role="group" aria-label="Choose felt measure"></div>
+      <div class="chart" id="scatter-chart"></div>
+      <div class="readout" id="scatter-readout">Hover a country, or switch the felt measure above.</div>
+    </div>
+    <figcaption>For sadness and loneliness the dots hug the line. For calm, they fly apart &mdash; the same national life-ratings buy very different amounts of peace.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+    <h2>Feeling better, or worse, than the rating says</h2>
+    <p>Even on the overall mood index, a handful of countries sit conspicuously off the line. <strong>Slovenia</strong> feels better than its middling life-rating would predict &mdash; the largest positive gap in Europe (<strong>+0.17</strong> on the standardized scale) &mdash; and <strong>Bulgaria</strong>, near the bottom on life satisfaction, and <strong>Ireland</strong> do the same. In the other direction, several of the highest-rating countries feel a touch worse than expected: <strong>Switzerland</strong> (<strong>&minus;0.11</strong>), <strong>Belgium</strong> and <strong>Cyprus</strong> all rate their lives well above where their weeks actually land. It is a muted version of the Latin-America paradox &mdash; the gap between how a place judges its life and how that life feels &mdash; playing out inside Europe.</p>
+
+    <div class="moverbox">
+      <div class="mcol up"><h3>Feel better than they rate</h3><ol id="mv-up"></ol></div>
+      <div class="mcol down"><h3>Rate higher than they feel</h3><ol id="mv-down"></ol></div>
+    </div>
+
+    <h2>What this shows &mdash; and what it doesn&rsquo;t</h2>
+    <p>The honest headline is a qualified one. At the level of whole countries, the evaluative and experiential measures are close cousins &mdash; far closer than rated life and a sense of <em>meaning</em>, which genuinely reorder the continent. The decoupling here is narrower and more specific: it lives in the low-arousal feelings of calm and (the absence of) anxiety, which a national life-rating predicts poorly, and in a few countries that sit off the line. These are 2012 snapshots; the felt items are &ldquo;past-week&rdquo; frequencies, not clinical rates, and they ask for self-reports that response styles can color across borders. What remains is a clean demonstration that &ldquo;how good is life here&rdquo; has more than one answer, and that the calmest dimension of feeling is the one least captured by asking people to rate their lives.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="notes">
+      <h2>Notes &amp; data</h2>
+      <ul>
+        <li><b>Source.</b> European Social Survey (ESS), round 6 (2012); the round carrying the full &ldquo;past-week&rdquo; battery alongside life satisfaction. Weighted with the analysis weight; each country one unit (country-equal; no population variable).</li>
+        <li><b>Measures.</b> <span class="tagline tag-eval">Evaluative</span> life satisfaction (<code>stflife</code>, 0&ndash;10). <span class="tagline tag-exp">Experiential</span> felt-mood index = mean of five direction-fixed past-week items (not depressed / not sad / not anxious / felt calm / not lonely), each 1&ndash;4; the chart can show each item alone. Higher = better throughout. Constructs labeled and never merged.</li>
+        <li><b>Off-the-line.</b> The diagonal is an ordinary-least-squares fit of felt mood on rated life across countries; &ldquo;feels better/worse than predicted&rdquo; is the residual, reported on a standardized scale.</li>
+        <li><b>Coverage.</b> 29 countries with at least 400 round-6 respondents. Correlations are Pearson across country means.</li>
+        <li><b>Limits.</b> Cross-sectional snapshot; past-week frequencies, not diagnoses; cross-country response styles unaddressed. A companion piece (the three-rankings map) shows the larger reshuffling that <em>meaning</em> produces.</li>
+        <li><b>Prior art.</b> Diener et al. on evaluative vs experiential well-being; the Latin-America positive-affect paradox; Renn, <em>American Affairs</em> (2023), on happiness, mood and mental health as distinct constructs.</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+const DATA = {"meta":{"title":"The Continent's Quiet Scissors","dataset":"European Social Survey (ESS), Round 6 (2012)","years":"2012 (ESS round 6)","weight":"weight (anweight); country-equal across countries","construct":"evaluative (life satisfaction) vs experiential (past-week mood/mental-health battery)","fit_note":"Diagonal = OLS of felt mood on rated life across countries (slope 0.135). Countries above it feel better than their life-rating predicts; below, worse.","item_note":"Felt-mood items are 'past-week' frequencies (1=none of the time .. 4=all of the time), direction-fixed so higher = better. They are not clinical diagnoses.","country_equal":"Each country one unit; within-country weighted by the analysis weight.","suppress":"countries with fewer than 400 round-6 respondents excluded."},"k":29,"n_total":54673,"min_n":400,"items":[{"key":"not_depressed","label":"not depressed"},{"key":"not_sad","label":"not sad"},{"key":"not_anxious","label":"not anxious"},{"key":"felt_calm","label":"felt calm"},{"key":"not_lonely","label":"not lonely"}],"corr":{"mood":0.86,"not_depressed":0.765,"not_sad":0.839,"not_anxious":0.656,"felt_calm":0.498,"not_lonely":0.842},"fit":{"slope":0.135,"intercept":2.3958},"ranges":{"life_sat":[4.51,8.552],"mood":[3.067,3.607],"not_depressed":[3.073,3.773],"not_sad":[2.907,3.72],"not_anxious":[2.903,3.777],"felt_calm":[2.593,3.075],"not_lonely":[3.214,3.781]},"countries":[{"iso2":"DK","name":"Denmark","rg":"Nordic","life_sat":8.552,"mood":3.604,"n":1650,"not_depressed":3.737,"not_sad":3.667,"not_anxious":3.75,"felt_calm":3.075,"not_lonely":3.781,"z_life":1.734,"z_mood":1.837,"resid":0.103,"mood_pred":3.551,"mood_excess":0.053},{"iso2":"CH","name":"Switzerland","rg":"Western","life_sat":8.167,"mood":3.389,"n":1493,"not_depressed":3.6,"not_sad":3.527,"not_anxious":3.236,"felt_calm":2.858,"not_lonely":3.719,"z_life":1.341,"z_mood":0.44,"resid":-0.901,"mood_pred":3.499,"mood_excess":-0.11},{"iso2":"NO","name":"Norway","rg":"Nordic","life_sat":8.14,"mood":3.607,"n":1624,"not_depressed":3.749,"not_sad":3.688,"not_anxious":3.777,"felt_calm":3.039,"not_lonely":3.778,"z_life":1.314,"z_mood":1.857,"resid":0.543,"mood_pred":3.495,"mood_excess":0.112},{"iso2":"FI","name":"Finland","rg":"Nordic","life_sat":8.109,"mood":3.512,"n":2197,"not_depressed":3.773,"not_sad":3.72,"not_anxious":3.604,"felt_calm":2.743,"not_lonely":3.724,"z_life":1.282,"z_mood":1.239,"resid":-0.042,"mood_pred":3.491,"mood_excess":0.021},{"iso2":"IS","name":"Iceland","rg":"Nordic","life_sat":7.948,"mood":3.498,"n":752,"not_depressed":3.576,"not_sad":3.571,"not_anxious":3.552,"felt_calm":3.049,"not_lonely":3.738,"z_life":1.118,"z_mood":1.149,"resid":0.031,"mood_pred":3.469,"mood_excess":0.029},{"iso2":"NL","name":"Netherlands","rg":"Western","life_sat":7.942,"mood":3.414,"n":1845,"not_depressed":3.668,"not_sad":3.543,"not_anxious":3.164,"felt_calm":2.958,"not_lonely":3.731,"z_life":1.111,"z_mood":0.603,"resid":-0.509,"mood_pred":3.468,"mood_excess":-0.054},{"iso2":"SE","name":"Sweden","rg":"Nordic","life_sat":7.871,"mood":3.503,"n":1847,"not_depressed":3.694,"not_sad":3.602,"not_anxious":3.53,"felt_calm":3.014,"not_lonely":3.675,"z_life":1.039,"z_mood":1.181,"resid":0.142,"mood_pred":3.459,"mood_excess":0.044},{"iso2":"DE","name":"Germany","rg":"Western","life_sat":7.568,"mood":3.494,"n":2958,"not_depressed":3.528,"not_sad":3.556,"not_anxious":3.758,"felt_calm":2.932,"not_lonely":3.691,"z_life":0.73,"z_mood":1.123,"resid":0.393,"mood_pred":3.418,"mood_excess":0.076},{"iso2":"IL","name":"Israel","rg":"Southern","life_sat":7.452,"mood":3.371,"n":2508,"not_depressed":3.509,"not_sad":3.401,"not_anxious":3.588,"felt_calm":2.739,"not_lonely":3.595,"z_life":0.611,"z_mood":0.323,"resid":-0.288,"mood_pred":3.402,"mood_excess":-0.031},{"iso2":"BE","name":"Belgium","rg":"Western","life_sat":7.393,"mood":3.276,"n":1869,"not_depressed":3.561,"not_sad":3.45,"not_anxious":3.108,"felt_calm":2.685,"not_lonely":3.576,"z_life":0.551,"z_mood":-0.294,"resid":-0.845,"mood_pred":3.394,"mood_excess":-0.118},{"iso2":"GB","name":"United Kingdom","rg":"Western","life_sat":7.334,"mood":3.365,"n":2286,"not_depressed":3.603,"not_sad":3.489,"not_anxious":3.456,"felt_calm":2.607,"not_lonely":3.668,"z_life":0.491,"z_mood":0.284,"resid":-0.207,"mood_pred":3.386,"mood_excess":-0.021},{"iso2":"PL","name":"Poland","rg":"East/Centre","life_sat":7.108,"mood":3.312,"n":1898,"not_depressed":3.415,"not_sad":3.4,"not_anxious":3.463,"felt_calm":2.686,"not_lonely":3.57,"z_life":0.26,"z_mood":-0.06,"resid":-0.32,"mood_pred":3.356,"mood_excess":-0.044},{"iso2":"SI","name":"Slovenia","rg":"Other","life_sat":6.997,"mood":3.511,"n":1257,"not_depressed":3.652,"not_sad":3.517,"not_anxious":3.66,"felt_calm":3.007,"not_lonely":3.715,"z_life":0.147,"z_mood":1.233,"resid":1.086,"mood_pred":3.341,"mood_excess":0.17},{"iso2":"ES","name":"Spain","rg":"Southern","life_sat":6.944,"mood":3.303,"n":1889,"not_depressed":3.421,"not_sad":3.288,"not_anxious":3.565,"felt_calm":2.666,"not_lonely":3.575,"z_life":0.093,"z_mood":-0.118,"resid":-0.211,"mood_pred":3.334,"mood_excess":-0.031},{"iso2":"CY","name":"Cyprus","rg":"Southern","life_sat":6.914,"mood":3.233,"n":1116,"not_depressed":3.546,"not_sad":3.311,"not_anxious":2.935,"felt_calm":2.785,"not_lonely":3.568,"z_life":0.062,"z_mood":-0.573,"resid":-0.635,"mood_pred":3.329,"mood_excess":-0.096},{"iso2":"IE","name":"Ireland","rg":"Western","life_sat":6.792,"mood":3.449,"n":2628,"not_depressed":3.66,"not_sad":3.579,"not_anxious":3.482,"felt_calm":2.833,"not_lonely":3.681,"z_life":-0.062,"z_mood":0.83,"resid":0.892,"mood_pred":3.313,"mood_excess":0.136},{"iso2":"IT","name":"Italy","rg":"Southern","life_sat":6.631,"mood":3.211,"n":960,"not_depressed":3.484,"not_sad":3.255,"not_anxious":3.208,"felt_calm":2.669,"not_lonely":3.423,"z_life":-0.226,"z_mood":-0.716,"resid":-0.49,"mood_pred":3.291,"mood_excess":-0.08},{"iso2":"CZ","name":"Czechia","rg":"East/Centre","life_sat":6.609,"mood":3.304,"n":2009,"not_depressed":3.31,"not_sad":3.311,"not_anxious":3.459,"felt_calm":3.012,"not_lonely":3.391,"z_life":-0.249,"z_mood":-0.112,"resid":0.137,"mood_pred":3.288,"mood_excess":0.016},{"iso2":"SK","name":"Slovakia","rg":"East/Centre","life_sat":6.57,"mood":3.298,"n":1847,"not_depressed":3.442,"not_sad":3.278,"not_anxious":3.367,"felt_calm":2.922,"not_lonely":3.473,"z_life":-0.289,"z_mood":-0.151,"resid":0.138,"mood_pred":3.283,"mood_excess":0.015},{"iso2":"FR","name":"France","rg":"Western","life_sat":6.541,"mood":3.214,"n":1968,"not_depressed":3.482,"not_sad":3.403,"not_anxious":3.093,"felt_calm":2.593,"not_lonely":3.499,"z_life":-0.318,"z_mood":-0.696,"resid":-0.378,"mood_pred":3.279,"mood_excess":-0.065},{"iso2":"XK","name":"Kosovo","rg":"Balkan/East","life_sat":6.259,"mood":3.218,"n":1295,"not_depressed":3.161,"not_sad":3.124,"not_anxious":3.512,"felt_calm":2.78,"not_lonely":3.446,"z_life":-0.606,"z_mood":-0.67,"resid":-0.065,"mood_pred":3.241,"mood_excess":-0.023},{"iso2":"EE","name":"Estonia","rg":"East/Centre","life_sat":6.248,"mood":3.284,"n":2380,"not_depressed":3.427,"not_sad":3.337,"not_anxious":3.282,"felt_calm":2.827,"not_lonely":3.532,"z_life":-0.617,"z_mood":-0.242,"resid":0.375,"mood_pred":3.24,"mood_excess":0.044},{"iso2":"PT","name":"Portugal","rg":"Southern","life_sat":5.993,"mood":3.282,"n":2151,"not_depressed":3.497,"not_sad":3.388,"not_anxious":3.25,"felt_calm":2.641,"not_lonely":3.625,"z_life":-0.877,"z_mood":-0.255,"resid":0.623,"mood_pred":3.205,"mood_excess":0.077},{"iso2":"LT","name":"Lithuania","rg":"East/Centre","life_sat":5.94,"mood":3.168,"n":2109,"not_depressed":3.347,"not_sad":3.187,"not_anxious":3.215,"felt_calm":2.648,"not_lonely":3.441,"z_life":-0.931,"z_mood":-0.995,"resid":-0.064,"mood_pred":3.198,"mood_excess":-0.03},{"iso2":"RU","name":"Russia","rg":"Balkan/East","life_sat":5.77,"mood":3.1,"n":2484,"not_depressed":3.302,"not_sad":3.108,"not_anxious":3.035,"felt_calm":2.665,"not_lonely":3.348,"z_life":-1.105,"z_mood":-1.437,"resid":-0.332,"mood_pred":3.175,"mood_excess":-0.075},{"iso2":"AL","name":"Albania","rg":"Balkan/East","life_sat":5.676,"mood":3.077,"n":1201,"not_depressed":3.118,"not_sad":2.907,"not_anxious":3.238,"felt_calm":2.721,"not_lonely":3.389,"z_life":-1.201,"z_mood":-1.586,"resid":-0.386,"mood_pred":3.162,"mood_excess":-0.085},{"iso2":"HU","name":"Hungary","rg":"East/Centre","life_sat":5.6,"mood":3.084,"n":2014,"not_depressed":3.073,"not_sad":3.163,"not_anxious":3.068,"felt_calm":2.75,"not_lonely":3.366,"z_life":-1.278,"z_mood":-1.541,"resid":-0.263,"mood_pred":3.152,"mood_excess":-0.068},{"iso2":"UA","name":"Ukraine","rg":"Balkan/East","life_sat":5.153,"mood":3.067,"n":2178,"not_depressed":3.358,"not_sad":2.983,"not_anxious":2.903,"felt_calm":2.814,"not_lonely":3.214,"z_life":-1.735,"z_mood":-1.651,"resid":0.083,"mood_pred":3.092,"mood_excess":-0.025},{"iso2":"BG","name":"Bulgaria","rg":"Balkan/East","life_sat":4.51,"mood":3.167,"n":2260,"not_depressed":3.399,"not_sad":3.254,"not_anxious":2.977,"felt_calm":2.723,"not_lonely":3.462,"z_life":-2.391,"z_mood":-1.002,"resid":1.389,"mood_pred":3.005,"mood_excess":0.162}],"movers":{"feel_better":[{"iso2":"SI","name":"Slovenia","excess":0.17,"life_sat":6.997,"mood":3.511},{"iso2":"BG","name":"Bulgaria","excess":0.162,"life_sat":4.51,"mood":3.167},{"iso2":"IE","name":"Ireland","excess":0.136,"life_sat":6.792,"mood":3.449},{"iso2":"NO","name":"Norway","excess":0.112,"life_sat":8.14,"mood":3.607},{"iso2":"PT","name":"Portugal","excess":0.077,"life_sat":5.993,"mood":3.282},{"iso2":"DE","name":"Germany","excess":0.076,"life_sat":7.568,"mood":3.494}],"feel_worse":[{"iso2":"BE","name":"Belgium","excess":-0.118,"life_sat":7.393,"mood":3.276},{"iso2":"CH","name":"Switzerland","excess":-0.11,"life_sat":8.167,"mood":3.389},{"iso2":"CY","name":"Cyprus","excess":-0.096,"life_sat":6.914,"mood":3.233},{"iso2":"AL","name":"Albania","excess":-0.085,"life_sat":5.676,"mood":3.077},{"iso2":"IT","name":"Italy","excess":-0.08,"life_sat":6.631,"mood":3.211},{"iso2":"RU","name":"Russia","excess":-0.075,"life_sat":5.77,"mood":3.1}]}};
+const EVAL="#13726a", EXP="#c2451c";
+const REG_COL={"Nordic":"#2f6aa8","Western":"#13726a","Southern":"#c08a1e","East/Centre":"#8a5a9c","Balkan/East":"#c2451c","Other":"#888"};
+
+function makeTip(c){ const t=document.createElement("div"); t.className="tip"; c.appendChild(t); return t; }
+function showTip(t,c,x,y,html){ t.innerHTML=html; t.style.display="block";
+  const cw=c.clientWidth, tw=t.offsetWidth; let lx=x+14; if(lx+tw>cw-4) lx=x-tw-14;
+  t.style.left=Math.max(2,lx)+"px"; t.style.top=Math.max(0,y-10)+"px"; }
+function hideTip(t){ t.style.display="none"; }
+
+const box=document.getElementById("scatter-chart"); const tip=makeTip(box);
+const readout=d3.select("#scatter-readout");
+const MEAS=[{key:"mood",label:"Felt mood (all 5)"}].concat(DATA.items.map(i=>({key:i.key,label:i.label})));
+let measure="mood";
+
+const ctrl=d3.select("#item-controls");
+MEAS.forEach(m=>{
+  ctrl.append("button").attr("class","mbtn").attr("aria-pressed",m.key===measure)
+    .text(m.label+`  (r=${(DATA.corr[m.key]).toFixed(2)})`)
+    .on("click",function(){ if(measure===m.key)return; measure=m.key;
+      ctrl.selectAll("button").attr("aria-pressed","false"); d3.select(this).attr("aria-pressed","true"); draw(); });
+});
+
+function fit(key){ // OLS y(key) ~ life_sat
+  const xs=DATA.countries.map(c=>c.life_sat), ys=DATA.countries.map(c=>c[key]);
+  const n=xs.length, mx=d3.mean(xs), my=d3.mean(ys);
+  let num=0,den=0; for(let i=0;i<n;i++){ num+=(xs[i]-mx)*(ys[i]-my); den+=(xs[i]-mx)**2; }
+  const b1=num/den, b0=my-b1*mx; return {b1,b0};
+}
+function draw(){
+  const C=DATA.countries, W=Math.max(330,box.clientWidth), narrow=W<560, H=narrow?460:520;
+  const mg={top:22,right:20,bottom:48,left:52};
+  const xr=DATA.ranges.life_sat, yr=DATA.ranges[measure];
+  const x=d3.scaleLinear().domain([xr[0]-0.2,xr[1]+0.2]).range([mg.left,W-mg.right]).nice();
+  const y=d3.scaleLinear().domain([yr[0]-0.05,yr[1]+0.05]).range([H-mg.bottom,mg.top]).nice();
+  const {b1,b0}=fit(measure);
+
+  let svg=d3.select(box).select("svg"); if(svg.empty()) svg=d3.select(box).append("svg");
+  svg.attr("viewBox",`0 0 ${W} ${H}`).attr("role","img")
+     .attr("aria-label",`Scatter of country life satisfaction versus ${measure}; correlation ${DATA.corr[measure].toFixed(2)}.`);
+  svg.selectAll("*").remove();
+  // grids
+  x.ticks(6).forEach(t=>{ svg.append("line").attr("x1",x(t)).attr("x2",x(t)).attr("y1",mg.top).attr("y2",H-mg.bottom).attr("stroke","#ece3d1");
+    svg.append("text").attr("x",x(t)).attr("y",H-mg.bottom+18).attr("text-anchor","middle").attr("font","10.5px var(--sans)").attr("fill","#897f6f").text(t); });
+  y.ticks(5).forEach(t=>{ svg.append("line").attr("x1",mg.left).attr("x2",W-mg.right).attr("y1",y(t)).attr("y2",y(t)).attr("stroke","#ece3d1");
+    svg.append("text").attr("x",mg.left-8).attr("y",y(t)).attr("dy","0.32em").attr("text-anchor","end").attr("font","10.5px var(--sans)").attr("fill","#897f6f").text(t.toFixed(1)); });
+  // axis titles
+  svg.append("text").attr("x",(mg.left+W-mg.right)/2).attr("y",H-8).attr("text-anchor","middle").attr("font","700 12px var(--sans)").attr("fill",EVAL).text("rated life satisfaction (0–10) →");
+  svg.append("text").attr("transform",`rotate(-90)`).attr("x",-(mg.top+H-mg.bottom)/2).attr("y",16).attr("text-anchor","middle").attr("font","700 12px var(--sans)").attr("fill",EXP).text("how the week felt →");
+  // fit line
+  const xa=x.domain()[0], xb=x.domain()[1];
+  svg.append("line").attr("x1",x(xa)).attr("y1",y(b0+b1*xa)).attr("x2",x(xb)).attr("y2",y(b0+b1*xb))
+    .attr("stroke","#b3a892").attr("stroke-width",1.6).attr("stroke-dasharray","5 4");
+  // points
+  svg.append("g").selectAll("circle").data(C).join("circle")
+    .attr("cx",c=>x(c.life_sat)).attr("cy",c=>y(c[measure])).attr("r",6)
+    .attr("fill",c=>REG_COL[c.rg]||"#888").attr("opacity",.82).attr("stroke","#fff").attr("stroke-width",1)
+    .style("cursor","pointer")
+    .on("pointerenter",function(ev,c){ d3.select(this).attr("r",8.5).raise();
+      const pred=b0+b1*c.life_sat, exc=(c[measure]-pred);
+      const [mx,my]=d3.pointer(ev,box);
+      showTip(tip,box,mx,my,`<b>${c.name}</b> <span class="trg">${c.rg}</span><br><span class="num">rated ${c.life_sat.toFixed(2)} &middot; felt ${c[measure].toFixed(2)}<br>${exc>=0?"+":""}${exc.toFixed(2)} vs predicted</span>`);
+      readout.html(`<b>${c.name}</b> — rates life <b>${c.life_sat.toFixed(2)}</b>, ${MEAS.find(m=>m.key===measure).label.toLowerCase()} <b>${c[measure].toFixed(2)}</b> (${exc>=0?"feels better":"feels worse"} than predicted)`);
+    })
+    .on("pointermove",function(ev){ const [mx,my]=d3.pointer(ev,box); tip.style.left=Math.max(2,mx+14)+"px"; tip.style.top=Math.max(0,my-10)+"px"; })
+    .on("pointerleave",function(){ d3.select(this).attr("r",6); hideTip(tip); readout.html("Hover a country, or switch the felt measure above."); });
+  // label a few notable
+  const labels=["Slovenia","Switzerland","Bulgaria","Ireland","Denmark","Kosovo","Russia"];
+  svg.append("g").selectAll("text.lab").data(C.filter(c=>labels.includes(c.name))).join("text").attr("class","lab")
+    .attr("x",c=>x(c.life_sat)+8).attr("y",c=>y(c[measure])-7).attr("font","700 10.5px var(--sans)").attr("fill","#574f43").text(c=>c.name);
+  // correlation badge
+  svg.append("text").attr("x",W-mg.right).attr("y",mg.top+4).attr("text-anchor","end").attr("font","800 13px var(--sans)").attr("fill",EXP).text(`r = ${DATA.corr[measure].toFixed(2)}`);
+}
+draw();
+
+// movers lists
+const up=d3.select("#mv-up"); DATA.movers.feel_better.forEach(m=>up.append("li").html(`${m.name} <span class="d">${m.excess>=0?"+":""}${m.excess.toFixed(2)}</span>`));
+const down=d3.select("#mv-down"); DATA.movers.feel_worse.forEach(m=>down.append("li").html(`${m.name} <span class="d">${m.excess.toFixed(2)}</span>`));
+
+let t; window.addEventListener("resize",()=>{ clearTimeout(t); t=setTimeout(draw,180); });
+</script>
+</body>
+</html>

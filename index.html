@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive Data Essays — Adam Duhachek</title>
+<meta name="description" content="A collection of hand-built, interactive data visualizations on human well-being — how people rate their lives against how their days feel, across surveys, countries, and five decades.">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<nav class="nav"><div class="row">
+  <div class="brand"><a href="./index.html">Adam Duhachek<span class="sub">University of Illinois Chicago</span></a></div>
+  <div class="tabs">
+    <a href="./index.html" class="active">Home</a>
+    <a href="./about.html">About</a>
+    <a href="./research.html">Research</a>
+    <a href="./teaching.html">Teaching</a>
+  </div>
+</div></nav>
+
+<main><div class="wrap" style="padding-top:36px">
+  <section>
+    <h1>Interactive Data Essays</h1>
+    <div class="rule"></div>
+    <p class="lede">Hand-built, interactive data visualizations on human well-being &mdash; how people rate their lives against how their days actually feel, across surveys, countries, and five decades. Each essay draws on a single survey backbone and is fully self-contained.</p>
+    <div class="gallery" id="essays" style="margin-top:22px"><p class="muted">Loading essays&hellip;</p></div>
+  </section>
+</div></main>
+
+<footer><div class="wrap">
+  <span>&copy; Adam Duhachek &middot; University of Illinois Chicago</span>
+  <span><a href="./about.html">About</a> &middot; <a href="./research.html">Research</a> &middot; <a href="./teaching.html">Teaching</a></span>
+</div></footer>
+
+<script>
+function sourceTag(ds){
+  const d=(ds||'').toLowerCase();
+  if(d.includes('european social survey')||/\bess\b/.test(d)) return {label:'European Social Survey', color:'#16233f'};
+  if(d.includes('evs')||d.includes('wvs')||d.includes('values survey')) return {label:'Values Surveys (EVS–WVS)', color:'#5b3a82'};
+  if(d.includes('gallup world')) return {label:'Gallup World Poll', color:'#0f6b62'};
+  if(d.includes('gallup us')||d.includes('motherlode')||d.includes('gallup u.s')) return {label:'Gallup US Daily', color:'#b8431a'};
+  if(d.includes('general social survey')||/\bgss\b/.test(d)) return {label:'General Social Survey', color:'#9b2335'};
+  if(d.includes('gallup')) return {label:'Gallup', color:'#0f6b62'};
+  return {label:(ds||'Data essay').split(',')[0], color:'#7b8398'};
+}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+fetch('./gallery.json').then(r=>r.json()).then(g=>{
+  const wrap=document.getElementById('essays'); wrap.innerHTML='';
+  const arts=(g&&g.articles)||[];
+  if(!arts.length){ wrap.innerHTML='<p class="muted">Essays unavailable.</p>'; return; }
+  for(const a of arts){
+    let path=(a.path||(a.slug+'.html')).replace(/^\//,'').replace(/^articles\//,'').replace(/\/$/,'');
+    if(!path.endsWith('.html')) path=(a.slug||path)+'.html';
+    const t=sourceTag(a.dataset);
+    const el=document.createElement('a'); el.className='card'; el.href='./'+path;
+    el.style.borderTop='3px solid '+t.color;
+    el.innerHTML='<p class="kk" style="color:'+t.color+'">'+esc(t.label)+'</p>'+
+                 '<h3>'+esc(a.title||a.slug)+'</h3>'+
+                 '<p>'+esc(a.dek||'')+'</p>'+
+                 '<span class="src">'+(a.primaryViz?('Interactive &middot; '+esc(a.primaryViz)):'Open essay')+' &rarr;</span>';
+    wrap.appendChild(el);
+  }
+}).catch(()=>{ document.getElementById('essays').innerHTML='<p class="muted">Essays unavailable.</p>'; });
+</script>
+</body>
+</html>

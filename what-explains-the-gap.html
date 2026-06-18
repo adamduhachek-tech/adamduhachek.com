@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can Marriage and Church Explain It?</title>
+<meta name="description" content="The conservative happiness advantage in the GSS is about 7 points. Adjust step by step for marriage, churchgoing, income and health and three-quarters of it dissolves — religion does the most work, income almost none — but a quarter survives every control.">
+<style>
+  :root{
+    --paper:#f3f1ea; --panel:#fffefb; --panel-edge:#e0dccf; --ink:#1b1a17;
+    --ink-dim:#514d44; --ink-faint:#857d6f; --hairline:#e6e0d2;
+    --con:#B5394C; --con-soft:#f3d6db; --explained:#c9bfa8; --residual:#8d2535;
+    --band:#2b2824; --gold:#b9851c;
+    --maxw:730px; --figw:1000px;
+    --sans:"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --serif:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--paper); color:var(--ink); font:18px/1.66 var(--serif); overflow-x:hidden}
+  .skip{position:absolute; left:-9999px; top:0; background:var(--ink); color:var(--paper); padding:.5em 1em; z-index:40; font-family:var(--sans)}
+  .skip:focus{left:8px; top:8px}
+  a{color:var(--con); text-underline-offset:3px}
+  a:focus-visible, button:focus-visible{outline:2.5px solid var(--gold); outline-offset:2px}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px}
+  .wrap-wide{max-width:var(--figw); margin:0 auto; padding:0 20px}
+
+  header{position:relative; padding:84px 0 8px; overflow:hidden}
+  .ghost{position:absolute; top:-26px; left:50%; transform:translateX(-50%);
+    font:900 clamp(160px,34vw,360px)/0.9 var(--sans);
+    color:transparent; -webkit-text-stroke:1.5px rgba(27,26,23,.10); user-select:none; pointer-events:none}
+  .kicker{font:700 12px/1.5 var(--sans); letter-spacing:.26em; text-transform:uppercase; color:var(--con)}
+  h1{font:900 clamp(36px,6.8vw,66px)/1.02 var(--sans); letter-spacing:-.028em; margin:.22em 0 .3em; text-wrap:balance}
+  .dek{font-size:clamp(19px,2.7vw,23px); line-height:1.46; color:var(--ink-dim); margin:0 0 22px; max-width:40em}
+  .byline{font:400 13px/1.7 var(--sans); color:var(--ink-faint); border-top:2px solid var(--ink); padding-top:12px; display:flex; gap:18px; flex-wrap:wrap}
+  .byline b{color:var(--ink-dim); font-weight:600}
+
+  main{position:relative; z-index:1}
+  h2{font:800 clamp(24px,3.7vw,32px)/1.16 var(--sans); letter-spacing:-.015em; margin:2.1em 0 .55em}
+  p{margin:0 0 1.15em}
+  strong{color:#000}
+
+  .statrow{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:30px 0 8px}
+  .stat{background:var(--panel); border:1px solid var(--panel-edge); border-top:3px solid var(--band); padding:13px 14px 11px}
+  .stat.con{border-top-color:var(--con)} .stat.res{border-top-color:var(--residual)}
+  .stat .lab{font:700 10.5px/1.4 var(--sans); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint)}
+  .stat .val{font:800 clamp(19px,2.6vw,27px)/1.12 var(--sans); margin-top:6px; font-variant-numeric:tabular-nums}
+  .stat.con .val{color:var(--con)} .stat.res .val{color:var(--residual)}
+  .stat .sub{font:400 12px/1.45 var(--sans); color:var(--ink-dim); margin-top:4px}
+  @media(max-width:680px){ .statrow{grid-template-columns:1fr 1fr} }
+  @media(max-width:420px){ .statrow{grid-template-columns:1fr} }
+
+  figure{margin:38px 0}
+  .fig{background:var(--panel); border:1px solid var(--panel-edge); padding:20px 20px 14px; position:relative; box-shadow:0 24px 50px -38px rgba(40,35,20,.45)}
+  .figtitle{font:800 18px/1.3 var(--sans); margin:0 0 3px}
+  .figsub{font:400 13.5px/1.55 var(--sans); color:var(--ink-dim); margin:0 0 10px; max-width:58em}
+  figcaption{font:400 12.5px/1.6 var(--sans); color:var(--ink-faint); margin-top:10px}
+  .chart{position:relative}
+  .chart svg{display:block; width:100%; height:auto}
+  .readout{font:400 13px/1.6 var(--sans); color:var(--ink-dim); border-top:1px dashed var(--hairline); padding-top:8px; margin-top:8px; min-height:2.2em}
+  .tip{position:absolute; pointer-events:none; z-index:20; display:none; background:#211e18; color:#f4efe4; border-radius:6px; padding:9px 11px; font:400 12.5px/1.5 var(--sans); max-width:240px; box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .tip b{color:#fff} .tip .num{font-variant-numeric:tabular-nums}
+
+  .notes{margin-top:60px; border-top:2px solid var(--ink); padding:26px 0 70px; font:400 14px/1.7 var(--sans); color:var(--ink-dim)}
+  .notes h2{font-size:19px; margin:0 0 14px}
+  .notes ul{padding-left:1.2em; margin:0} .notes li{margin-bottom:9px}
+  code{font:13px/1.4 ui-monospace,"Cascadia Code",Consolas,monospace; background:#ece6d6; padding:1px 4px; border-radius:3px}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to article</a>
+<header>
+  <div class="ghost" aria-hidden="true">?</div>
+  <div class="wrap">
+    <p class="kicker">General Social Survey &middot; United States &middot; 1974&ndash;2024</p>
+    <h1>Can Marriage and Church Explain It?</h1>
+    <p class="dek">Conservatives report being &ldquo;very happy&rdquo; about seven points more often than liberals. Strip away the things conservatives have more of, one at a time, and most of the gap dissolves &mdash; but not all of it.</p>
+    <div class="byline">
+      <span><b>Data</b> GSS cumulative, 1974&ndash;2024, weighted (wtssps)</span>
+      <span><b>Sample</b> 25,951 liberals &amp; conservatives, complete data</span>
+      <span><b>Method</b> nested linear-probability models</span>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <p>A companion piece established the basic fact: across fifty years of the General Social Survey, American conservatives call themselves &ldquo;very happy&rdquo; more often than liberals, by about seven points. The interesting question is <em>why</em> &mdash; and whether the gap is really about ideology at all, or just a stand-in for the fact that conservatives are more likely to be married, to go to church, to be older and more financially secure. Each of those is independently tied to happiness. So how much of the gap is left once you account for them?</p>
+    <p>The way to find out is to take a single sample of liberals and conservatives with complete records, predict who is &ldquo;very happy,&rdquo; and add the suspects one block at a time, watching the conservative advantage shrink. On this sample the raw gap is <strong>7.0 points</strong>. Demographics &mdash; age, sex, race, region, survey year &mdash; trim it to <strong>5.6</strong>. Marital status takes it to <strong>4.1</strong>. Then churchgoing does the most work of all, dropping it to <strong>1.6</strong>. Income and health change almost nothing. What remains at the end is <strong>1.8 points</strong> &mdash; about a quarter of where we started.</p>
+
+    <div class="statrow" role="list" aria-label="Headline numbers">
+      <div class="stat con" role="listitem"><div class="lab">Raw gap</div><div class="val">7.0 pts</div><div class="sub">conservative &ldquo;very happy&rdquo; advantage</div></div>
+      <div class="stat" role="listitem"><div class="lab">Explained</div><div class="val">~75%</div><div class="sub">by marriage, church, demographics</div></div>
+      <div class="stat res" role="listitem"><div class="lab">Survives everything</div><div class="val">1.8 pts</div><div class="sub">a quarter of the gap</div></div>
+      <div class="stat" role="listitem"><div class="lab">Biggest single factor</div><div class="val">Church</div><div class="sub">&minus;2.5 pts on its own</div></div>
+    </div>
+  </div>
+
+  <div class="wrap-wide">
+  <figure>
+    <div class="fig">
+      <p class="figtitle">Watching the gap dissolve, one control at a time</p>
+      <p class="figsub">The conservative &ldquo;very happy&rdquo; advantage (percentage points) as each block of controls is added, on one fixed sample. Each bar is what remains; the faded segment is what the latest block absorbed.</p>
+      <div class="chart" id="wf-chart"></div>
+      <div class="readout" id="wf-readout">Hover a bar for the remaining gap and what the step absorbed.</div>
+    </div>
+    <figcaption>Religious attendance is the largest single explainer; household income absorbs essentially none. A residual gap refuses to go away.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+    <p>Two things stand out. First, the explanation that does the heavy lifting is <strong>religion</strong>, not money. Adjusting for how often someone attends services cuts the gap by <strong>2.5 points</strong> by itself &mdash; more than marriage and demographics combined did before it. Adjusting for household income, by contrast, moves the gap by essentially nothing: conservatives are not happier because they are richer. Second, the controls together account for about <strong>three-quarters</strong> of the gap &mdash; which means the popular claim that the conservative happiness edge is &ldquo;just&rdquo; marriage and church is mostly, but not entirely, right.</p>
+    <p>Because a quarter of it isn&rsquo;t. After every adjustment, conservatives remain about <strong>1.8 points</strong> more likely to call themselves very happy than otherwise-similar liberals. You can see the same residue without any model at all: split people by marital status and churchgoing into four corners, and conservatives stay ahead in every one &mdash; by <strong>3.1 points</strong> among married non-attenders, <strong>2.8</strong> among the married faithful, even <strong>1.5</strong> among unmarried non-attenders.</p>
+  </div>
+
+  <div class="wrap-wide">
+  <figure>
+    <div class="fig">
+      <p class="figtitle">The gap persists in every corner</p>
+      <p class="figsub">Raw conservative-minus-liberal &ldquo;very happy&rdquo; gap (percentage points) within cells of marital status and churchgoing &mdash; no model, just the four groups.</p>
+      <div class="chart" id="cell-chart"></div>
+    </div>
+    <figcaption>Married or not, churchgoing or not, conservatives report being very happy a few points more often than liberals.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+    <h2>What this shows &mdash; and what it doesn&rsquo;t</h2>
+    <p>This is an accounting exercise, not a verdict on cause. The controls are bundles of correlated traits, and some of them &mdash; marriage, churchgoing &mdash; may be partly <em>downstream</em> of ideology rather than rival explanations for it; if being conservative makes someone more likely to marry or attend services, then &ldquo;explaining away&rdquo; the gap through those variables understates ideology&rsquo;s role. Adjustment also can&rsquo;t see what isn&rsquo;t measured: optimism, sense of meaning, trust, temperament. So the honest reading runs in both directions. The conservative happiness advantage is <em>largely</em> the well-documented happiness dividends of marriage and especially religious community &mdash; it is not a free-standing magic of ideology, and it is not about money. But it does not vanish when you account for those things. A modest, stubborn remainder &mdash; roughly a quarter, about <strong>1.8 points</strong> &mdash; sits with ideology itself, or with something that travels too closely with it to separate in survey data.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="notes">
+      <h2>Notes &amp; data</h2>
+      <ul>
+        <li><b>Source.</b> General Social Survey cumulative file, 1974&ndash;2024, weighted with <code>wtssps</code>. Sample: 25,951 self-identified liberals (<code>polviews</code> 1&ndash;3) and conservatives (5&ndash;7) with complete data on every control; moderates excluded.</li>
+        <li><b>Models.</b> Linear-probability (weighted least squares) models for being &ldquo;very happy&rdquo; (<code>happy</code>=3). Controls added in blocks: demographics (age, age&sup2;, sex, race, census region, survey year), then marital status, then religious attendance, then log household income (<code>coninc</code>), then self-rated health. The reported figure is the coefficient on a conservative dummy at each step, in percentage points. <span style="font-variant:small-caps">Evaluative</span> outcome.</li>
+        <li><b>Not causal mediation.</b> Controls are correlated bundles; marriage and churchgoing may be partly consequences of ideology, which would make this a conservative (low) estimate of ideology&rsquo;s own role. No causal claim is made.</li>
+        <li><b>Subgroup cells.</b> The four-corner figure shows raw weighted shares, not model-adjusted estimates.</li>
+        <li><b>Prior art.</b> Renn, &ldquo;How to Understand the Well-Being Gap&rdquo; (<em>American Affairs</em>, 2023); Schlenker, Chambers &amp; Le (2012); the marriage- and religion-and-happiness literatures (Putnam &amp; Campbell on religious social ties).</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+const DATA = {"meta":{"title":"Can Marriage and Church Explain It?","dataset":"General Social Survey (GSS) cumulative","years":"1974-2024","weight":"wtssps (weighted)","construct":"evaluative","model_note":"Linear-probability models for being 'very happy' (=1), wtssps-weighted, on a fixed sample of liberals and conservatives with complete data on every control. Each bar adds a block of controls; the height is the remaining conservative advantage.","sample_note":"25,951 liberal/conservative respondents with complete data on all controls (1974-2024).","decomp_note":"Adjustment is not causal mediation: the controls are bundles of correlated traits, and some (e.g. marriage, churchgoing) may themselves be shaped by ideology.","cell_note":"Subgroup cells are raw wtssps-weighted shares (not model-adjusted), shown to illustrate that a gap persists within marital x attendance cells."},"n":25951,"waterfall":[{"key":"raw","label":"Raw gap","coef_pp":7.055,"se_pp":0.582,"remaining_pct":100.0,"drop_pp":0.0},{"key":"demog","label":"+ age, sex, race, region, year","coef_pp":5.603,"se_pp":0.596,"remaining_pct":79.4,"drop_pp":1.452},{"key":"marital","label":"+ marital status","coef_pp":4.083,"se_pp":0.589,"remaining_pct":57.9,"drop_pp":1.52},{"key":"religion","label":"+ religious attendance","coef_pp":1.6,"se_pp":0.599,"remaining_pct":22.7,"drop_pp":2.483},{"key":"income","label":"+ household income","coef_pp":1.675,"se_pp":0.598,"remaining_pct":23.7,"drop_pp":-0.075},{"key":"health","label":"+ self-rated health","coef_pp":1.757,"se_pp":0.585,"remaining_pct":24.9,"drop_pp":-0.082}],"raw_pp":7.055,"final_pp":1.757,"explained_pp":5.298,"explained_share":75.1,"surviving_share":24.9,"cells":{"married_attend":{"con":0.4837,"lib":0.4559,"gap":0.0278,"n":7721},"married_noattend":{"con":0.3688,"lib":0.3374,"gap":0.0314,"n":12593},"unmarried_attend":{"con":0.2873,"lib":0.2593,"gap":0.028,"n":4976},"unmarried_noattend":{"con":0.1989,"lib":0.1843,"gap":0.0146,"n":14047}}};
+const CON="#B5394C", RES="#8d2535", FADE="#d9cfb8";
+
+function makeTip(c){ const t=document.createElement("div"); t.className="tip"; c.appendChild(t); return t; }
+function showTip(t,c,x,y,html){ t.innerHTML=html; t.style.display="block";
+  const cw=c.clientWidth, tw=t.offsetWidth; let lx=x+14; if(lx+tw>cw-4) lx=x-tw-14;
+  t.style.left=Math.max(2,lx)+"px"; t.style.top=Math.max(0,y-10)+"px"; }
+function hideTip(t){ t.style.display="none"; }
+
+/* waterfall: descending remaining-gap bars */
+const wfBox=document.getElementById("wf-chart"); const wfTip=makeTip(wfBox);
+const wfReadout=d3.select("#wf-readout");
+function drawWF(){
+  const W=DATA.waterfall, Wd=Math.max(330,wfBox.clientWidth), narrow=Wd<560, H=narrow?420:380;
+  const mg={top:16,right:narrow?54:70,bottom:30,left:narrow?150:210};
+  const x=d3.scaleLinear().domain([0, DATA.raw_pp*1.04]).range([mg.left,Wd-mg.right]);
+  const y=d3.scaleBand().domain(W.map(d=>d.key)).range([mg.top,H-mg.bottom]).padding(0.26);
+  let svg=d3.select(wfBox).select("svg"); if(svg.empty()) svg=d3.select(wfBox).append("svg");
+  svg.attr("viewBox",`0 0 ${Wd} ${H}`).attr("role","img")
+     .attr("aria-label",`Bars showing the conservative very-happy advantage falling from ${DATA.raw_pp} to ${DATA.final_pp} points as controls are added.`);
+  svg.selectAll("*").remove();
+  x.ticks(6).forEach(t=>{ svg.append("line").attr("x1",x(t)).attr("x2",x(t)).attr("y1",mg.top-4).attr("y2",H-mg.bottom).attr("stroke","#ece6d6");
+    svg.append("text").attr("x",x(t)).attr("y",H-mg.bottom+18).attr("text-anchor","middle").attr("font","10px var(--sans)").attr("fill","#aaa290").text(t); });
+  svg.append("text").attr("x",(mg.left+Wd-mg.right)/2).attr("y",H-4).attr("text-anchor","middle").attr("font","700 11px var(--sans)").attr("fill","#857d6f").text("conservative advantage (percentage points)");
+
+  W.forEach((d,i)=>{
+    const yy=y(d.key), h=y.bandwidth();
+    const prev=i>0?W[i-1].coef_pp:d.coef_pp;
+    // faded segment: what this step absorbed (from current coef up to previous coef)
+    if(i>0 && prev>d.coef_pp){
+      svg.append("rect").attr("x",x(d.coef_pp)).attr("y",yy).attr("width",x(prev)-x(d.coef_pp)).attr("height",h)
+        .attr("fill",FADE).attr("opacity",.7);
+    }
+    // remaining bar
+    svg.append("rect").attr("x",x(0)).attr("y",yy).attr("width",Math.max(0,x(d.coef_pp)-x(0))).attr("height",h)
+      .attr("fill",i===W.length-1?RES:CON).attr("opacity",i===0?1:.92)
+      .style("cursor","pointer")
+      .on("pointerenter",function(ev){ const [mx,my]=d3.pointer(ev,wfBox);
+        showTip(wfTip,wfBox,mx,my,`<b>${d.label}</b><br><span class="num">remaining gap ${d.coef_pp.toFixed(1)} pts (${d.remaining_pct.toFixed(0)}%)${i>0?`<br>this step absorbed ${d.drop_pp.toFixed(1)} pts`:""}</span>`);
+        wfReadout.html(`<b>${d.label}</b> — remaining gap <b>${d.coef_pp.toFixed(1)} pts</b> (${d.remaining_pct.toFixed(0)}% of the original)${i>0?`; this block absorbed <b>${d.drop_pp.toFixed(1)}</b>`:""}`);})
+      .on("pointerleave",function(){ hideTip(wfTip); wfReadout.html("Hover a bar for the remaining gap and what the step absorbed."); });
+    // step label
+    svg.append("text").attr("x",mg.left-10).attr("y",yy+h/2).attr("dy","0.32em").attr("text-anchor","end")
+      .attr("font",(i===0||i===W.length-1)?"800 12px var(--sans)":"600 12px var(--sans)").attr("fill","#514d44").text(d.label);
+    // value label
+    svg.append("text").attr("x",x(d.coef_pp)+7).attr("y",yy+h/2).attr("dy","0.32em")
+      .attr("font","800 12px var(--sans)").attr("fill",i===W.length-1?RES:CON).attr("font-variant-numeric","tabular-nums")
+      .text(d.coef_pp.toFixed(1));
+  });
+}
+
+/* 2x2 cell gaps */
+const cellBox=document.getElementById("cell-chart"); const cellTip=makeTip(cellBox);
+function drawCells(){
+  const order=[["married_attend","Married, churchgoing"],["married_noattend","Married, not"],
+               ["unmarried_attend","Unmarried, churchgoing"],["unmarried_noattend","Unmarried, not"]];
+  const rows=order.map(([k,lab])=>({k,lab,...DATA.cells[k]})).filter(d=>d.gap!=null);
+  const W=Math.max(330,cellBox.clientWidth), narrow=W<560, H=narrow?220:200;
+  const mg={top:14,right:46,bottom:30,left:narrow?150:200};
+  const x=d3.scaleLinear().domain([0,Math.max(...rows.map(r=>r.gap))*1.18]).range([mg.left,W-mg.right]);
+  const y=d3.scaleBand().domain(rows.map(r=>r.k)).range([mg.top,H-mg.bottom]).padding(0.3);
+  let svg=d3.select(cellBox).select("svg"); if(svg.empty()) svg=d3.select(cellBox).append("svg");
+  svg.attr("viewBox",`0 0 ${W} ${H}`).attr("role","img").attr("aria-label","Conservative-liberal very-happy gap stays positive in all four marital-by-churchgoing cells.");
+  svg.selectAll("*").remove();
+  x.ticks(5).forEach(t=>{ svg.append("line").attr("x1",x(t)).attr("x2",x(t)).attr("y1",mg.top-4).attr("y2",H-mg.bottom).attr("stroke","#ece6d6");
+    svg.append("text").attr("x",x(t)).attr("y",H-mg.bottom+16).attr("text-anchor","middle").attr("font","10px var(--sans)").attr("fill","#aaa290").text((t*100).toFixed(0)+"pp"); });
+  rows.forEach(r=>{
+    const yy=y(r.k), h=y.bandwidth();
+    svg.append("rect").attr("x",x(0)).attr("y",yy).attr("width",x(r.gap)-x(0)).attr("height",h).attr("fill",CON).attr("opacity",.9)
+      .style("cursor","pointer")
+      .on("pointerenter",function(ev){ const [mx,my]=d3.pointer(ev,cellBox);
+        showTip(cellTip,cellBox,mx,my,`<b>${r.lab}</b><br><span class="num">+${(r.gap*100).toFixed(1)} pts (con ${(r.con*100).toFixed(0)}% vs lib ${(r.lib*100).toFixed(0)}%)<br>n=${r.n.toLocaleString()}</span>`);})
+      .on("pointerleave",()=>hideTip(cellTip));
+    svg.append("text").attr("x",mg.left-10).attr("y",yy+h/2).attr("dy","0.32em").attr("text-anchor","end").attr("font","600 12px var(--sans)").attr("fill","#514d44").text(r.lab);
+    svg.append("text").attr("x",x(r.gap)+6).attr("y",yy+h/2).attr("dy","0.32em").attr("font","800 12px var(--sans)").attr("fill",CON).attr("font-variant-numeric","tabular-nums").text("+"+(r.gap*100).toFixed(1));
+  });
+}
+
+function drawAll(){ drawWF(); drawCells(); }
+drawAll();
+let t; window.addEventListener("resize",()=>{ clearTimeout(t); t=setTimeout(drawAll,180); });
+</script>
+</body>
+</html>

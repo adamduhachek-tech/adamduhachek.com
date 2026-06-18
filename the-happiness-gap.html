@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fifty Years of a Partisan Happiness Gap</title>
+<meta name="description" content="In the General Social Survey, U.S. conservatives have reported being 'very happy' more often than liberals in 31 of 33 survey years since 1974 — a gap of about seven points that runs through how people rate their lives and how their minds feel, but not their physical health.">
+<style>
+  :root{
+    --paper:#f3f1ea; --panel:#fffefb; --panel-edge:#e0dccf; --ink:#1b1a17;
+    --ink-dim:#514d44; --ink-faint:#857d6f; --hairline:#e6e0d2;
+    --lib:#3B6CA8; --lib-soft:#d6e2f0; --con:#B5394C; --con-soft:#f3d6db;
+    --mod:#9a8f76; --band:#2b2824; --gold:#b9851c;
+    --eval:#3B6CA8; --exp:#B5394C;
+    --maxw:730px; --figw:1000px;
+    --sans:"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --serif:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--paper); color:var(--ink); font:18px/1.66 var(--serif); overflow-x:hidden}
+  .skip{position:absolute; left:-9999px; top:0; background:var(--ink); color:var(--paper); padding:.5em 1em; z-index:40; font-family:var(--sans)}
+  .skip:focus{left:8px; top:8px}
+  a{color:var(--lib); text-underline-offset:3px}
+  a:focus-visible, button:focus-visible{outline:2.5px solid var(--gold); outline-offset:2px}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px}
+  .wrap-wide{max-width:var(--figw); margin:0 auto; padding:0 20px}
+
+  header{position:relative; padding:84px 0 8px; overflow:hidden}
+  .ghost{position:absolute; top:-14px; left:50%; transform:translateX(-50%);
+    font:900 clamp(120px,28vw,300px)/0.9 var(--sans); letter-spacing:-.05em;
+    color:transparent; -webkit-text-stroke:1.5px rgba(27,26,23,.09); user-select:none; pointer-events:none; white-space:nowrap}
+  .kicker{font:700 12px/1.5 var(--sans); letter-spacing:.26em; text-transform:uppercase; color:var(--con)}
+  h1{font:900 clamp(38px,7.2vw,70px)/1.0 var(--sans); letter-spacing:-.028em; margin:.22em 0 .3em; text-wrap:balance}
+  .dek{font-size:clamp(19px,2.7vw,23px); line-height:1.46; color:var(--ink-dim); margin:0 0 22px; max-width:39em}
+  .byline{font:400 13px/1.7 var(--sans); color:var(--ink-faint); border-top:2px solid var(--ink); padding-top:12px; display:flex; gap:18px; flex-wrap:wrap}
+  .byline b{color:var(--ink-dim); font-weight:600}
+
+  main{position:relative; z-index:1}
+  h2{font:800 clamp(24px,3.7vw,32px)/1.16 var(--sans); letter-spacing:-.015em; margin:2.1em 0 .55em}
+  p{margin:0 0 1.15em}
+  strong{color:#000}
+  .lib-t{color:var(--lib); font-weight:700}
+  .con-t{color:var(--con); font-weight:700}
+  .tagline{font:700 11px/1 var(--sans); letter-spacing:.14em; text-transform:uppercase; padding:4px 8px; border-radius:3px; white-space:nowrap}
+  .tag-eval{background:var(--lib-soft); color:#2a527e}
+  .tag-exp{background:var(--con-soft); color:#8d2535}
+
+  .statrow{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:30px 0 8px}
+  .stat{background:var(--panel); border:1px solid var(--panel-edge); border-top:3px solid var(--band); padding:13px 14px 11px}
+  .stat.con{border-top-color:var(--con)} .stat.lib{border-top-color:var(--lib)}
+  .stat .lab{font:700 10.5px/1.4 var(--sans); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint)}
+  .stat .val{font:800 clamp(19px,2.6vw,27px)/1.12 var(--sans); margin-top:6px; font-variant-numeric:tabular-nums}
+  .stat.con .val{color:var(--con)} .stat.lib .val{color:var(--lib)}
+  .stat .sub{font:400 12px/1.45 var(--sans); color:var(--ink-dim); margin-top:4px}
+  @media(max-width:680px){ .statrow{grid-template-columns:1fr 1fr} }
+  @media(max-width:420px){ .statrow{grid-template-columns:1fr} }
+
+  figure{margin:38px 0}
+  .fig{background:var(--panel); border:1px solid var(--panel-edge); padding:20px 20px 14px; position:relative; box-shadow:0 24px 50px -38px rgba(40,35,20,.45)}
+  .figtitle{font:800 18px/1.3 var(--sans); margin:0 0 3px}
+  .figsub{font:400 13.5px/1.55 var(--sans); color:var(--ink-dim); margin:0 0 10px; max-width:56em}
+  figcaption{font:400 12.5px/1.6 var(--sans); color:var(--ink-faint); margin-top:10px}
+  .chart{position:relative}
+  .chart svg{display:block; width:100%; height:auto}
+
+  .legend{display:flex; gap:6px 14px; flex-wrap:wrap; margin:2px 0 8px; font:600 12.5px/1.6 var(--sans); color:var(--ink-dim)}
+  .legend button{display:inline-flex; align-items:center; gap:7px; background:none; border:none; cursor:pointer; font:inherit; color:inherit; padding:2px 4px; border-radius:4px}
+  .legend button .sw{width:13px; height:4px; border-radius:2px; flex:none}
+  .legend button[aria-pressed="false"]{opacity:.34}
+
+  .readout{font:400 13px/1.6 var(--sans); color:var(--ink-dim); border-top:1px dashed var(--hairline); padding-top:8px; margin-top:8px; min-height:2.4em}
+  .readout b{color:var(--ink); font-variant-numeric:tabular-nums}
+
+  .modecall{display:flex; gap:10px; align-items:flex-start; background:#fbf3df; border:1px solid #e6cf9a; border-left:4px solid #c79023; padding:10px 14px; margin:6px 0 14px; font:400 13px/1.55 var(--sans); color:#5b4a22}
+  .modecall b{color:#3f3315} .modecall .ex{font:900 15px/1.2 var(--sans); color:#c79023; flex:none}
+
+  .tip{position:absolute; pointer-events:none; z-index:20; display:none; background:#211e18; color:#f4efe4; border-radius:6px; padding:9px 11px; font:400 12.5px/1.5 var(--sans); max-width:240px; box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .tip b{color:#fff} .tip .num{font-variant-numeric:tabular-nums}
+
+  .pull{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:24px 0}
+  .pcard{background:var(--panel); border:1px solid var(--panel-edge); padding:15px 17px}
+  .pcard h3{font:800 12.5px/1.4 var(--sans); letter-spacing:.05em; text-transform:uppercase; margin:0 0 6px; color:var(--ink-dim)}
+  .pcard p{font:400 14px/1.55 var(--sans); margin:0; color:var(--ink-dim)}
+  .pcard .big{font:800 22px/1 var(--sans); font-variant-numeric:tabular-nums; color:var(--ink)}
+  @media(max-width:560px){ .pull{grid-template-columns:1fr} }
+
+  .notes{margin-top:60px; border-top:2px solid var(--ink); padding:26px 0 70px; font:400 14px/1.7 var(--sans); color:var(--ink-dim)}
+  .notes h2{font-size:19px; margin:0 0 14px}
+  .notes ul{padding-left:1.2em; margin:0} .notes li{margin-bottom:9px}
+  code{font:13px/1.4 ui-monospace,"Cascadia Code",Consolas,monospace; background:#ece6d6; padding:1px 4px; border-radius:3px}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to article</a>
+<header>
+  <div class="ghost" aria-hidden="true">+7</div>
+  <div class="wrap">
+    <p class="kicker">General Social Survey &middot; United States &middot; 1974&ndash;2024</p>
+    <h1>Fifty Years of a Partisan Happiness Gap</h1>
+    <p class="dek">In the survey social scientists trust most, American conservatives have reported being &ldquo;very happy&rdquo; more often than liberals in almost every year for half a century. The gap is real, durable, and oddly specific about where it shows up.</p>
+    <div class="byline">
+      <span><b>Data</b> GSS cumulative, 1974&ndash;2024, weighted (wtssps)</span>
+      <span><b>Sample</b> 64,090 adults with both happiness and ideology</span>
+      <span><b>Method</b> share &ldquo;very happy&rdquo; by self-placed ideology</span>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <p>A 2023 essay in <em>American Affairs</em> made a claim that sounds like a culture-war talking point but turns out to be one of the most replicated results in the happiness literature: <strong>conservatives report being happier than liberals.</strong> The cleanest evidence sits in the General Social Survey, which has asked Americans the same blunt question &mdash; &ldquo;Taken all together, how would you say things are these days &mdash; would you say that you are very happy, pretty happy, or not too happy?&rdquo; &mdash; since the early 1970s, alongside where they place themselves from extremely liberal to extremely conservative.</p>
+    <p>Pool every year and the gap is plain. <strong>35% of conservatives</strong> call themselves very happy, against <strong>28% of liberals</strong> &mdash; a spread of about <strong>seven percentage points</strong>, with moderates in between. It is not a fluke of one decade: conservatives lead in <strong>31 of the 33</strong> survey years with enough data to compare.</p>
+
+    <div class="statrow" role="list" aria-label="Headline numbers">
+      <div class="stat con" role="listitem"><div class="lab">Conservatives &middot; very happy</div><div class="val">35.2%</div><div class="sub">pooled, 1974&ndash;2024</div></div>
+      <div class="stat lib" role="listitem"><div class="lab">Liberals &middot; very happy</div><div class="val">28.0%</div><div class="sub">pooled, 1974&ndash;2024</div></div>
+      <div class="stat" role="listitem"><div class="lab">The gap</div><div class="val">+7.1 pts</div><div class="sub">conservative advantage</div></div>
+      <div class="stat" role="listitem"><div class="lab">Years ahead</div><div class="val">31 / 33</div><div class="sub">conservatives lead</div></div>
+    </div>
+
+    <p>What follows takes the claim apart on its own terms. How steady is the gap over fifty years? Does it run smoothly across the ideological spectrum, or is it driven by the extremes? And &mdash; the question that separates a slogan from a finding &mdash; is the gap the same whichever kind of well-being you measure?</p>
+  </div>
+
+  <div class="wrap-wide">
+  <figure>
+    <div class="fig">
+      <p class="figtitle">Half a century of the happiness gap</p>
+      <p class="figsub">Share calling themselves &ldquo;very happy,&rdquo; by self-placed ideology, GSS 1974&ndash;2024 (weighted). Lines are three-survey moving averages; dots are individual survey years. The shaded band is the conservative&ndash;liberal gap.</p>
+      <div class="legend" id="leg1"></div>
+      <div class="chart" id="line-chart"></div>
+      <div class="readout" id="line-readout">Hover the chart to read any year.</div>
+    </div>
+    <figcaption>Conservatives sit above liberals in nearly every year. The gap widens and narrows &mdash; it peaked in the 2000s &mdash; but it does not close, and it does not steadily grow.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+    <p>The line for conservatives floats above the line for liberals decade after decade, the two of them rising and falling together with the national mood. The distance between them is not constant: it stretched widest in the 2000s, narrowed in the 2010s, and reopened in the pandemic years. But across the whole half-century it drifts by barely <strong>0.1 points a decade</strong> &mdash; statistically, it is closer to a constant than to a trend. The headline some have drawn, that the gap is dramatically <em>widening</em>, is era-specific; the more remarkable fact is how <em>stable</em> it is.</p>
+
+    <div class="modecall"><span class="ex">!</span><div><b>One caveat the chart makes visible.</b> In 2021&ndash;2022 the GSS moved from in-person to push-to-web interviewing. Happiness fell across the board in 2021 &mdash; partly real pandemic, partly the mode change &mdash; so the unusually wide 2021 gap should be read with that asterisk, not as a trend.</div></div>
+
+    <h2>It is a gradient, not a cliff</h2>
+    <p>The gap is not the work of a handful of euphoric conservatives or miserable progressives at the fringes. Walk the seven-point ideology scale from left to right and the share of &ldquo;very happy&rdquo; rises almost monotonically &mdash; from <strong>29%</strong> among the most liberal to <strong>41%</strong> among the most conservative. Every step rightward buys a little more reported happiness.</p>
+  </div>
+
+  <div class="wrap-wide">
+  <figure>
+    <div class="fig">
+      <p class="figtitle">Happiness climbs across the ideological spectrum</p>
+      <p class="figsub">Share &ldquo;very happy&rdquo; at each point of the GSS 7-point ideology scale, pooled 1974&ndash;2024 (weighted).</p>
+      <div class="chart" id="grad-chart"></div>
+    </div>
+    <figcaption>A near-monotone climb from the extreme left to the extreme right &mdash; the pattern of a gradient, not an artifact of the tails.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+    <h2>The same gap, measured a different way</h2>
+    <p>Self-reported happiness is one window. The GSS opens another: since 2002 it has asked how many of the past 30 days were &ldquo;not good&rdquo; for one&rsquo;s mental health. This is a different construct &mdash; <span class="tagline tag-exp">Experiential</span> the felt texture of recent days, rather than <span class="tagline tag-eval">Evaluative</span> a considered verdict on one&rsquo;s life as a whole &mdash; and the well-being literature is emphatic that the two can come apart. Here they don&rsquo;t. Liberals report <strong>4.05</strong> bad mental-health days a month; conservatives report <strong>3.12</strong>. That is nearly a full extra bad day, every month, on the other side of the aisle.</p>
+  </div>
+
+  <div class="wrap-wide">
+  <figure>
+    <div class="fig">
+      <p class="figtitle">Bad mental-health days per month, by ideology</p>
+      <p class="figsub">Mean days in the past 30 that mental health was &ldquo;not good,&rdquo; GSS mental-health module 2002&ndash;2022 (weighted). Higher is worse.</p>
+      <div class="chart" id="mh-chart"></div>
+    </div>
+    <figcaption>The evaluative gap (who calls themselves very happy) and the experiential gap (whose recent days felt bad) point the same way.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+    <h2>Where the gap is &mdash; and isn&rsquo;t</h2>
+    <p>The pattern survives swapping the question and swapping the grouping. Sort Americans by party instead of ideology and Republicans out-&ldquo;very-happy&rdquo; Democrats by <strong>8 points</strong> (38% to 30%). Conservatives are also more satisfied with their finances, by about <strong>6 points</strong>. But the gap is strikingly specific. It does <em>not</em> appear in physical health: conservatives and liberals report excellent-or-good health at essentially the same rate, a difference under a single percentage point. Whatever the happiness gap is, it is not just conservatives being healthier.</p>
+
+    <div class="pull">
+      <div class="pcard"><h3>Party check</h3><p><span class="big">+8.1 pts</span><br>Republicans vs Democrats, &ldquo;very happy.&rdquo; The ideology gap is not an artifact of how it&rsquo;s sliced.</p></div>
+      <div class="pcard"><h3>Financial satisfaction</h3><p><span class="big">+5.7 pts</span><br>Conservatives more likely to be satisfied with their finances.</p></div>
+      <div class="pcard"><h3>Physical health</h3><p><span class="big">~0</span><br>No meaningful gap in self-rated health &mdash; the divergence is about mind, not body.</p></div>
+      <div class="pcard"><h3>The spectrum</h3><p><span class="big">29% &rarr; 41%</span><br>&ldquo;Very happy&rdquo; from the far left to the far right.</p></div>
+    </div>
+
+    <h2>What this shows &mdash; and what it doesn&rsquo;t</h2>
+    <p>This is a description, not a diagnosis. The GSS records that people who <em>call themselves</em> conservative also report more happiness and fewer bad mental days; it cannot tell you that adopting conservative views would lift anyone&rsquo;s mood, nor rule out that happier people drift rightward. Ideology here is self-placement, which means different things to different people and has shifted over fifty years. And the measures are self-reports: a gap in reported happiness could in part be a gap in <em>how willingly</em> people report distress &mdash; a possibility the data can raise but not settle.</p>
+    <p>What the data do settle is the first-order fact. The conservative happiness advantage in the United States is not a recent invention, not an artifact of one survey wave, and not confined to one way of asking. It is a seven-point gap that has outlasted nine presidents &mdash; visible in how people rate their lives and in how their minds feel, but not in their bodies. Why it exists is the harder question, and the one worth arguing about.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="notes">
+      <h2>Notes &amp; data</h2>
+      <ul>
+        <li><b>Source.</b> General Social Survey (GSS) cumulative file, 1974&ndash;2024, NORC at the University of Chicago. All estimates weighted with <code>wtssps</code>.</li>
+        <li><b>Measures.</b> &ldquo;Very happy&rdquo; is the top category of the 3-point <code>happy</code> item (not too / pretty / very). Ideology is the 7-point <code>polviews</code> self-placement: liberal = 1&ndash;3, moderate = 4, conservative = 5&ndash;7. <span class="tagline tag-eval">Evaluative</span> happiness vs <span class="tagline tag-exp">Experiential</span> bad mental-health days (<code>days_bad_mental</code>, 0&ndash;30, higher = worse), GSS mental-health module 2002&ndash;2022.</li>
+        <li><b>Constructs are kept separate.</b> The happiness item is an evaluative judgment; the bad-mental-health-days item is experiential. They are labeled throughout and never merged.</li>
+        <li><b>Suppression.</b> Ideology&times;year cells with fewer than 100 weighted respondents are dropped from the time series; 33 survey years remain comparable.</li>
+        <li><b>Mode change.</b> The 2021&ndash;2022 shift to push-to-web interviewing can move levels; the 2021 point is annotated and not treated as a trend.</li>
+        <li><b>Limits.</b> Descriptive, not causal: self-placed ideology, self-reported well-being, cross-sectional. Robustness checks use <code>partyid</code>, <code>satfin</code>, and self-rated <code>health</code>.</li>
+        <li><b>Prior art.</b> Aaron M. Renn, &ldquo;How to Understand the Well-Being Gap between Liberals and Conservatives,&rdquo; <em>American Affairs</em> (2023); Stavrova &amp; Luhmann (2016) on the cross-national conservative happiness advantage; Schlenker, Chambers &amp; Le (2012).</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+const DATA = {"meta":{"title":"Fifty Years of a Partisan Happiness Gap","dataset":"General Social Survey (GSS) cumulative","years":"1974-2024","weight":"wtssps (weighted)","construct":"evaluative (% 'very happy', happy=3) + experiential (bad mental-health days, higher=worse)","ideology_note":"polviews self-placement: liberal = 1-3, moderate = 4, conservative = 5-7. Self-placed ideology, not party or policy.","mode_note":"GSS switched to push-to-web in 2021-2022; levels in 2021/2022 may be partly artifactual and are annotated where shown.","suppress":"ideology x year cells with effective N < 100 suppressed.","happy_note":"'Very happy' is the top of the 3-point GSS happy item (1 not too / 2 pretty / 3 very)."},"pooled":{"con":0.3519,"lib":0.2804,"mod":0.2939,"gap":0.0714,"n_con":21618,"n_lib":18040,"n_mod":24432,"n_total":64090},"gradient":[{"pv":1,"vh":0.2875,"n":2165},{"pv":2,"vh":0.2808,"n":7826},{"pv":3,"vh":0.2782,"n":8049},{"pv":4,"vh":0.2939,"n":24432},{"pv":5,"vh":0.3237,"n":9732},{"pv":6,"vh":0.3668,"n":9607},{"pv":7,"vh":0.4078,"n":2279}],"series":[{"year":1974,"lib":0.3271,"n_lib":428,"mod":0.3434,"n_mod":564,"con":0.4227,"n_con":414,"gap":0.0956,"lib_sm":0.3274,"mod_sm":0.3329,"con_sm":0.3823},{"year":1975,"lib":0.3277,"n_lib":420,"mod":0.3225,"n_mod":558,"con":0.3419,"n_con":416,"gap":0.0142,"lib_sm":0.3291,"mod_sm":0.331,"con_sm":0.3875},{"year":1976,"lib":0.3324,"n_lib":404,"mod":0.327,"n_mod":559,"con":0.398,"n_con":438,"gap":0.0656,"lib_sm":0.3273,"mod_sm":0.3435,"con_sm":0.3701},{"year":1977,"lib":0.3218,"n_lib":420,"mod":0.3809,"n_mod":564,"con":0.3704,"n_con":468,"gap":0.0486,"lib_sm":0.3193,"mod_sm":0.3378,"con_sm":0.3865},{"year":1978,"lib":0.3036,"n_lib":401,"mod":0.3055,"n_mod":547,"con":0.3912,"n_con":475,"gap":0.0876,"lib_sm":0.311,"mod_sm":0.3446,"con_sm":0.3717},{"year":1980,"lib":0.3077,"n_lib":365,"mod":0.3475,"n_mod":580,"con":0.3536,"n_con":479,"gap":0.0459,"lib_sm":0.2985,"mod_sm":0.3233,"con_sm":0.3833},{"year":1982,"lib":0.2842,"n_lib":513,"mod":0.3168,"n_mod":694,"con":0.405,"n_con":529,"gap":0.1208,"lib_sm":0.2819,"mod_sm":0.3124,"con_sm":0.3817},{"year":1983,"lib":0.2539,"n_lib":176,"mod":0.2728,"n_mod":315,"con":0.3866,"n_con":266,"gap":0.1327,"lib_sm":0.3022,"mod_sm":0.2989,"con_sm":0.3959},{"year":1984,"lib":0.3684,"n_lib":335,"mod":0.3071,"n_mod":557,"con":0.3962,"n_con":493,"gap":0.0278,"lib_sm":0.3207,"mod_sm":0.2695,"con_sm":0.37},{"year":1985,"lib":0.3397,"n_lib":369,"mod":0.2286,"n_mod":565,"con":0.3273,"n_con":527,"gap":-0.0124,"lib_sm":0.3347,"mod_sm":0.2887,"con_sm":0.3628},{"year":1986,"lib":0.296,"n_lib":328,"mod":0.3304,"n_mod":569,"con":0.3648,"n_con":483,"gap":0.0688,"lib_sm":0.306,"mod_sm":0.2986,"con_sm":0.3608},{"year":1987,"lib":0.2824,"n_lib":499,"mod":0.3369,"n_mod":630,"con":0.3904,"n_con":519,"gap":0.108,"lib_sm":0.3123,"mod_sm":0.3295,"con_sm":0.3868},{"year":1988,"lib":0.3584,"n_lib":395,"mod":0.3211,"n_mod":510,"con":0.4053,"n_con":498,"gap":0.0469,"lib_sm":0.3253,"mod_sm":0.3395,"con_sm":0.3811},{"year":1989,"lib":0.3352,"n_lib":408,"mod":0.3606,"n_mod":562,"con":0.3475,"n_con":463,"gap":0.0123,"lib_sm":0.3416,"mod_sm":0.3422,"con_sm":0.379},{"year":1990,"lib":0.3313,"n_lib":352,"mod":0.345,"n_mod":473,"con":0.3842,"n_con":480,"gap":0.0529,"lib_sm":0.3142,"mod_sm":0.3329,"con_sm":0.3715},{"year":1991,"lib":0.2762,"n_lib":403,"mod":0.2931,"n_mod":579,"con":0.3827,"n_con":465,"gap":0.1065,"lib_sm":0.2978,"mod_sm":0.3042,"con_sm":0.3817},{"year":1993,"lib":0.286,"n_lib":412,"mod":0.2746,"n_mod":574,"con":0.3783,"n_con":559,"gap":0.0923,"lib_sm":0.2826,"mod_sm":0.284,"con_sm":0.366},{"year":1994,"lib":0.2855,"n_lib":774,"mod":0.2844,"n_mod":1044,"con":0.3371,"n_con":1049,"gap":0.0516,"lib_sm":0.2808,"mod_sm":0.2925,"con_sm":0.3624},{"year":1996,"lib":0.2709,"n_lib":693,"mod":0.3186,"n_mod":1037,"con":0.3719,"n_con":998,"gap":0.101,"lib_sm":0.2908,"mod_sm":0.3024,"con_sm":0.3617},{"year":1998,"lib":0.316,"n_lib":765,"mod":0.3041,"n_mod":978,"con":0.3762,"n_con":923,"gap":0.0602,"lib_sm":0.2985,"mod_sm":0.3128,"con_sm":0.3837},{"year":2000,"lib":0.3085,"n_lib":687,"mod":0.3156,"n_mod":1043,"con":0.4031,"n_con":879,"gap":0.0946,"lib_sm":0.3075,"mod_sm":0.3092,"con_sm":0.3822},{"year":2002,"lib":0.2981,"n_lib":348,"mod":0.3079,"n_mod":522,"con":0.3674,"n_con":459,"gap":0.0693,"lib_sm":0.2998,"mod_sm":0.2985,"con_sm":0.3846},{"year":2004,"lib":0.2929,"n_lib":318,"mod":0.272,"n_mod":495,"con":0.3832,"n_con":493,"gap":0.0903,"lib_sm":0.2836,"mod_sm":0.2981,"con_sm":0.3755},{"year":2006,"lib":0.2598,"n_lib":783,"mod":0.3145,"n_mod":1097,"con":0.3758,"n_con":1008,"gap":0.116,"lib_sm":0.2678,"mod_sm":0.2958,"con_sm":0.3748},{"year":2008,"lib":0.2507,"n_lib":527,"mod":0.3008,"n_mod":736,"con":0.3655,"n_con":663,"gap":0.1148,"lib_sm":0.27,"mod_sm":0.2909,"con_sm":0.3439},{"year":2010,"lib":0.2995,"n_lib":567,"mod":0.2575,"n_mod":745,"con":0.2903,"n_con":659,"gap":-0.0092,"lib_sm":0.2696,"mod_sm":0.2856,"con_sm":0.3451},{"year":2012,"lib":0.2586,"n_lib":532,"mod":0.2985,"n_mod":710,"con":0.3795,"n_con":626,"gap":0.1209,"lib_sm":0.2859,"mod_sm":0.2883,"con_sm":0.3415},{"year":2014,"lib":0.2996,"n_lib":660,"mod":0.309,"n_mod":987,"con":0.3547,"n_con":797,"gap":0.0551,"lib_sm":0.2868,"mod_sm":0.2901,"con_sm":0.3611},{"year":2016,"lib":0.3023,"n_lib":795,"mod":0.2629,"n_mod":1031,"con":0.3492,"n_con":926,"gap":0.0469,"lib_sm":0.298,"mod_sm":0.2906,"con_sm":0.3526},{"year":2018,"lib":0.292,"n_lib":656,"mod":0.2999,"n_mod":854,"con":0.354,"n_con":736,"gap":0.062,"lib_sm":0.246,"mod_sm":0.2539,"con_sm":0.3125},{"year":2021,"lib":0.1436,"n_lib":1313,"mod":0.199,"n_mod":1372,"con":0.2343,"n_con":1263,"gap":0.0907,"lib_sm":0.2197,"mod_sm":0.2446,"con_sm":0.2909},{"year":2022,"lib":0.2235,"n_lib":1071,"mod":0.2349,"n_mod":1240,"con":0.2845,"n_con":1094,"gap":0.061,"lib_sm":0.1918,"mod_sm":0.2234,"con_sm":0.2586},{"year":2024,"lib":0.2084,"n_lib":923,"mod":0.2363,"n_mod":1141,"con":0.257,"n_con":1073,"gap":0.0486,"lib_sm":0.216,"mod_sm":0.2356,"con_sm":0.2707}],"era":[{"label":"1974-1989","lib":0.3184,"con":0.3788,"mod":0.323,"gap":0.0604,"n":19703},{"label":"1990-1999","lib":0.2931,"con":0.3678,"mod":0.3021,"gap":0.0748,"n":12558},{"label":"2000-2009","lib":0.2796,"con":0.3806,"mod":0.3059,"gap":0.101,"n":10058},{"label":"2010-2019","lib":0.2922,"con":0.3465,"mod":0.2858,"gap":0.0543,"n":11281},{"label":"2020-2024","lib":0.1878,"con":0.2583,"mod":0.2216,"gap":0.0705,"n":10490}],"trend":{"slope_per_year":0.00013,"slope_per_decade_pp":0.13,"gap_min_year":1985,"gap_min":-0.0124,"gap_max_year":1983,"gap_max":0.1327,"n_years_total":33,"n_years_con_ahead":31},"mh":{"con":3.123,"lib":4.051,"mod":3.755,"gap":0.928,"n_con":3669,"n_lib":3223,"n_mod":4209,"years":"2002-2022 (GSS mental-health module)","series":[{"year":2002,"lib":4.149,"mod":3.478,"con":1.993},{"year":2004,"lib":5.602,"mod":4.735,"con":3.424},{"year":2006,"lib":2.967,"mod":2.906,"con":2.535},{"year":2010,"lib":3.731,"mod":3.786,"con":3.223},{"year":2012,"lib":3.723,"mod":3.739,"con":3.215},{"year":2014,"lib":3.361,"mod":3.683,"con":3.214},{"year":2016,"lib":4.49,"mod":3.455,"con":3.612},{"year":2018,"lib":3.582,"mod":3.971,"con":2.88},{"year":2022,"lib":5.198,"mod":4.219,"con":3.729}]},"robust":{"party_rep":0.3776,"party_dem":0.2969,"party_gap":0.0807,"satfin_con":0.3358,"satfin_lib":0.2791,"satfin_gap":0.0567,"health_con":0.772,"health_lib":0.774,"health_gap":-0.002}};
+
+const LIB="#3B6CA8", CON="#B5394C", MOD="#9a8f76", BAND="#2b2824", GOLD="#b9851c";
+const fmtPct = v => v==null ? "—" : (v*100).toFixed(1)+"%";
+const fmtPct0 = v => v==null ? "—" : Math.round(v*100)+"%";
+
+/* shared tooltip */
+function makeTip(c){ const t=document.createElement("div"); t.className="tip"; c.appendChild(t); return t; }
+function showTip(t,c,x,y,html){ t.innerHTML=html; t.style.display="block";
+  const cw=c.clientWidth, tw=t.offsetWidth; let lx=x+14; if(lx+tw>cw-4) lx=x-tw-14;
+  t.style.left=Math.max(2,lx)+"px"; t.style.top=Math.max(0,y-10)+"px"; }
+function hideTip(t){ t.style.display="none"; }
+
+/* ============ FIG 1 — 50-year dual line ============ */
+const lineBox = document.getElementById("line-chart");
+const lineTip = makeTip(lineBox);
+const lineReadout = d3.select("#line-readout");
+const groups = [{k:"con",name:"Conservatives",c:CON},{k:"lib",name:"Liberals",c:LIB},{k:"mod",name:"Moderates",c:MOD}];
+const shown = new Set(["con","lib","mod"]);
+
+const leg1 = d3.select("#leg1");
+groups.forEach(g=>{
+  leg1.append("button").attr("aria-pressed","true").attr("data-k",g.k)
+    .html(`<span class="sw" style="background:${g.c}"></span>${g.name}`)
+    .on("click",function(){
+      if(shown.has(g.k)) shown.delete(g.k); else shown.add(g.k);
+      if(shown.size===0){ groups.forEach(x=>shown.add(x.k)); }
+      leg1.selectAll("button").attr("aria-pressed",function(){return shown.has(this.getAttribute("data-k"))?"true":"false";});
+      drawLine();
+    });
+});
+
+function drawLine(){
+  const S=DATA.series, W=Math.max(330,lineBox.clientWidth), narrow=W<560, H=narrow?420:480;
+  const mg={top:26,right:narrow?14:96,bottom:40,left:46};
+  const x=d3.scaleLinear().domain(d3.extent(S,d=>d.year)).range([mg.left,W-mg.right]);
+  const allv=[]; S.forEach(d=>["lib","mod","con"].forEach(k=>{ if(d[k]!=null)allv.push(d[k]); if(d[k+"_sm"]!=null)allv.push(d[k+"_sm"]); }));
+  const y=d3.scaleLinear().domain([d3.min(allv)-0.02,d3.max(allv)+0.02]).range([H-mg.bottom,mg.top]).nice();
+
+  let svg=d3.select(lineBox).select("svg");
+  if(svg.empty()) svg=d3.select(lineBox).append("svg");
+  svg.attr("viewBox",`0 0 ${W} ${H}`).attr("role","img")
+     .attr("aria-label","Line chart of the share calling themselves very happy from 1974 to 2024, conservatives above liberals in nearly every year, with moderates between.");
+  svg.selectAll("*").remove();
+
+  const ticks=y.ticks(narrow?5:6);
+  svg.append("g").selectAll("line.g").data(ticks).join("line")
+    .attr("x1",mg.left).attr("x2",W-mg.right).attr("y1",d=>y(d)).attr("y2",d=>y(d))
+    .attr("stroke","#ece6d6").attr("stroke-width",1);
+  svg.append("g").selectAll("text.yt").data(ticks).join("text")
+    .attr("x",mg.left-8).attr("y",d=>y(d)).attr("dy","0.32em").attr("text-anchor","end")
+    .attr("font","11px var(--sans)").attr("fill","#857d6f").text(d=>Math.round(d*100)+"%");
+  const xticks = narrow?[1980,2000,2020]:[1980,1990,2000,2010,2020];
+  svg.append("g").selectAll("text.xt").data(xticks).join("text")
+    .attr("x",d=>x(d)).attr("y",H-mg.bottom+22).attr("text-anchor","middle")
+    .attr("font","11px var(--sans)").attr("fill","#857d6f").text(d=>d);
+
+  // gap band (con_sm - lib_sm) where both shown
+  if(shown.has("con")&&shown.has("lib")){
+    const pts=S.filter(d=>d.con_sm!=null&&d.lib_sm!=null);
+    const area=d3.area().x(d=>x(d.year)).y0(d=>y(d.lib_sm)).y1(d=>y(d.con_sm)).curve(d3.curveMonotoneX);
+    svg.append("path").datum(pts).attr("d",area).attr("fill",CON).attr("opacity",0.10);
+  }
+  // 2021 mode-change marker
+  svg.append("line").attr("x1",x(2021)).attr("x2",x(2021)).attr("y1",mg.top).attr("y2",H-mg.bottom)
+     .attr("stroke",GOLD).attr("stroke-width",1).attr("stroke-dasharray","3 3").attr("opacity",.7);
+  svg.append("text").attr("x",x(2021)).attr("y",mg.top-8).attr("text-anchor",narrow?"end":"middle")
+     .attr("font","italic 700 10.5px var(--sans)").attr("fill",GOLD).text("web mode →");
+
+  const line=d3.line().defined(d=>d.v!=null).x(d=>x(d.year)).y(d=>y(d.v)).curve(d3.curveMonotoneX);
+  groups.forEach(g=>{
+    if(!shown.has(g.k)) return;
+    // raw dots
+    svg.append("g").selectAll("circle").data(S.filter(d=>d[g.k]!=null)).join("circle")
+      .attr("cx",d=>x(d.year)).attr("cy",d=>y(d[g.k])).attr("r",1.8).attr("fill",g.c).attr("opacity",.28);
+    // smoothed line
+    svg.append("path").datum(S.map(d=>({year:d.year,v:d[g.k+"_sm"]})))
+      .attr("fill","none").attr("stroke",g.c).attr("stroke-width",g.k==="mod"?1.6:2.6)
+      .attr("opacity",g.k==="mod"?.7:1).attr("d",line);
+    // end label (wide only)
+    if(!narrow){
+      const last=[...S].reverse().find(d=>d[g.k+"_sm"]!=null);
+      const shortName={con:"Con",lib:"Lib",mod:"Mod"}[g.k];
+      svg.append("text").attr("x",x(last.year)+6).attr("y",y(last[g.k+"_sm"])).attr("dy","0.32em")
+        .attr("font","800 11.5px var(--sans)").attr("fill",g.c).text(shortName);
+    }
+  });
+
+  // hover guide
+  const guide=svg.append("line").attr("y1",mg.top).attr("y2",H-mg.bottom).attr("stroke","#bbb").attr("stroke-width",1).attr("opacity",0);
+  svg.append("rect").attr("x",mg.left).attr("y",mg.top).attr("width",W-mg.right-mg.left).attr("height",H-mg.bottom-mg.top)
+    .attr("fill","transparent").style("cursor","crosshair")
+    .on("pointermove",function(ev){
+      const mx=d3.pointer(ev)[0]; const yr=Math.round(x.invert(mx));
+      const row=S.reduce((a,b)=>Math.abs(b.year-yr)<Math.abs(a.year-yr)?b:a);
+      guide.attr("x1",x(row.year)).attr("x2",x(row.year)).attr("opacity",1);
+      const gp=(row.con!=null&&row.lib!=null)?`<br>gap <b class="num">${((row.con-row.lib)*100).toFixed(1)} pts</b>`:"";
+      lineReadout.html(`<b>${row.year}</b> &nbsp; <span class="con-t">Con ${fmtPct(row.con)}</span> &nbsp; <span class="lib-t">Lib ${fmtPct(row.lib)}</span> &nbsp; Mod ${fmtPct(row.mod)}${gp.replace("<br>"," — ")}`);
+      showTip(lineTip,lineBox,x(row.year),mg.top+10,
+        `<b>${row.year}</b><br><span class="num">Con ${fmtPct(row.con)}<br>Lib ${fmtPct(row.lib)}<br>Mod ${fmtPct(row.mod)}</span>`);
+    })
+    .on("pointerleave",function(){ guide.attr("opacity",0); hideTip(lineTip); });
+}
+
+/* ============ FIG 2 — gradient lollipop ============ */
+const gradBox=document.getElementById("grad-chart");
+const gradTip=makeTip(gradBox);
+const LABELS={1:"Extremely liberal",2:"Liberal",3:"Slightly liberal",4:"Moderate",5:"Slightly conservative",6:"Conservative",7:"Extremely conservative"};
+function drawGrad(){
+  const G=DATA.gradient, W=Math.max(330,gradBox.clientWidth), narrow=W<560, H=narrow?300:280;
+  const mg={top:18,right:24,bottom:46,left:42};
+  const x=d3.scalePoint().domain(G.map(d=>d.pv)).range([mg.left,W-mg.right]).padding(0.5);
+  const y=d3.scaleLinear().domain([0.24,0.43]).range([H-mg.bottom,mg.top]).nice();
+  const col=d3.scaleLinear().domain([1,4,7]).range([LIB,MOD,CON]);
+
+  let svg=d3.select(gradBox).select("svg"); if(svg.empty()) svg=d3.select(gradBox).append("svg");
+  svg.attr("viewBox",`0 0 ${W} ${H}`).attr("role","img")
+     .attr("aria-label","Share very happy rising from 29 percent at the extreme left to 41 percent at the extreme right of the ideology scale.");
+  svg.selectAll("*").remove();
+  const ticks=y.ticks(5);
+  svg.append("g").selectAll("line").data(ticks).join("line").attr("x1",mg.left).attr("x2",W-mg.right)
+    .attr("y1",d=>y(d)).attr("y2",d=>y(d)).attr("stroke","#ece6d6");
+  svg.append("g").selectAll("text").data(ticks).join("text").attr("x",mg.left-8).attr("y",d=>y(d)).attr("dy","0.32em")
+    .attr("text-anchor","end").attr("font","11px var(--sans)").attr("fill","#857d6f").text(d=>Math.round(d*100)+"%");
+
+  G.forEach(d=>{
+    svg.append("line").attr("x1",x(d.pv)).attr("x2",x(d.pv)).attr("y1",y(0.24)).attr("y2",y(d.vh))
+      .attr("stroke",col(d.pv)).attr("stroke-width",2).attr("opacity",.45);
+    svg.append("circle").attr("cx",x(d.pv)).attr("cy",y(d.vh)).attr("r",7).attr("fill",col(d.pv))
+      .attr("stroke","#fff").attr("stroke-width",1.5).style("cursor","pointer")
+      .on("pointerenter",function(ev){ showTip(gradTip,gradBox,x(d.pv),y(d.vh),`<b>${LABELS[d.pv]}</b><br><span class="num">${fmtPct(d.vh)} very happy<br>n=${d.n.toLocaleString()}</span>`); })
+      .on("pointerleave",()=>hideTip(gradTip));
+    svg.append("text").attr("x",x(d.pv)).attr("y",y(d.vh)-12).attr("text-anchor","middle")
+      .attr("font","700 11px var(--sans)").attr("fill",col(d.pv)).attr("font-variant-numeric","tabular-nums").text(Math.round(d.vh*100)+"%");
+  });
+  // axis labels
+  svg.append("text").attr("x",mg.left).attr("y",H-12).attr("text-anchor","start").attr("font","700 11px var(--sans)").attr("fill",LIB).text("◄ more liberal");
+  svg.append("text").attr("x",W-mg.right).attr("y",H-12).attr("text-anchor","end").attr("font","700 11px var(--sans)").attr("fill",CON).text("more conservative ►");
+}
+
+/* ============ FIG 3 — mental-health dot plot ============ */
+const mhBox=document.getElementById("mh-chart");
+const mhTip=makeTip(mhBox);
+function drawMH(){
+  const M=DATA.mh, rows=[{k:"lib",name:"Liberals",c:LIB,v:M.lib},{k:"mod",name:"Moderates",c:MOD,v:M.mod},{k:"con",name:"Conservatives",c:CON,v:M.con}];
+  const W=Math.max(330,mhBox.clientWidth), narrow=W<560, H=narrow?210:190;
+  const mg={top:18,right:30,bottom:38,left:narrow?96:118};
+  const x=d3.scaleLinear().domain([0,Math.max(...rows.map(r=>r.v))*1.18]).range([mg.left,W-mg.right]);
+  const y=d3.scalePoint().domain(rows.map(r=>r.name)).range([mg.top,H-mg.bottom]).padding(0.6);
+
+  let svg=d3.select(mhBox).select("svg"); if(svg.empty()) svg=d3.select(mhBox).append("svg");
+  svg.attr("viewBox",`0 0 ${W} ${H}`).attr("role","img")
+     .attr("aria-label","Liberals report 4.05 bad mental-health days a month, moderates 3.76, conservatives 3.12.");
+  svg.selectAll("*").remove();
+  const ticks=x.ticks(5);
+  svg.append("g").selectAll("line").data(ticks).join("line").attr("y1",mg.top-6).attr("y2",H-mg.bottom)
+    .attr("x1",d=>x(d)).attr("x2",d=>x(d)).attr("stroke","#ece6d6");
+  svg.append("g").selectAll("text").data(ticks).join("text").attr("x",d=>x(d)).attr("y",H-mg.bottom+18)
+    .attr("text-anchor","middle").attr("font","11px var(--sans)").attr("fill","#857d6f").text(d=>d);
+  svg.append("text").attr("x",(mg.left+W-mg.right)/2).attr("y",H-8).attr("text-anchor","middle")
+    .attr("font","700 11px var(--sans)").attr("fill","#857d6f").text("bad mental-health days per month (higher = worse)");
+
+  rows.forEach(r=>{
+    svg.append("line").attr("x1",x(0)).attr("x2",x(r.v)).attr("y1",y(r.name)).attr("y2",y(r.name))
+      .attr("stroke",r.c).attr("stroke-width",3).attr("opacity",.35);
+    svg.append("circle").attr("cx",x(r.v)).attr("cy",y(r.name)).attr("r",8).attr("fill",r.c)
+      .attr("stroke","#fff").attr("stroke-width",1.5).style("cursor","pointer")
+      .on("pointerenter",function(ev){ showTip(mhTip,mhBox,x(r.v),y(r.name),`<b>${r.name}</b><br><span class="num">${r.v.toFixed(2)} bad days / month</span>`); })
+      .on("pointerleave",()=>hideTip(mhTip));
+    svg.append("text").attr("x",mg.left-10).attr("y",y(r.name)).attr("dy","0.32em").attr("text-anchor","end")
+      .attr("font","700 12.5px var(--sans)").attr("fill",r.c).text(r.name);
+    svg.append("text").attr("x",x(r.v)+13).attr("y",y(r.name)).attr("dy","0.32em")
+      .attr("font","800 12.5px var(--sans)").attr("fill",r.c).attr("font-variant-numeric","tabular-nums").text(r.v.toFixed(2));
+  });
+}
+
+function drawAll(){ drawLine(); drawGrad(); drawMH(); }
+drawAll();
+let t; window.addEventListener("resize",()=>{ clearTimeout(t); t=setTimeout(drawAll,180); });
+</script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What Faith Pays For in Secular Europe</title>
+<meta name="description" content="Adjusted within country for age, income and gender, religious attendance in Europe tracks more meaning and a higher life-rating — but not a calmer or less-depressed week. Faith buys purpose, not mood.">
+<style>
+  :root{
+    --paper:#f4f1ea; --panel:#fffefb; --panel-edge:#e2ddce; --ink:#1c1a16;
+    --ink-dim:#524d43; --ink-faint:#867d6e; --hairline:#e7e1d2;
+    --eval:#0f6b62; --eval-soft:#dcebe8; --exp:#b8431a; --exp-soft:#f6e4da;
+    --eud:#5b3a82; --eud-soft:#ece3f3; --band:#2a2722; --gold:#b9851c;
+    --maxw:730px; --figw:1000px;
+    --sans:"Segoe UI","Helvetica Neue",Helvetica,Arial,sans-serif;
+    --serif:Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--paper); color:var(--ink); font:18px/1.66 var(--serif); overflow-x:hidden}
+  .skip{position:absolute; left:-9999px; top:0; background:var(--ink); color:var(--paper); padding:.5em 1em; z-index:40; font-family:var(--sans)}
+  .skip:focus{left:8px; top:8px}
+  a{color:var(--eud); text-underline-offset:3px}
+  a:focus-visible, button:focus-visible{outline:2.5px solid var(--gold); outline-offset:2px}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 20px}
+  .wrap-wide{max-width:var(--figw); margin:0 auto; padding:0 20px}
+
+  header{position:relative; padding:84px 0 8px; overflow:hidden}
+  .ghost{position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+    font:900 clamp(150px,30vw,320px)/0.9 var(--sans);
+    color:transparent; -webkit-text-stroke:1.5px rgba(28,26,22,.08); user-select:none; pointer-events:none}
+  .kicker{font:700 12px/1.5 var(--sans); letter-spacing:.26em; text-transform:uppercase; color:var(--eud)}
+  h1{font:900 clamp(36px,6.6vw,66px)/1.02 var(--sans); letter-spacing:-.028em; margin:.22em 0 .3em; text-wrap:balance}
+  .dek{font-size:clamp(19px,2.7vw,23px); line-height:1.46; color:var(--ink-dim); margin:0 0 22px; max-width:40em}
+  .byline{font:400 13px/1.7 var(--sans); color:var(--ink-faint); border-top:2px solid var(--ink); padding-top:12px; display:flex; gap:18px; flex-wrap:wrap}
+  .byline b{color:var(--ink-dim); font-weight:600}
+
+  main{position:relative; z-index:1}
+  h2{font:800 clamp(24px,3.7vw,32px)/1.16 var(--sans); letter-spacing:-.015em; margin:2.1em 0 .55em}
+  p{margin:0 0 1.15em}
+  strong{color:#000}
+  .tagline{font:700 11px/1 var(--sans); letter-spacing:.13em; text-transform:uppercase; padding:4px 8px; border-radius:3px; white-space:nowrap}
+  .tag-eval{background:var(--eval-soft); color:#0c544c} .tag-exp{background:var(--exp-soft); color:#8d3414} .tag-eud{background:var(--eud-soft); color:#4a2f6b}
+
+  .statrow{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:30px 0 8px}
+  .stat{background:var(--panel); border:1px solid var(--panel-edge); border-top:3px solid var(--band); padding:13px 14px 11px}
+  .stat.eud{border-top-color:var(--eud)} .stat.exp{border-top-color:var(--exp)} .stat.eval{border-top-color:var(--eval)}
+  .stat .lab{font:700 10.5px/1.4 var(--sans); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint)}
+  .stat .val{font:800 clamp(19px,2.6vw,27px)/1.12 var(--sans); margin-top:6px; font-variant-numeric:tabular-nums}
+  .stat.eud .val{color:var(--eud)} .stat.exp .val{color:var(--exp)} .stat.eval .val{color:var(--eval)}
+  .stat .sub{font:400 12px/1.45 var(--sans); color:var(--ink-dim); margin-top:4px}
+  @media(max-width:680px){ .statrow{grid-template-columns:1fr 1fr} }
+  @media(max-width:420px){ .statrow{grid-template-columns:1fr} }
+
+  figure{margin:38px 0}
+  .fig{background:var(--panel); border:1px solid var(--panel-edge); padding:20px 20px 14px; position:relative; box-shadow:0 24px 50px -38px rgba(40,35,20,.45)}
+  .figtitle{font:800 18px/1.3 var(--sans); margin:0 0 3px}
+  .figsub{font:400 13.5px/1.55 var(--sans); color:var(--ink-dim); margin:0 0 10px; max-width:58em}
+  figcaption{font:400 12.5px/1.6 var(--sans); color:var(--ink-faint); margin-top:10px}
+  .chart{position:relative}
+  .chart svg{display:block; width:100%; height:auto}
+  .legend{display:flex; gap:6px 14px; flex-wrap:wrap; margin:2px 0 8px; font:600 12px/1.6 var(--sans); color:var(--ink-dim)}
+  .legend span{display:inline-flex; align-items:center; gap:6px}
+  .legend .sw{width:11px; height:11px; border-radius:50%; flex:none}
+  .readout{font:400 13px/1.6 var(--sans); color:var(--ink-dim); border-top:1px dashed var(--hairline); padding-top:8px; margin-top:8px; min-height:2.2em}
+  .tip{position:absolute; pointer-events:none; z-index:20; display:none; background:#211e18; color:#f4efe4; border-radius:6px; padding:9px 11px; font:400 12.5px/1.5 var(--sans); max-width:240px; box-shadow:0 8px 24px rgba(0,0,0,.35)}
+  .tip b{color:#fff} .tip .num{font-variant-numeric:tabular-nums}
+
+  .notes{margin-top:60px; border-top:2px solid var(--ink); padding:26px 0 70px; font:400 14px/1.7 var(--sans); color:var(--ink-dim)}
+  .notes h2{font-size:19px; margin:0 0 14px}
+  .notes ul{padding-left:1.2em; margin:0} .notes li{margin-bottom:9px}
+  code{font:13px/1.4 ui-monospace,"Cascadia Code",Consolas,monospace; background:#ece6d6; padding:1px 4px; border-radius:3px}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to article</a>
+<header>
+  <div class="ghost" aria-hidden="true">✦</div>
+  <div class="wrap">
+    <p class="kicker">European Social Survey &middot; Round 6 &middot; 2012</p>
+    <h1>What Faith Pays For in Secular Europe</h1>
+    <p class="dek">Religion is supposed to make people happier. In one of the world&rsquo;s most secular regions, it does &mdash; but only a particular kind of happier. It buys a sense that life is worthwhile, not a calmer week.</p>
+    <div class="byline">
+      <span><b>Data</b> European Social Survey, round 6 (2012)</span>
+      <span><b>Sample</b> 43,679 respondents, within-country</span>
+      <span><b>Method</b> attendance slopes, adjusted, standardized</span>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap">
+    <p>One of the steadier findings in well-being research is that religious people report doing better. The harder question &mdash; the one the <em>American Affairs</em> essay on the happiness gap presses &mdash; is what kind of &ldquo;better.&rdquo; Well-being is not one thing: there is the <span class="tagline tag-eval">Evaluative</span> rating you give your life, the <span class="tagline tag-exp">Experiential</span> feel of your recent days, and the <span class="tagline tag-eud">Eudaimonic</span> sense that what you do is worthwhile. The European Social Survey measures all three, which lets us ask which of them religious practice actually tracks &mdash; in Europe, where regular attendance is the exception rather than the rule.</p>
+    <p>The naive answer is misleading, because the people who fill the pews are, on average, older, poorer and more rural &mdash; all of which colour well-being on their own. So every figure here is measured <strong>within country</strong> and adjusted for age, gender and household income, and each outcome is put on a common standard-deviation scale. The result is a sharp division of labour. Going from never attending to attending every day is associated with <strong>+0.36</strong> standard deviations more <em>meaning</em>, <strong>+0.30</strong> in feeling life is <em>worthwhile</em>, and <strong>+0.28</strong> in life <em>satisfaction</em>. On how the week actually <em>felt</em> &mdash; mood, depression, anxiety &mdash; it buys almost nothing.</p>
+
+    <div class="statrow" role="list" aria-label="Headline numbers">
+      <div class="stat eud" role="listitem"><div class="lab">Meaning</div><div class="val">+0.36</div><div class="sub">SD, never &rarr; daily (eudaimonic)</div></div>
+      <div class="stat eval" role="listitem"><div class="lab">Life satisfaction</div><div class="val">+0.28</div><div class="sub">SD, never &rarr; daily (evaluative)</div></div>
+      <div class="stat exp" role="listitem"><div class="lab">Felt mood</div><div class="val">+0.04</div><div class="sub">SD — essentially nil (experiential)</div></div>
+      <div class="stat exp" role="listitem"><div class="lab">Not depressed</div><div class="val">+0.01</div><div class="sub">SD — no effect</div></div>
+    </div>
+  </div>
+
+  <div class="wrap-wide">
+  <figure>
+    <div class="fig">
+      <p class="figtitle">What religious attendance is &mdash; and isn&rsquo;t &mdash; associated with</p>
+      <p class="figsub">Adjusted within-country association of going from never to daily attendance with each outcome, in standard deviations. Bars are 95% intervals. Colour marks the construct.</p>
+      <div class="legend">
+        <span><span class="sw" style="background:var(--eud)"></span>Eudaimonic (meaning)</span>
+        <span><span class="sw" style="background:var(--eval)"></span>Evaluative (life-rating)</span>
+        <span><span class="sw" style="background:var(--exp)"></span>Experiential (mood)</span>
+      </div>
+      <div class="chart" id="coef-chart"></div>
+      <div class="readout" id="coef-readout">Hover a row for the estimate and its interval.</div>
+    </div>
+    <figcaption>Meaning, worthwhileness and life-rating sit well to the right of zero. The three experiential measures &mdash; mood, depression, anxiety &mdash; straddle it.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+    <p>The contrast is clean because the experiential estimates are not just small, they are indistinguishable from zero: the intervals for mood, depression and anxiety all cross the no-effect line. Whatever regular worship does for the people who practise it, it is not making their ordinary days feel calmer or less low. What it tracks is the slower, more cognitive registers of well-being &mdash; the judgment that life is worthwhile and, to a lesser degree, the overall rating of that life.</p>
+    <p>You can see why adjustment was necessary by looking at the raw gradient, before any controls. Feeling life is worthwhile climbs steadily with attendance &mdash; but the share who avoided feeling depressed actually <em>falls</em> a little among the most observant, because they are older and poorer. Net those things out and the depression line flattens to nothing; the meaning line stays standing.</p>
+  </div>
+
+  <div class="wrap-wide">
+  <figure>
+    <div class="fig">
+      <p class="figtitle">The raw gradient, before adjustment</p>
+      <p class="figsub">Weighted means by attendance band, each measure standardized across the four bands so they share a scale. The confounding the adjusted model removes is visible here.</p>
+      <div class="chart" id="raw-chart"></div>
+    </div>
+    <figcaption>Meaning and worthwhileness rise with attendance even before controls; freedom from depression does not.</figcaption>
+  </figure>
+  </div>
+
+  <div class="wrap">
+    <h2>What this shows &mdash; and what it doesn&rsquo;t</h2>
+    <p>This is association, within country and net of the obvious confounders, not proof of cause &mdash; the devout differ from the secular in ways no survey fully captures, and the arrow could run either way (people in search of meaning may seek out religion). The measures are self-reports, and 2012 is a single snapshot. But the pattern is specific enough to be useful, and it lines up with how the well-being constructs are supposed to behave: religion is, among other things, a meaning-making institution, and it is on the meaning register &mdash; not the daily-mood register &mdash; that its signal is loudest. That it also tracks the evaluative life-rating, while leaving felt mood untouched, is the same lesson the rest of this series keeps returning to: &ldquo;does religion make you happier&rdquo; has no single answer until you say which happiness you mean.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="notes">
+      <h2>Notes &amp; data</h2>
+      <ul>
+        <li><b>Source.</b> European Social Survey (ESS), round 6 (2012); the round carrying all three construct batteries. Weighted with the analysis weight. 43,679 respondents with complete attendance, age, gender and income data.</li>
+        <li><b>Model.</b> For each outcome, a weighted least-squares regression of the standardized outcome on religious attendance (<code>attend_freq</code>, 1=never .. 7=every day) with <b>country fixed effects</b> and controls for age, age&sup2;, gender and household-income decile. The reported figure is the attendance coefficient &times; 6 (never &rarr; every day), in outcome standard deviations, with 95% intervals.</li>
+        <li><b>Constructs.</b> <span class="tagline tag-eval">Evaluative</span> life satisfaction; <span class="tagline tag-exp">Experiential</span> felt-mood index, not-depressed, not-anxious (past-week items); <span class="tagline tag-eud">Eudaimonic</span> meaning index and &ldquo;life feels worthwhile.&rdquo; Labeled throughout; never merged.</li>
+        <li><b>Why adjust.</b> Frequent attenders are older, poorer and more rural; the raw gradient (second figure) confounds those with religion. Country fixed effects also remove differences between secular and observant nations, so the slope is within-society.</li>
+        <li><b>Limits.</b> Cross-sectional, associational, self-reported; reverse causation (seeking meaning &rarr; attending) is not ruled out. Companion pieces map the same constructs across countries.</li>
+        <li><b>Prior art.</b> Putnam &amp; Campbell, <em>American Grace</em> (religious social ties and well-being); Oishi &amp; Diener on meaning; Renn, <em>American Affairs</em> (2023).</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<script type="module">
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+const DATA = {"meta":{"title":"What Faith Pays For in Secular Europe","dataset":"European Social Survey (ESS), Round 6 (2012)","years":"2012 (ESS round 6)","weight":"weight (anweight); within-country (country fixed effects)","construct":"evaluative vs experiential vs eudaimonic","model_note":"Each slope is the within-country (country fixed-effects) association of religious attendance (1=never .. 7=every day) with a standardized outcome, adjusted for age, age-squared, gender and household-income decile, weighted. Units are standard deviations of the outcome per one-step increase in attendance.","confound_note":"The raw gradient is confounded: frequent attenders are older, poorer and more rural. The adjusted slopes net those out within each country.","sample_note":"43,679 round-6 respondents with attendance, age, gender and income.","scale_note":"Attendance runs from 1 (never) to 7 (every day), a 6-step range from never to daily."},"n_base":43679,"slopes":[{"key":"life_satisfaction","label":"Life satisfaction","construct":"evaluative","slope_sd":0.0474,"se":0.003,"ci_lo":0.0415,"ci_hi":0.0533,"n":43508,"per6_sd":0.2845},{"key":"mood","label":"Felt mood (past-week)","construct":"experiential","slope_sd":0.006,"se":0.0032,"ci_lo":-0.0003,"ci_hi":0.0123,"n":42757,"per6_sd":0.036},{"key":"not_depressed","label":"Not feeling depressed","construct":"experiential","slope_sd":0.0019,"se":0.0034,"ci_lo":-0.0047,"ci_hi":0.0085,"n":43462,"per6_sd":0.0114},{"key":"not_anxious","label":"Not feeling anxious","construct":"experiential","slope_sd":-0.0036,"se":0.0032,"ci_lo":-0.0099,"ci_hi":0.0026,"n":43348,"per6_sd":-0.0218},{"key":"meaning","label":"Meaning index","construct":"eudaimonic","slope_sd":0.06,"se":0.0032,"ci_lo":0.0537,"ci_hi":0.0663,"n":42835,"per6_sd":0.3599},{"key":"life_worthwhile","label":"Life feels worthwhile","construct":"eudaimonic","slope_sd":0.0503,"se":0.0032,"ci_lo":0.0439,"ci_hi":0.0567,"n":43262,"per6_sd":0.3019}],"raw_bands":[{"band":"Never","n":17969,"life_sat":6.596,"mood":3.289,"not_depressed":3.477,"meaning":3.731,"worthwhile":3.856},{"band":"Rarely","n":22813,"life_sat":6.546,"mood":3.258,"not_depressed":3.45,"meaning":3.775,"worthwhile":3.881},{"band":"Monthly+","n":11222,"life_sat":6.898,"mood":3.261,"not_depressed":3.425,"meaning":3.845,"worthwhile":4.0},{"band":"Weekly+","n":2213,"life_sat":6.799,"mood":3.235,"not_depressed":3.384,"meaning":3.879,"worthwhile":3.996}],"headline":{"meaning_slope":0.06,"worthwhile_slope":0.0503,"mood_slope":0.006,"depr_slope":0.0019,"life_slope":0.0474,"meaning_per6":0.3599,"mood_per6":0.036}};
+const COLC={evaluative:"#0f6b62",experiential:"#b8431a",eudaimonic:"#5b3a82"};
+
+function makeTip(c){ const t=document.createElement("div"); t.className="tip"; c.appendChild(t); return t; }
+function showTip(t,c,x,y,html){ t.innerHTML=html; t.style.display="block";
+  const cw=c.clientWidth, tw=t.offsetWidth; let lx=x+14; if(lx+tw>cw-4) lx=x-tw-14;
+  t.style.left=Math.max(2,lx)+"px"; t.style.top=Math.max(0,y-10)+"px"; }
+function hideTip(t){ t.style.display="none"; }
+
+/* coefficient plot (never->daily, SD) */
+const cBox=document.getElementById("coef-chart"); const cTip=makeTip(cBox);
+const cReadout=d3.select("#coef-readout");
+function drawCoef(){
+  // order: eudaimonic, evaluative, then experiential
+  const order=["meaning","life_worthwhile","life_satisfaction","mood","not_depressed","not_anxious"];
+  const rows=order.map(k=>DATA.slopes.find(s=>s.key===k)).filter(Boolean)
+    .map(s=>({...s, est:s.per6_sd, lo:s.ci_lo*6, hi:s.ci_hi*6}));
+  const W=Math.max(330,cBox.clientWidth), narrow=W<560, H=narrow?330:300;
+  const mg={top:16,right:30,bottom:38,left:narrow?140:184};
+  const xmax=Math.max(0.42, d3.max(rows,d=>d.hi)+0.03), xmin=Math.min(-0.05, d3.min(rows,d=>d.lo)-0.02);
+  const x=d3.scaleLinear().domain([xmin,xmax]).range([mg.left,W-mg.right]);
+  const y=d3.scalePoint().domain(rows.map(r=>r.key)).range([mg.top+8,H-mg.bottom-4]).padding(0.6);
+  let svg=d3.select(cBox).select("svg"); if(svg.empty()) svg=d3.select(cBox).append("svg");
+  svg.attr("viewBox",`0 0 ${W} ${H}`).attr("role","img")
+     .attr("aria-label","Adjusted attendance effects: meaning, worthwhile and life satisfaction clearly positive; mood, depression and anxiety near zero.");
+  svg.selectAll("*").remove();
+  x.ticks(6).forEach(t=>{ svg.append("line").attr("x1",x(t)).attr("x2",x(t)).attr("y1",mg.top).attr("y2",H-mg.bottom).attr("stroke","#ece6d6");
+    svg.append("text").attr("x",x(t)).attr("y",H-mg.bottom+18).attr("text-anchor","middle").attr("font","10px var(--sans)").attr("fill","#aaa290").text((t>0?"+":"")+t.toFixed(1)); });
+  svg.append("text").attr("x",(mg.left+W-mg.right)/2).attr("y",H-4).attr("text-anchor","middle").attr("font","700 11px var(--sans)").attr("fill","#857d6f").text("std. deviations of the outcome, never → every day");
+  // zero line
+  svg.append("line").attr("x1",x(0)).attr("x2",x(0)).attr("y1",mg.top).attr("y2",H-mg.bottom).attr("stroke","#1c1a16").attr("stroke-width",1.3);
+  rows.forEach(r=>{
+    const yy=y(r.key), col=COLC[r.construct];
+    svg.append("line").attr("x1",x(r.lo)).attr("x2",x(r.hi)).attr("y1",yy).attr("y2",yy).attr("stroke",col).attr("stroke-width",2.4).attr("opacity",.55);
+    svg.append("circle").attr("cx",x(r.est)).attr("cy",yy).attr("r",6.5).attr("fill",col).attr("stroke","#fff").attr("stroke-width",1.4)
+      .style("cursor","pointer")
+      .on("pointerenter",function(ev){ const [mx,my]=d3.pointer(ev,cBox);
+        showTip(cTip,cBox,mx,my,`<b>${r.label}</b> <span style="color:#cfc6b4">${r.construct}</span><br><span class="num">${r.est>=0?"+":""}${r.est.toFixed(2)} SD [${r.lo.toFixed(2)}, ${r.hi.toFixed(2)}]</span>`);
+        cReadout.html(`<b>${r.label}</b> (${r.construct}) — ${r.est>=0?"+":""}<b>${r.est.toFixed(2)} SD</b> from never to daily attendance; 95% interval [${r.lo.toFixed(2)}, ${r.hi.toFixed(2)}]`);})
+      .on("pointerleave",function(){ hideTip(cTip); cReadout.html("Hover a row for the estimate and its interval."); });
+    svg.append("text").attr("x",mg.left-12).attr("y",yy).attr("dy","0.32em").attr("text-anchor","end").attr("font","700 12px var(--sans)").attr("fill","#514d44").text(r.label);
+    svg.append("text").attr("x",x(r.hi)+8).attr("y",yy).attr("dy","0.32em").attr("font","800 11.5px var(--sans)").attr("fill",col).attr("font-variant-numeric","tabular-nums").text((r.est>=0?"+":"")+r.est.toFixed(2));
+  });
+}
+
+/* raw gradient (standardized across bands) */
+const rBox=document.getElementById("raw-chart"); const rTip=makeTip(rBox);
+function drawRaw(){
+  const B=DATA.raw_bands, bands=B.map(b=>b.band);
+  const series=[{k:"worthwhile",lab:"Life worthwhile",col:COLC.eudaimonic},
+                {k:"meaning",lab:"Meaning",col:COLC.eudaimonic,dash:"4 3"},
+                {k:"life_sat",lab:"Life satisfaction",col:COLC.evaluative},
+                {k:"not_depressed",lab:"Not depressed",col:COLC.experiential}];
+  // z-standardize each measure across the 4 bands
+  const z={};
+  series.forEach(s=>{ const v=B.map(b=>b[s.k]); const m=d3.mean(v), sd=d3.deviation(v)||1; z[s.k]=v.map(x=>(x-m)/sd); });
+  const W=Math.max(330,rBox.clientWidth), narrow=W<560, H=narrow?320:300;
+  const mg={top:16,right:narrow?92:140,bottom:34,left:44};
+  const x=d3.scalePoint().domain(bands).range([mg.left,W-mg.right]).padding(0.3);
+  const y=d3.scaleLinear().domain([-1.6,1.6]).range([H-mg.bottom,mg.top]);
+  let svg=d3.select(rBox).select("svg"); if(svg.empty()) svg=d3.select(rBox).append("svg");
+  svg.attr("viewBox",`0 0 ${W} ${H}`).attr("role","img").attr("aria-label","Raw attendance gradient: meaning and worthwhile rise across bands; not-depressed does not.");
+  svg.selectAll("*").remove();
+  svg.append("line").attr("x1",mg.left).attr("x2",W-mg.right).attr("y1",y(0)).attr("y2",y(0)).attr("stroke","#ded7c6");
+  bands.forEach(b=>svg.append("text").attr("x",x(b)).attr("y",H-mg.bottom+18).attr("text-anchor","middle").attr("font","11px var(--sans)").attr("fill","#857d6f").text(b));
+  svg.append("text").attr("x",mg.left).attr("y",mg.top-2).attr("font","10px var(--sans)").attr("fill","#aaa290").text("↑ higher (standardized across bands)");
+  const line=d3.line().x((d,i)=>x(bands[i])).y(d=>y(d)).curve(d3.curveMonotoneX);
+  series.forEach(s=>{
+    svg.append("path").datum(z[s.k]).attr("fill","none").attr("stroke",s.col).attr("stroke-width",2.4)
+      .attr("stroke-dasharray",s.dash||null).attr("d",line);
+    z[s.k].forEach((v,i)=>svg.append("circle").attr("cx",x(bands[i])).attr("cy",y(v)).attr("r",3.5).attr("fill",s.col));
+    svg.append("text").attr("x",W-mg.right+8).attr("y",y(z[s.k][z[s.k].length-1])).attr("dy","0.32em")
+      .attr("font","700 10.5px var(--sans)").attr("fill",s.col).text(s.lab);
+  });
+}
+
+function drawAll(){ drawCoef(); drawRaw(); }
+drawAll();
+let t; window.addEventListener("resize",()=>{ clearTimeout(t); t=setTimeout(drawAll,180); });
+</script>
+</body>
+</html>
