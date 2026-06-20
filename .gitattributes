@@ -1,0 +1,16 @@
+# Treat binary assets as binary so Git never applies line-ending (CRLF/LF)
+# normalization to them. Without this, a Windows checkout with
+# core.autocrlf=true can corrupt binary files (e.g. PDFs, images, fonts).
+*.pdf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.svg   -text
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
+*.zip   binary
