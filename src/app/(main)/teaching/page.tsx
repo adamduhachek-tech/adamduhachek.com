@@ -83,6 +83,31 @@ export default function TeachingPage() {
         </section>
 
         <section>
+          <h2>Course resources</h2>
+          <div className="rule" />
+          <p>
+            Open datasets for marketing-research projects — a sortable catalog
+            by domain and difficulty, each with a direct download path and a
+            good first exercise.
+          </p>
+          <div className="gallery">
+            <a
+              className="card"
+              href="/teaching/marketing-research-data-sources.html"
+              target="_blank"
+              rel="noopener"
+            >
+              <h3>Marketing Research — Classroom Data Sources</h3>
+              <p>
+                Sixteen vetted public datasets across consumer reviews, retail,
+                real estate, survey, demographics, and search behavior.
+              </p>
+              <span className="src">sortable table + download guides →</span>
+            </a>
+          </div>
+        </section>
+
+        <section>
           <h2>Courses</h2>
           <div className="rule" />
           <CourseList items={COURSES} />

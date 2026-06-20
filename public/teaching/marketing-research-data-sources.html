@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Marketing Research — Classroom Data Sources</title>
+<style>
+  :root{
+    --bg:#f7f8fa; --panel:#ffffff; --ink:#1f2733; --muted:#5d6b7e;
+    --line:#e3e8ef; --line-strong:#cdd5e0; --accent:#1f5fae; --accent-soft:#eaf1fb;
+    --shadow:0 1px 2px rgba(16,24,40,.06), 0 4px 16px rgba(16,24,40,.06);
+    /* difficulty tints */
+    --beg-bg:#e6f4ea; --beg-bd:#34a853; --beg-tx:#137333;
+    --int-bg:#fef7e0; --int-bd:#f3a712; --int-tx:#9a5b00;
+    --adv-bg:#fce8e6; --adv-bd:#ea4335; --adv-tx:#b3261e;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 20px 80px}
+
+  /* Header */
+  header.masthead{
+    background:linear-gradient(180deg,#14233b 0%,#1d3a63 100%); color:#fff;
+    padding:34px 0 28px; border-bottom:3px solid #c8a24a;
+  }
+  .masthead .wrap{padding-bottom:0}
+  .kicker{letter-spacing:.14em; text-transform:uppercase; font-size:12px; font-weight:700; color:#c8d6ee; margin:0 0 6px}
+  header.masthead h1{margin:0 0 8px; font-size:30px; line-height:1.2}
+  header.masthead p{margin:0; color:#d7e2f3; max-width:760px}
+  .verified{
+    display:inline-flex; align-items:center; gap:8px; margin-top:16px;
+    background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25);
+    color:#eaf3ff; padding:6px 12px; border-radius:999px; font-size:13px; font-weight:600;
+  }
+  .verified .dot{width:8px; height:8px; border-radius:50%; background:#5ad17a; box-shadow:0 0 0 3px rgba(90,209,122,.25)}
+
+  /* Section scaffolding */
+  section{margin-top:38px}
+  h2.section{font-size:22px; margin:0 0 4px; display:flex; align-items:center; gap:10px}
+  h2.section .num{
+    display:inline-grid; place-items:center; width:26px; height:26px; border-radius:7px;
+    background:var(--accent-soft); color:var(--accent); font-size:14px; font-weight:800;
+  }
+  .section-sub{color:var(--muted); margin:2px 0 18px; max-width:820px}
+
+  /* Intro definitions */
+  .defs{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:18px 0 0}
+  .def{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow)}
+  .def h3{margin:0 0 4px; font-size:15px; display:flex; align-items:center; gap:8px}
+  .def p{margin:0; color:var(--muted); font-size:14px}
+  .swatch{width:12px; height:12px; border-radius:3px; display:inline-block; flex:none}
+
+  /* Toolbar */
+  .toolbar{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:0 0 14px}
+  .search{
+    flex:1 1 280px; display:flex; align-items:center; gap:8px;
+    background:var(--panel); border:1px solid var(--line-strong); border-radius:10px; padding:9px 12px;
+  }
+  .search input{border:0; outline:0; font:inherit; width:100%; background:transparent; color:var(--ink)}
+  .search svg{flex:none; color:var(--muted)}
+  .count{color:var(--muted); font-size:13px; white-space:nowrap}
+  .hint{color:var(--muted); font-size:13px; flex-basis:100%}
+
+  /* Table */
+  .tablecard{background:var(--panel); border:1px solid var(--line); border-radius:14px; box-shadow:var(--shadow); overflow:hidden}
+  .scroll{overflow-x:auto}
+  table{border-collapse:collapse; width:100%; min-width:960px; font-size:14px}
+  thead th{
+    position:sticky; top:0; z-index:2; background:#f1f4f9; color:var(--ink);
+    text-align:left; font-weight:700; padding:12px 14px; border-bottom:2px solid var(--line-strong);
+    cursor:pointer; user-select:none; white-space:nowrap;
+  }
+  thead th:hover{background:#e8edf6}
+  thead th .arrow{color:var(--muted); font-size:11px; margin-left:6px; opacity:.45}
+  thead th[aria-sort="ascending"] .arrow,
+  thead th[aria-sort="descending"] .arrow{opacity:1; color:var(--accent)}
+  tbody td{padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:#fafbfe}
+  td.source{font-weight:600; min-width:170px}
+  td.source .opt{display:inline-block; margin-left:6px; font-size:11px; font-weight:700; color:#8a6d1f; background:#fbf1d3; border:1px solid #e9d9a3; border-radius:5px; padding:1px 6px; vertical-align:middle}
+  td.exercise{color:var(--muted); min-width:230px}
+  td.linkcell a{font-size:13px; white-space:nowrap}
+  .domain-tag{color:var(--ink)}
+
+  /* Difficulty badges */
+  .diff{display:inline-block; padding:3px 10px; border-radius:999px; font-size:12.5px; font-weight:700; border:1px solid; white-space:nowrap}
+  .diff.beg{background:var(--beg-bg); border-color:var(--beg-bd); color:var(--beg-tx)}
+  .diff.int{background:var(--int-bg); border-color:var(--int-bd); color:var(--int-tx)}
+  .diff.adv{background:var(--adv-bg); border-color:var(--adv-bd); color:var(--adv-tx)}
+  .diff.beg-int{background:linear-gradient(100deg,var(--beg-bg) 45%,var(--int-bg)); border-color:var(--int-bd); color:var(--beg-tx)}
+  .diff.beg-adv{background:linear-gradient(100deg,var(--beg-bg) 40%,var(--adv-bg)); border-color:var(--adv-bd); color:var(--beg-tx)}
+  .diff.int-adv{background:linear-gradient(100deg,var(--int-bg) 45%,var(--adv-bg)); border-color:var(--adv-bd); color:var(--int-tx)}
+
+  /* Instruction groups */
+  .domain-nav{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 22px}
+  .domain-nav a{
+    background:var(--panel); border:1px solid var(--line-strong); border-radius:999px;
+    padding:6px 13px; font-size:13px; font-weight:600; color:var(--ink);
+  }
+  .domain-nav a:hover{border-color:var(--accent); color:var(--accent); text-decoration:none}
+
+  .group{margin-top:30px}
+  .group > h3{
+    font-size:18px; margin:0 0 14px; padding-bottom:8px; border-bottom:2px solid var(--line);
+    display:flex; align-items:center; gap:10px; scroll-margin-top:14px;
+  }
+  .group > h3 .pill{font-size:12px; font-weight:600; color:var(--muted); background:#eef1f6; border-radius:999px; padding:3px 10px}
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(420px,1fr)); gap:16px}
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 18px 16px;
+    box-shadow:var(--shadow); display:flex; flex-direction:column;
+  }
+  .card .card-head{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:6px}
+  .card h4{margin:0; font-size:16.5px; line-height:1.25}
+  .card .meta-line{display:flex; flex-wrap:wrap; gap:6px; margin:8px 0 12px}
+  .chip{font-size:12px; font-weight:600; color:var(--muted); background:#f1f4f9; border:1px solid var(--line); border-radius:6px; padding:2px 8px}
+  .card ol{margin:0 0 12px; padding-left:20px}
+  .card ol li{margin:5px 0}
+  .card code{background:#f3f5f8; border:1px solid var(--line); border-radius:5px; padding:1px 6px; font-size:12.5px; font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace; word-break:break-word}
+  .exercise-box{
+    margin-top:auto; background:var(--accent-soft); border:1px solid #cfe0f7; border-radius:10px;
+    padding:10px 12px; font-size:13.5px; color:#1c3c64;
+  }
+  .exercise-box strong{color:var(--accent)}
+  .visit{margin-top:12px; font-size:13.5px; font-weight:600}
+  .visit a::after{content:" ↗"; font-weight:400}
+  .flag{
+    margin-top:10px; background:#fff7ed; border:1px solid #f3d6a8; color:#8a5a13;
+    border-radius:10px; padding:8px 11px; font-size:13px;
+  }
+  .flag b{color:#7a4d0c}
+
+  /* Aggregators */
+  .hubs{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:12px}
+  .hub{background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; box-shadow:var(--shadow)}
+  .hub h4{margin:0 0 4px; font-size:15px}
+  .hub p{margin:0; color:var(--muted); font-size:13.5px}
+  .hub .visit{margin-top:8px}
+
+  /* Instructor note */
+  details.notes{margin-top:38px; background:var(--panel); border:1px dashed var(--line-strong); border-radius:12px; padding:6px 18px}
+  details.notes summary{cursor:pointer; font-weight:700; padding:10px 0; color:var(--ink)}
+  details.notes ul{margin:4px 0 14px; padding-left:20px; color:var(--muted); font-size:14px}
+  details.notes li{margin:5px 0}
+
+  footer.foot{margin-top:46px; padding-top:18px; border-top:1px solid var(--line); color:var(--muted); font-size:13px}
+
+  .totop{position:fixed; right:20px; bottom:20px; background:var(--accent); color:#fff; border:0; width:44px; height:44px; border-radius:50%; font-size:20px; cursor:pointer; box-shadow:var(--shadow); opacity:0; pointer-events:none; transition:opacity .2s}
+  .totop.show{opacity:1; pointer-events:auto}
+
+  @media (max-width:720px){
+    .defs{grid-template-columns:1fr}
+    .cards{grid-template-columns:1fr}
+    header.masthead h1{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="kicker">Marketing Research</p>
+    <h1>Classroom Data Sources</h1>
+    <p>A curated, ready-to-use map of public datasets for market-research projects — sorted by domain, tagged by difficulty, each with a direct download path and a good first exercise.</p>
+    <span class="verified"><span class="dot"></span>Links verified live on June 20, 2026</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- INTRO / DEFINITIONS -->
+  <section id="how-to-read" aria-label="How to read the difficulty tags">
+    <p class="section-sub" style="margin-top:24px">
+      <strong>How to read the difficulty tag.</strong> It reflects the <em>class-friendly path</em> — the small,
+      teachable slice of each source — not the full dataset. Sort or filter the table below, then jump to the
+      step-by-step download instructions for any source.
+    </p>
+    <div class="defs">
+      <div class="def">
+        <h3><span class="swatch" style="background:var(--beg-bd)"></span>Beginner</h3>
+        <p>Small, clean, direct download. Analysis-ready out of the box.</p>
+      </div>
+      <div class="def">
+        <h3><span class="swatch" style="background:var(--int-bd)"></span>Intermediate</h3>
+        <p>Larger, or needs an account / terms acceptance / light reshaping.</p>
+      </div>
+      <div class="def">
+        <h3><span class="swatch" style="background:var(--adv-bd)"></span>Advanced</h3>
+        <p>Very large, multi-file, or API-heavy. Plan your subset first.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUMMARY TABLE -->
+  <section id="table">
+    <h2 class="section"><span class="num">1</span>Summary table</h2>
+    <p class="section-sub">Click any column header to sort (click again to reverse). Use the box to filter by keyword — source, domain, format, anything.</p>
+
+    <div class="toolbar">
+      <label class="search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input id="filter" type="search" placeholder="Filter sources (e.g. “reviews”, “real estate”, “no account”, “CSV”)" aria-label="Filter table">
+      </label>
+      <span class="count" id="count"></span>
+      <span class="hint">Tip: sort by <em>Access</em> to find “no account” datasets, or by <em>Difficulty</em> to start easy.</span>
+    </div>
+
+    <div class="tablecard">
+      <div class="scroll">
+        <table id="dt">
+          <thead>
+            <tr>
+              <th data-key="source">Source<span class="arrow">↕</span></th>
+              <th data-key="domain">Domain<span class="arrow">↕</span></th>
+              <th data-key="difficulty">Difficulty<span class="arrow">↕</span></th>
+              <th data-key="format">Format<span class="arrow">↕</span></th>
+              <th data-key="access">Access<span class="arrow">↕</span></th>
+              <th data-key="size">Size (class path)<span class="arrow">↕</span></th>
+              <th data-key="exercise">Good first exercise<span class="arrow">↕</span></th>
+              <th data-key="link">Link<span class="arrow">↕</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Consumer reviews / text -->
+            <tr>
+              <td class="source"><a href="https://amazon-reviews-2023.github.io" target="_blank" rel="noopener noreferrer">Amazon Reviews 2023</a></td>
+              <td class="domain-tag">Consumer reviews / text</td>
+              <td data-sort="3"><span class="diff int">Intermediate</span></td>
+              <td>JSONL (gzip)</td>
+              <td>Free, no login</td>
+              <td>One category (~MBs–GB)</td>
+              <td class="exercise">Sentiment vs. star-rating gap in one product category</td>
+              <td class="linkcell"><a href="https://amazon-reviews-2023.github.io" target="_blank" rel="noopener noreferrer">amazon-reviews-2023.github.io</a></td>
+            </tr>
+            <tr>
+              <td class="source"><a href="https://business.yelp.com/data/resources/open-dataset/" target="_blank" rel="noopener noreferrer">Yelp Open Dataset</a></td>
+              <td class="domain-tag">Consumer reviews / text</td>
+              <td data-sort="3"><span class="diff int">Intermediate</span></td>
+              <td>JSONL</td>
+              <td>Free + accept agreement</td>
+              <td>4.35 GB compressed</td>
+              <td class="exercise">Predict star rating from review text</td>
+              <td class="linkcell"><a href="https://business.yelp.com/data/resources/open-dataset/" target="_blank" rel="noopener noreferrer">business.yelp.com</a></td>
+            </tr>
+            <tr>
+              <td class="source"><a href="https://www.kaggle.com/datasets/zynicide/wine-reviews" target="_blank" rel="noopener noreferrer">Wine reviews (zynicide)</a></td>
+              <td class="domain-tag">Consumer reviews / text</td>
+              <td data-sort="1"><span class="diff beg">Beginner</span></td>
+              <td>CSV / JSON</td>
+              <td>Kaggle account</td>
+              <td>~50 MB (~130K rows)</td>
+              <td class="exercise">Does price predict points? price + text regression</td>
+              <td class="linkcell"><a href="https://www.kaggle.com/datasets/zynicide/wine-reviews" target="_blank" rel="noopener noreferrer">kaggle.com</a></td>
+            </tr>
+            <!-- Retail / e-commerce -->
+            <tr>
+              <td class="source"><a href="https://www.kaggle.com/c/instacart-market-basket-analysis/data" target="_blank" rel="noopener noreferrer">Instacart Market Basket</a></td>
+              <td class="domain-tag">Retail / e-commerce</td>
+              <td data-sort="3"><span class="diff int">Intermediate</span></td>
+              <td>CSV (6 files)</td>
+              <td>Kaggle acct + accept rules</td>
+              <td>~700 MB (tiny version ~7 MB)</td>
+              <td class="exercise">Market-basket association rules (Apriori)</td>
+              <td class="linkcell"><a href="https://www.kaggle.com/c/instacart-market-basket-analysis/data" target="_blank" rel="noopener noreferrer">kaggle.com</a></td>
+            </tr>
+            <tr>
+              <td class="source"><a href="https://archive.ics.uci.edu/dataset/352/online+retail" target="_blank" rel="noopener noreferrer">Online Retail (UCI 352)</a></td>
+              <td class="domain-tag">Retail / e-commerce</td>
+              <td data-sort="1"><span class="diff beg">Beginner</span></td>
+              <td>XLSX (1 file)</td>
+              <td>Direct, no account</td>
+              <td>~23 MB (~542K rows)</td>
+              <td class="exercise">RFM segmentation + simple CLV</td>
+              <td class="linkcell"><a href="https://archive.ics.uci.edu/dataset/352/online+retail" target="_blank" rel="noopener noreferrer">archive.ics.uci.edu</a></td>
+            </tr>
+            <!-- Real estate -->
+            <tr>
+              <td class="source"><a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer">Zillow Research</a></td>
+              <td class="domain-tag">Real estate</td>
+              <td data-sort="1"><span class="diff beg">Beginner</span></td>
+              <td>CSV</td>
+              <td>Direct, no account</td>
+              <td>Small–medium</td>
+              <td class="exercise">Plot ZHVI for 3 metros; compute YoY appreciation</td>
+              <td class="linkcell"><a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer">zillow.com</a></td>
+            </tr>
+            <tr>
+              <td class="source"><a href="https://www.redfin.com/news/data-center/" target="_blank" rel="noopener noreferrer">Redfin Data Center</a></td>
+              <td class="domain-tag">Real estate</td>
+              <td data-sort="2"><span class="diff beg-int">Beginner–Intermediate</span></td>
+              <td>TSV (gzip)</td>
+              <td>Direct, no account</td>
+              <td>Medium–large</td>
+              <td class="exercise">Compare days-on-market; buyer vs. seller market</td>
+              <td class="linkcell"><a href="https://www.redfin.com/news/data-center/" target="_blank" rel="noopener noreferrer">redfin.com</a></td>
+            </tr>
+            <!-- Survey / attitudinal -->
+            <tr>
+              <td class="source"><a href="https://gss.norc.org" target="_blank" rel="noopener noreferrer">General Social Survey (GSS)</a></td>
+              <td class="domain-tag">Survey / attitudinal</td>
+              <td data-sort="3"><span class="diff int">Intermediate</span></td>
+              <td>Stata/SPSS/SAS/CSV</td>
+              <td>Free (account for extracts)</td>
+              <td>Medium</td>
+              <td class="exercise">Trend an attitude over time; cross-tab by group</td>
+              <td class="linkcell"><a href="https://gss.norc.org" target="_blank" rel="noopener noreferrer">gss.norc.org</a></td>
+            </tr>
+            <tr>
+              <td class="source"><a href="https://www.pewresearch.org/datasets" target="_blank" rel="noopener noreferrer">Pew Research Center</a></td>
+              <td class="domain-tag">Survey / attitudinal</td>
+              <td data-sort="3"><span class="diff int">Intermediate</span></td>
+              <td>SPSS .sav (usually)</td>
+              <td>Free account</td>
+              <td>Small–medium per study</td>
+              <td class="exercise">Weighted crosstab on a consumer/tech attitude</td>
+              <td class="linkcell"><a href="https://www.pewresearch.org/datasets" target="_blank" rel="noopener noreferrer">pewresearch.org</a></td>
+            </tr>
+            <!-- Survey / spending -->
+            <tr>
+              <td class="source"><a href="https://www.bls.gov/cex" target="_blank" rel="noopener noreferrer">Consumer Expenditure Survey (BLS)</a></td>
+              <td class="domain-tag">Survey / spending</td>
+              <td data-sort="4"><span class="diff int-adv">Intermediate–Advanced</span></td>
+              <td>CSV / fixed-width</td>
+              <td>Direct, no account</td>
+              <td>Medium–large</td>
+              <td class="exercise">Spending share by category across income quintiles</td>
+              <td class="linkcell"><a href="https://www.bls.gov/cex" target="_blank" rel="noopener noreferrer">bls.gov</a></td>
+            </tr>
+            <!-- Demographics -->
+            <tr>
+              <td class="source"><a href="https://data.census.gov" target="_blank" rel="noopener noreferrer">U.S. Census / ACS</a></td>
+              <td class="domain-tag">Demographics</td>
+              <td data-sort="2.5"><span class="diff beg-adv">Beginner → Advanced</span></td>
+              <td>CSV</td>
+              <td>Direct / API</td>
+              <td>Varies</td>
+              <td class="exercise">Market-sizing profile for one metro</td>
+              <td class="linkcell"><a href="https://data.census.gov" target="_blank" rel="noopener noreferrer">data.census.gov</a></td>
+            </tr>
+            <!-- Economic context -->
+            <tr>
+              <td class="source"><a href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer">FRED (St. Louis Fed)</a></td>
+              <td class="domain-tag">Economic context</td>
+              <td data-sort="1"><span class="diff beg">Beginner</span></td>
+              <td>CSV / Excel</td>
+              <td>Direct, no account</td>
+              <td>Small</td>
+              <td class="exercise">Overlay consumer sentiment vs. retail sales</td>
+              <td class="linkcell"><a href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer">fred.stlouisfed.org</a></td>
+            </tr>
+            <!-- Search / digital behavior -->
+            <tr>
+              <td class="source"><a href="https://trends.google.com/trends" target="_blank" rel="noopener noreferrer">Google Trends</a></td>
+              <td class="domain-tag">Search / digital behavior</td>
+              <td data-sort="1"><span class="diff beg">Beginner</span></td>
+              <td>CSV</td>
+              <td>Free, no account</td>
+              <td>Tiny</td>
+              <td class="exercise">Seasonality of a term; brand A vs. brand B interest</td>
+              <td class="linkcell"><a href="https://trends.google.com/trends" target="_blank" rel="noopener noreferrer">trends.google.com</a></td>
+            </tr>
+            <tr>
+              <td class="source"><a href="https://pageviews.wmcloud.org" target="_blank" rel="noopener noreferrer">Wikipedia pageviews</a></td>
+              <td class="domain-tag">Search / digital behavior</td>
+              <td data-sort="2"><span class="diff beg-int">Beginner → Intermediate</span></td>
+              <td>CSV / JSON</td>
+              <td>Free, no account</td>
+              <td>Small per article</td>
+              <td class="exercise">Attention spike around a launch/event</td>
+              <td class="linkcell"><a href="https://pageviews.wmcloud.org" target="_blank" rel="noopener noreferrer">pageviews.wmcloud.org</a></td>
+            </tr>
+            <!-- Recommendation -->
+            <tr>
+              <td class="source"><a href="https://www.kaggle.com/competitions/h-and-m-personalized-fashion-recommendations/data" target="_blank" rel="noopener noreferrer">H&amp;M Personalized Fashion</a></td>
+              <td class="domain-tag">Recommendation</td>
+              <td data-sort="3"><span class="diff int">Intermediate</span></td>
+              <td>CSV (+ images)</td>
+              <td>Kaggle acct + accept rules</td>
+              <td>Large (CSVs-only is smaller)</td>
+              <td class="exercise">Popularity baseline, then co-purchase recommender</td>
+              <td class="linkcell"><a href="https://www.kaggle.com/competitions/h-and-m-personalized-fashion-recommendations/data" target="_blank" rel="noopener noreferrer">kaggle.com</a></td>
+            </tr>
+            <!-- Sports / fun -->
+            <tr>
+              <td class="source"><a href="https://baseballsavant.mlb.com" target="_blank" rel="noopener noreferrer">Baseball Savant (Statcast)</a><span class="opt">optional</span></td>
+              <td class="domain-tag">Sports / fun</td>
+              <td data-sort="2"><span class="diff beg-int">Beginner–Intermediate</span></td>
+              <td>CSV</td>
+              <td>Free, no account</td>
+              <td>Varies</td>
+              <td class="exercise">Compare a metric across players; build a “player card”</td>
+              <td class="linkcell"><a href="https://baseballsavant.mlb.com" target="_blank" rel="noopener noreferrer">baseballsavant.mlb.com</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD INSTRUCTIONS -->
+  <section id="instructions">
+    <h2 class="section"><span class="num">2</span>Download instructions</h2>
+    <p class="section-sub">Grouped by domain. Each card has numbered steps that match the current site, plus a first exercise to get moving.</p>
+
+    <nav class="domain-nav" aria-label="Jump to domain">
+      <a href="#d-reviews">Consumer reviews / text</a>
+      <a href="#d-retail">Retail / e-commerce</a>
+      <a href="#d-realestate">Real estate</a>
+      <a href="#d-survey">Survey &amp; attitudes</a>
+      <a href="#d-spending">Survey &amp; spending</a>
+      <a href="#d-demographics">Demographics</a>
+      <a href="#d-econ">Economic context</a>
+      <a href="#d-digital">Search / digital behavior</a>
+      <a href="#d-rec">Recommendation</a>
+      <a href="#d-sports">Sports / fun</a>
+    </nav>
+
+    <!-- GROUP: Consumer reviews -->
+    <div class="group">
+      <h3 id="d-reviews">Consumer reviews / text <span class="pill">3 sources</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>Amazon Reviews 2023</h4></div>
+          <div class="meta-line"><span class="chip">Intermediate</span><span class="chip">JSONL (gzip)</span><span class="chip">Free, no login</span></div>
+          <ol>
+            <li>Go to the McAuley Lab page and scroll to the <strong>per-category table</strong>.</li>
+            <li>Pick <strong>one</strong> category (e.g., Beauty). Download its <strong>review</strong> file; add the <strong>meta</strong> file if you want product info.</li>
+            <li>Or in Python (via Hugging Face): <code>from datasets import load_dataset</code> → <code>load_dataset("McAuley-Lab/Amazon-Reviews-2023", "raw_review_All_Beauty", trust_remote_code=True)</code>.</li>
+            <li>The full set is ~571M reviews (1996–Sep 2023). <strong>Never pull everything</strong> — one category is plenty for class.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> compare the star rating to the sentiment of the review text; find where they diverge.</div>
+          <div class="visit"><a href="https://amazon-reviews-2023.github.io" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h4>Yelp Open Dataset</h4></div>
+          <div class="meta-line"><span class="chip">Intermediate</span><span class="chip">JSONL</span><span class="chip">Accept agreement</span></div>
+          <ol>
+            <li>Go to the Yelp Open Dataset page and click <strong>Download</strong>.</li>
+            <li>Enter name/email and accept the <strong>Dataset User Agreement</strong>.</li>
+            <li>Download the TAR (~4.35 GB compressed) and extract → five JSON files (<code>business</code>, <code>review</code>, <code>user</code>, <code>checkin</code>, <code>tip</code>), one JSON object per line.</li>
+            <li>For class, hand students just <code>review</code> + <code>business</code>. No-email mirror: Kaggle dataset <code>yelp-dataset/yelp-dataset</code>.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> predict the star rating from review text (or from business attributes).</div>
+          <div class="flag"><b>Heads up — URL changed.</b> Yelp moved this from <code>yelp.com/dataset</code> to <code>business.yelp.com/data/resources/open-dataset/</code> (verified June 2026). Old links still redirect, but use the new one.</div>
+          <div class="visit"><a href="https://business.yelp.com/data/resources/open-dataset/" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h4>Wine reviews (Kaggle — zynicide)</h4></div>
+          <div class="meta-line"><span class="chip">Beginner</span><span class="chip">CSV / JSON</span><span class="chip">Kaggle account</span></div>
+          <ol>
+            <li>Go to the Kaggle wine-reviews dataset and sign in.</li>
+            <li>Click <strong>Download</strong>. Main file: <code>winemag-data-130k-v2.csv</code> (description, points, price, variety, region).</li>
+            <li>Note: the region is split into <code>region_1</code> / <code>region_2</code>; points are on a 1–100 scale (~130K rows, ~53 MB).</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> regress points on price; add simple text features from the description.</div>
+          <div class="visit"><a href="https://www.kaggle.com/datasets/zynicide/wine-reviews" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GROUP: Retail -->
+    <div class="group">
+      <h3 id="d-retail">Retail / e-commerce <span class="pill">2 sources</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>Instacart Market Basket</h4></div>
+          <div class="meta-line"><span class="chip">Intermediate</span><span class="chip">CSV (6 files)</span><span class="chip">Accept rules</span></div>
+          <ol>
+            <li>Go to the Instacart competition <strong>Data</strong> tab on Kaggle.</li>
+            <li>Sign in and accept the competition <strong>rules</strong> (required before download — the competition closed in 2017, but the data is still available this way).</li>
+            <li>Download the 6 CSVs: <code>orders</code>, <code>products</code>, <code>aisles</code>, <code>departments</code>, <code>order_products__prior</code>, <code>order_products__train</code>.</li>
+            <li>For a quick in-class demo, search Kaggle for a “Simplified Instacart” dataset (~7 MB) instead of the full files.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> association rules (Apriori) — which products co-occur in baskets.</div>
+          <div class="visit"><a href="https://www.kaggle.com/c/instacart-market-basket-analysis/data" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h4>Online Retail (UCI, id 352)</h4></div>
+          <div class="meta-line"><span class="chip">Beginner</span><span class="chip">XLSX (1 file)</span><span class="chip">No account</span></div>
+          <ol>
+            <li>Go to the UCI page and click <strong>Download</strong> → <code>Online Retail.xlsx</code> (~23 MB).</li>
+            <li>Or in Python: <code>from ucimlrepo import fetch_ucirepo</code> → <code>d = fetch_ucirepo(id=352)</code>.</li>
+            <li>UK non-store retailer, Dec 2010–Dec 2011, ~542K rows, licensed CC BY 4.0. Two-year version: <strong>Online Retail II</strong> (id 502).</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> RFM segmentation and a simple CLV estimate.</div>
+          <div class="visit"><a href="https://archive.ics.uci.edu/dataset/352/online+retail" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GROUP: Real estate -->
+    <div class="group">
+      <h3 id="d-realestate">Real estate <span class="pill">2 sources</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>Zillow Research</h4></div>
+          <div class="meta-line"><span class="chip">Beginner</span><span class="chip">CSV</span><span class="chip">No account</span></div>
+          <ol>
+            <li>Go to Zillow Research → Data.</li>
+            <li>Pick a data type (e.g., <strong>ZHVI</strong> home values, <strong>ZORI</strong> rents).</li>
+            <li>Choose geography (metro / county / ZIP) and click the green <strong>Download</strong> button.</li>
+            <li>Wide format: one row per region, one column per month.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> plot ZHVI for three metros; compute year-over-year appreciation.</div>
+          <div class="visit"><a href="https://www.zillow.com/research/data/" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h4>Redfin Data Center</h4></div>
+          <div class="meta-line"><span class="chip">Beginner–Intermediate</span><span class="chip">TSV (gzip)</span><span class="chip">No account</span></div>
+          <ol>
+            <li>Go to the Redfin Data Center and click <strong>Download the data</strong>.</li>
+            <li>Pick a metric set (e.g., Housing Market Tracker) and region level (metro / city / neighborhood / ZIP); download.</li>
+            <li>Each row is one region for one time period; column suffixes <code>YOY</code> / <code>MOM</code> / <code>WOW</code> = year / month / week-over-week change.</li>
+            <li>Redfin relaunched the Data Center in May 2026 (<strong>seasonally adjusted is now the default</strong>) — layouts differ from older tutorials. Cite Redfin as the source.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> compare days-on-market across regions to flag buyer’s vs. seller’s markets.</div>
+          <div class="visit"><a href="https://www.redfin.com/news/data-center/" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GROUP: Survey & attitudes -->
+    <div class="group">
+      <h3 id="d-survey">Survey &amp; attitudes <span class="pill">2 sources</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>General Social Survey (GSS)</h4></div>
+          <div class="meta-line"><span class="chip">Intermediate</span><span class="chip">Stata/SPSS/SAS/CSV</span><span class="chip">Free</span></div>
+          <ol>
+            <li>Go to the GSS site and open <strong>Get the Data</strong>.</li>
+            <li>Either download the full cumulative file (1972–present) in Stata/SPSS/SAS, <strong>or</strong></li>
+            <li>Use the <strong>GSS Data Explorer</strong> (free account) to build a custom extract of just the variables/years you want and export CSV.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> trend one attitude over time; cross-tab it by a demographic.</div>
+          <div class="visit"><a href="https://gss.norc.org" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h4>Pew Research Center</h4></div>
+          <div class="meta-line"><span class="chip">Intermediate</span><span class="chip">SPSS .sav</span><span class="chip">Free account</span></div>
+          <ol>
+            <li>Go to Pew’s datasets page and pick a study (e.g., an American Trends Panel wave).</li>
+            <li>Create a free account and download the data file + questionnaire/codebook.</li>
+            <li>Read the codebook first — <strong>weights matter</strong> for any valid estimate.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> a weighted crosstab on a consumer or technology attitude.</div>
+          <div class="visit"><a href="https://www.pewresearch.org/datasets" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GROUP: Survey & spending -->
+    <div class="group">
+      <h3 id="d-spending">Survey &amp; spending <span class="pill">1 source</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>Consumer Expenditure Survey (BLS)</h4></div>
+          <div class="meta-line"><span class="chip">Intermediate–Advanced</span><span class="chip">CSV / fixed-width</span><span class="chip">No account</span></div>
+          <ol>
+            <li>Go to the BLS Consumer Expenditure Survey site.</li>
+            <li>Microdata: open <strong>PUMD</strong> (Public-Use Microdata) → pick a year → download the Interview and/or Diary files + documentation (SAS / Stata / comma-delimited).</li>
+            <li>Lighter option: use the pre-tabulated <strong>CE Data Tables</strong> instead of raw microdata.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> spending share by category across income quintiles.</div>
+          <div class="visit"><a href="https://www.bls.gov/cex" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GROUP: Demographics -->
+    <div class="group">
+      <h3 id="d-demographics">Demographics <span class="pill">1 source</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>U.S. Census / ACS</h4></div>
+          <div class="meta-line"><span class="chip">Beginner → Advanced</span><span class="chip">CSV</span><span class="chip">Direct / API</span></div>
+          <ol>
+            <li>Go to data.census.gov and search a topic (e.g., “median household income”).</li>
+            <li>Filter by geography and year, click <strong>Download</strong>, choose <strong>CSV</strong> (Excel and ZIP are also offered), then <strong>Download Data</strong>.</li>
+            <li>Row-level microdata is under <strong>Microdata Access</strong> (PUMS); automated pulls use the <strong>Census API</strong>.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> build a market-sizing profile for one metro (income, age, household size).</div>
+          <div class="visit"><a href="https://data.census.gov" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GROUP: Economic context -->
+    <div class="group">
+      <h3 id="d-econ">Economic context <span class="pill">1 source</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>FRED (St. Louis Fed)</h4></div>
+          <div class="meta-line"><span class="chip">Beginner</span><span class="chip">CSV / Excel</span><span class="chip">No account</span></div>
+          <ol>
+            <li>Go to FRED and search a series (e.g., “CPI,” “retail sales,” “consumer sentiment”).</li>
+            <li>On the series page click <strong>Download</strong> → CSV or Excel.</li>
+            <li>Programmatic: the <code>fredapi</code> Python package (needs a free API key) or the FRED Excel add-in.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> overlay consumer sentiment against retail sales over time.</div>
+          <div class="visit"><a href="https://fred.stlouisfed.org" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GROUP: Search / digital behavior -->
+    <div class="group">
+      <h3 id="d-digital">Search / digital behavior <span class="pill">2 sources</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>Google Trends</h4></div>
+          <div class="meta-line"><span class="chip">Beginner</span><span class="chip">CSV</span><span class="chip">No account</span></div>
+          <ol>
+            <li>Go to Google Trends and enter up to 5 terms.</li>
+            <li>Set country and time range.</li>
+            <li>Click the <strong>download (down-arrow) icon</strong> on each chart panel to export that panel’s CSV.</li>
+            <li>Values are relative (0–100), not raw counts — state this to students.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> seasonality of a product term; compare brand A vs. brand B interest.</div>
+          <div class="visit"><a href="https://trends.google.com/trends" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h4>Wikipedia pageviews</h4></div>
+          <div class="meta-line"><span class="chip">Beginner → Intermediate</span><span class="chip">CSV / JSON</span><span class="chip">No account</span></div>
+          <ol>
+            <li>Easiest: the <strong>Pageviews Analysis</strong> tool — enter article(s) (up to 10), set dates, <strong>export CSV</strong>.</li>
+            <li>Programmatic: the Wikimedia REST pageviews API.</li>
+            <li>Bulk: hourly dump files at <code>dumps.wikimedia.org/other/pageviews</code>.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> measure the attention spike around a product launch or event.</div>
+          <div class="visit"><a href="https://pageviews.wmcloud.org" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GROUP: Recommendation -->
+    <div class="group">
+      <h3 id="d-rec">Recommendation <span class="pill">1 source</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>H&amp;M Personalized Fashion Recommendations</h4></div>
+          <div class="meta-line"><span class="chip">Intermediate</span><span class="chip">CSV (+ images)</span><span class="chip">Accept rules</span></div>
+          <ol>
+            <li>Go to the H&amp;M competition <strong>Data</strong> tab on Kaggle.</li>
+            <li>Sign in and accept the competition <strong>rules</strong> (required before download).</li>
+            <li>Download the three CSVs: <code>transactions_train.csv</code> (~2 years of purchases), <code>customers.csv</code> (~1.3M customers; age, hashed postal code), <code>articles.csv</code> (~105K items; product metadata + descriptions).</li>
+            <li>The <code>images/</code> folder is large — skip it unless doing image work. Data covers ~2018–2020, primarily European markets. Cite both the competition and H&amp;M Group.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> build a popularity-baseline recommender, then a simple co-purchase (“customers who bought X also bought Y”) on <code>transactions_train</code>.</div>
+          <div class="visit"><a href="https://www.kaggle.com/competitions/h-and-m-personalized-fashion-recommendations/data" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- GROUP: Sports / fun -->
+    <div class="group">
+      <h3 id="d-sports">Sports / fun <span class="pill">1 source · optional</span></h3>
+      <div class="cards">
+
+        <div class="card">
+          <div class="card-head"><h4>Baseball Savant / Statcast</h4></div>
+          <div class="meta-line"><span class="chip">Beginner–Intermediate</span><span class="chip">CSV</span><span class="chip">No account</span></div>
+          <ol>
+            <li>Go to Baseball Savant → <strong>Statcast Search</strong>.</li>
+            <li>Set filters → <strong>Search</strong> → download CSV (link appears on the results page).</li>
+            <li>Or use the <code>pybaseball</code> Python package.</li>
+          </ol>
+          <div class="exercise-box"><strong>First exercise:</strong> compare one metric across players; assemble a simple “player card.”</div>
+          <div class="visit"><a href="https://baseballsavant.mlb.com" target="_blank" rel="noopener noreferrer">Open the dataset site</a></div>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- AGGREGATORS -->
+  <section id="hubs">
+    <h2 class="section"><span class="num">3</span>Where to find more</h2>
+    <p class="section-sub">Aggregator hubs for branching out beyond this list.</p>
+    <div class="hubs">
+      <div class="hub">
+        <h4>Kaggle Datasets</h4>
+        <p>Free account; mostly CSV. Huge breadth of community datasets.</p>
+        <div class="visit"><a href="https://www.kaggle.com/datasets" target="_blank" rel="noopener noreferrer">kaggle.com/datasets</a></div>
+      </div>
+      <div class="hub">
+        <h4>UCI ML Repository</h4>
+        <p>Classic, clean teaching datasets. Direct download.</p>
+        <div class="visit"><a href="https://archive.ics.uci.edu" target="_blank" rel="noopener noreferrer">archive.ics.uci.edu</a></div>
+      </div>
+      <div class="hub">
+        <h4>Google Dataset Search</h4>
+        <p>A meta-search across all the others — start here when scoping a topic.</p>
+        <div class="visit"><a href="https://datasetsearch.research.google.com" target="_blank" rel="noopener noreferrer">datasetsearch.research.google.com</a></div>
+      </div>
+      <div class="hub">
+        <h4>Hugging Face Datasets</h4>
+        <p>Load straight into Python with <code>load_dataset</code>.</p>
+        <div class="visit"><a href="https://huggingface.co/datasets" target="_blank" rel="noopener noreferrer">huggingface.co/datasets</a></div>
+      </div>
+      <div class="hub">
+        <h4>AWS Open Data Registry</h4>
+        <p>S3-hosted; some very large. Good for scale projects.</p>
+        <div class="visit"><a href="https://registry.opendata.aws" target="_blank" rel="noopener noreferrer">registry.opendata.aws</a></div>
+      </div>
+      <div class="hub">
+        <h4>Harvard Dataverse</h4>
+        <p>Research data, free. Strong for replication datasets.</p>
+        <div class="visit"><a href="https://dataverse.harvard.edu" target="_blank" rel="noopener noreferrer">dataverse.harvard.edu</a></div>
+      </div>
+      <div class="hub">
+        <h4>ICPSR</h4>
+        <p>Social-science archive. UIC likely has institutional access, which unlocks restricted holdings for students.</p>
+        <div class="visit"><a href="https://www.icpsr.umich.edu" target="_blank" rel="noopener noreferrer">icpsr.umich.edu</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTRUCTOR NOTE -->
+  <details class="notes">
+    <summary>Maintenance notes (instructor)</summary>
+    <ul>
+      <li><b>All 16 sources + 7 hubs verified live on June 20, 2026.</b> The four Python packages referenced — <code>ucimlrepo</code>, <code>datasets</code>, <code>fredapi</code>, <code>pybaseball</code> — are all current on PyPI and import as written.</li>
+      <li><b>Yelp link updated.</b> <code>yelp.com/dataset</code> now 301-redirects to <code>business.yelp.com/data/resources/open-dataset/</code>; the page here uses the new URL. File details (4.35 GB TAR → 5 JSON files) unchanged.</li>
+      <li><b>Amazon snippet corrected.</b> The <code>load_dataset</code> call is the Hugging Face path; the config name is <code>raw_review_All_Beauty</code> (the GitHub landing page itself doesn’t host that snippet).</li>
+      <li><b>Instacart wording softened.</b> That competition closed in 2017, so you accept the competition rules / sign in to download rather than “joining” a live competition. A simplified mirror is a fine in-class fallback.</li>
+      <li><b>Redfin claim confirmed.</b> The May 2026 Data Center relaunch with seasonally-adjusted-as-default is real (Redfin announcement dated May 12, 2026).</li>
+      <li><b>Minor data notes folded in:</b> Wine <code>region</code> is split into <code>region_1</code>/<code>region_2</code>; H&amp;M postal code is hashed; Census download includes an Excel/CSV/ZIP format step; BLS PUMD ships as SAS/Stata/comma-delimited.</li>
+      <li><b>Spotify Million Playlist Dataset is intentionally excluded</b> — no longer publicly downloadable; license restricts use to challenge submissions and forbids redistribution. Do not re-add.</li>
+    </ul>
+  </details>
+
+  <footer class="foot">
+    Marketing Research — Classroom Data Sources. Difficulty tags reflect the class-friendly path, not the full dataset. External links open in a new tab. Verified June 20, 2026.
+  </footer>
+
+</div>
+
+<button class="totop" id="totop" aria-label="Back to top">↑</button>
+
+<script>
+(function(){
+  var table = document.getElementById('dt');
+  var tbody = table.tBodies[0];
+  var headers = table.tHead.rows[0].cells;
+  var filterInput = document.getElementById('filter');
+  var countEl = document.getElementById('count');
+  var allRows = Array.prototype.slice.call(tbody.rows);
+
+  function cellSortValue(row, idx){
+    var cell = row.cells[idx];
+    var ds = cell.getAttribute('data-sort');
+    return (ds !== null ? ds : cell.textContent).trim();
+  }
+
+  function compare(a, b, idx, dir){
+    var va = cellSortValue(a, idx), vb = cellSortValue(b, idx);
+    var na = parseFloat(va), nb = parseFloat(vb);
+    var bothNum = !isNaN(na) && !isNaN(nb) && /^[-+]?[\d.]+$/.test(va) && /^[-+]?[\d.]+$/.test(vb);
+    var res = bothNum ? (na - nb) : va.toLowerCase().localeCompare(vb.toLowerCase());
+    return dir === 'asc' ? res : -res;
+  }
+
+  function sortBy(idx){
+    var th = headers[idx];
+    var current = th.getAttribute('aria-sort');
+    var dir = current === 'ascending' ? 'desc' : 'asc';
+    for (var i=0;i<headers.length;i++) headers[i].removeAttribute('aria-sort');
+    th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+    for (var j=0;j<headers.length;j++){
+      var arr = headers[j].querySelector('.arrow');
+      if (arr) arr.textContent = (j===idx) ? (dir==='asc'?'↑':'↓') : '↕';
+    }
+    var rows = allRows.slice().sort(function(a,b){ return compare(a,b,idx,dir); });
+    rows.forEach(function(r){ tbody.appendChild(r); });
+    applyFilter();
+  }
+
+  for (var i=0;i<headers.length;i++){
+    (function(idx){ headers[idx].addEventListener('click', function(){ sortBy(idx); }); })(i);
+  }
+
+  function applyFilter(){
+    var q = filterInput.value.trim().toLowerCase();
+    var shown = 0;
+    allRows.forEach(function(r){
+      var match = q === '' || r.textContent.toLowerCase().indexOf(q) !== -1;
+      r.style.display = match ? '' : 'none';
+      if (match) shown++;
+    });
+    countEl.textContent = shown + ' of ' + allRows.length + ' sources';
+  }
+  filterInput.addEventListener('input', applyFilter);
+  applyFilter();
+
+  // Back to top
+  var totop = document.getElementById('totop');
+  window.addEventListener('scroll', function(){
+    if (window.scrollY > 500) totop.classList.add('show'); else totop.classList.remove('show');
+  });
+  totop.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+})();
+</script>
+
+</body>
+</html>
