@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Do Frontier AI Models Have Personality? — An Interactive Case</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Spline+Sans+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root{
+  --paper:#f4efe6; --paper2:#ece4d6; --ink:#1c1a17; --ink2:#4a443c;
+  --ox:#7c2424; --ox2:#a8362f; --gold:#b08433; --line:#cdbfa8;
+  --blue:#2f5d6b; --green:#5a6e3f;
+  --c-claude:#7c2424; --c-gpt:#2f5d6b; --c-gemini:#b08433; --c-deepseek:#5a6e3f;
+  --serif:'Fraunces',Georgia,serif; --read:'Newsreader',Georgia,serif; --mono:'Spline Sans Mono',monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--read);font-size:18px;line-height:1.62;
+  background-image:radial-gradient(circle at 12% 8%,rgba(176,132,51,.05),transparent 40%),radial-gradient(circle at 88% 92%,rgba(124,36,36,.05),transparent 45%);}
+.wrap{max-width:980px;margin:0 auto;padding:0 28px}
+::selection{background:var(--ox);color:var(--paper)}
+
+/* grain */
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* hero */
+.hero{padding:90px 0 40px;position:relative}
+.kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.32em;text-transform:uppercase;color:var(--ox);margin-bottom:22px}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(40px,7vw,84px);line-height:.98;letter-spacing:-.02em;margin:0 0 24px;
+  font-variation-settings:'opsz' 140}
+.hero h1 em{font-style:italic;color:var(--ox);font-weight:500}
+.deck{font-family:var(--serif);font-weight:500;font-style:italic;font-size:clamp(20px,2.8vw,28px);line-height:1.18;color:var(--ink);margin:0 0 26px;letter-spacing:-.01em}
+.deck em{color:var(--ox);font-style:italic}
+.lede{font-size:clamp(18px,2.2vw,21px);max-width:700px;color:var(--ink2)}
+.lede + .lede{margin-top:14px}
+.lede b{color:var(--ink);font-weight:500}
+.lede em{font-style:italic;color:var(--ox)}
+.herowave-wrap{margin:38px 0 4px;padding:0}
+#herowave{width:100%;height:170px}
+.wavecap{font-family:var(--read);font-size:14.5px;line-height:1.55;color:var(--ink2);max-width:none;margin:10px 0 0;font-style:italic}
+.wavecap b{color:var(--ink);font-style:normal;font-weight:500}
+.cit{color:var(--ox);text-decoration:none;border-bottom:1px solid var(--line);white-space:nowrap}
+.cit:hover{border-bottom-color:var(--ox)}
+.modeltable{border:1px solid var(--line);border-radius:4px;margin:24px 0 12px;overflow:hidden;background:#fbf8f1;max-width:540px}
+.mt-row{display:flex;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:13px}
+.mt-row:last-child{border-bottom:0}
+.mt-head{background:var(--paper2);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ox)}
+.mt-row span:first-child{color:var(--ink);font-weight:500}
+.mt-row span:last-child{color:var(--ink2)}
+.mt-note{font-size:14.5px;color:var(--ink2);max-width:680px;margin-top:6px}
+#refs{padding:46px 0 8px}
+.refs{list-style:none;padding:0;margin:14px 0 0}
+.refs li{font-family:var(--read);font-size:14.5px;line-height:1.5;color:var(--ink2);margin:0 0 15px;padding-left:24px;text-indent:-24px}
+.refs a{color:var(--ox);text-decoration:none;word-break:break-word}
+.refs a:hover{text-decoration:underline}
+.refs i{color:var(--ink);font-style:italic}
+.refs .anno{font-style:italic;color:var(--ink2)}
+.mask-fig{margin:34px 0 6px;padding:0}
+.mask-svg{width:100%;max-width:430px;height:auto;display:block;margin:0 auto}
+.mk-flap{transform-box:fill-box;transform-origin:top center;animation:mkPeel 2.4s cubic-bezier(.34,.8,.3,1) .4s forwards}
+.mk-flap{transform:rotate(0deg) scaleX(1)}
+.mk-feat{opacity:0;animation:mkFade .6s ease 1.4s forwards}
+.mk-flicker path{stroke-dasharray:200;animation:mkFlicker 3.6s ease-in-out infinite}
+.mk-flicker path:nth-child(2){animation-delay:.6s}
+.mk-flicker path:nth-child(3){animation-delay:1.2s}
+.mk-flicker path:nth-child(4){animation-delay:1.8s}
+@keyframes mkPeel{0%{transform:rotate(0deg) scaleX(1)}100%{transform:rotate(-26deg) scaleX(.82) translateY(-4px)}}
+@keyframes mkFade{to{opacity:1}}
+@keyframes mkFlicker{0%,100%{stroke-dashoffset:0;opacity:.18}50%{stroke-dashoffset:200;opacity:.6}}
+.mask-cap{font-family:var(--read);font-size:15px;line-height:1.55;color:var(--ink2);font-style:italic;max-width:560px;margin:16px auto 0;text-align:center}
+@media(prefers-reduced-motion:reduce){.mk-flap{animation:none;transform:rotate(-24deg) scaleX(.82)}.mk-feat{opacity:1;animation:none}.mk-flicker path{animation:none}}
+.epigraph{max-width:720px;margin:8px auto;text-align:center;padding:34px 28px 38px}
+.epigraph .q{font-family:var(--serif);font-weight:500;font-style:italic;font-size:clamp(22px,3.1vw,31px);line-height:1.26;color:var(--ink);letter-spacing:-.012em;margin:0}
+.epigraph .q em{font-style:italic;color:var(--ox)}
+.epigraph .src{font-family:var(--read);font-size:15px;color:var(--ink2);margin:20px auto 0;line-height:1.55;max-width:560px}
+.epigraph .src i{font-style:italic;color:var(--ink)}
+.meta-row{display:flex;flex-wrap:wrap;gap:28px;margin-top:34px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12.5px;color:var(--ink2)}
+.meta-row span b{color:var(--ox);font-weight:500}
+
+/* section scaffolding */
+section{padding:52px 0;position:relative;z-index:2}
+.sec-num{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--ox);text-transform:uppercase}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(28px,4vw,40px);line-height:1.05;letter-spacing:-.015em;margin:.35em 0 .5em;font-variation-settings:'opsz' 80}
+h3{font-family:var(--serif);font-weight:600;font-size:22px;margin:1.4em 0 .3em}
+p{margin:.7em 0}
+.narrow{max-width:680px}
+a.skip{color:var(--ox);text-decoration:none;border-bottom:1px solid var(--line)}
+
+/* hypothesis cards */
+.hyps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:28px 0}
+.hyp{background:linear-gradient(180deg,#fbf7ef,#f1ead d);background:#fbf7ef;border:1px solid var(--line);border-radius:3px;padding:20px 20px 18px;position:relative;overflow:hidden}
+.hyp::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--ox)}
+.hyp .h{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--ox);text-transform:uppercase}
+.hyp .t{font-family:var(--serif);font-weight:600;font-size:18px;margin:8px 0 6px;line-height:1.2}
+.hyp .d{font-size:15px;color:var(--ink2);line-height:1.5}
+.hyp .v{margin-top:12px;font-family:var(--mono);font-size:12px;font-weight:500;padding-top:10px;border-top:1px dashed var(--line)}
+.hyp.rej .v{color:var(--ox2)} .hyp.sup .v{color:var(--green)}
+
+/* figure blocks */
+.figure{background:#fbf8f1;border:1px solid var(--line);border-radius:4px;margin:30px 0;box-shadow:0 1px 0 #fff inset, 0 18px 40px -28px rgba(28,26,23,.4)}
+.figure .cap{padding:16px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}
+.figure .cap .fl{font-family:var(--mono);font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--ox)}
+.figure .cap .ft{font-family:var(--serif);font-weight:600;font-size:19px}
+.figure .body{padding:22px}
+.fignote{padding:0 22px 18px;font-size:14.5px;color:var(--ink2);max-width:none}
+.fignote b{color:var(--ink)}
+
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-bottom:18px;font-family:var(--mono);font-size:13px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.seg button{font-family:var(--mono);font-size:12px;letter-spacing:.04em;background:transparent;border:0;padding:8px 13px;color:var(--ink2);cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--ink);color:var(--paper)}
+.ctl-label{color:var(--ink2);letter-spacing:.12em;text-transform:uppercase;font-size:11px}
+input[type=range]{-webkit-appearance:none;appearance:none;height:3px;background:var(--line);border-radius:3px;width:min(360px,46vw);cursor:pointer;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ox);border:3px solid var(--paper);box-shadow:0 0 0 1px var(--ox)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border:3px solid var(--paper);border-radius:50%;background:var(--ox)}
+.runcount{font-variation-settings:normal;font-weight:500;color:var(--ink);font-size:13px}
+.runcount b{color:var(--ox);font-size:15px}
+.btn{font-family:var(--mono);font-size:12px;border:1px solid var(--ox);background:transparent;color:var(--ox);padding:7px 14px;border-radius:3px;cursor:pointer;letter-spacing:.05em}
+.btn:hover{background:var(--ox);color:var(--paper)}
+
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-family:var(--mono);font-size:12px;margin-top:14px}
+.legend .it{display:flex;align-items:center;gap:7px;color:var(--ink2)}
+.legend .sw{width:13px;height:13px;border-radius:2px}
+
+/* readout stat strip */
+.statstrip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin:8px 0 0}
+.statstrip .s{background:#fbf8f1;padding:16px 18px}
+.statstrip .s .n{font-family:var(--serif);font-weight:900;font-size:30px;line-height:1;color:var(--ox);font-variation-settings:'opsz' 60}
+.statstrip .s .l{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--ink2);margin-top:7px;text-transform:uppercase}
+.statstrip .s .tech{font-family:var(--mono);font-size:10px;letter-spacing:.02em;color:var(--ink2);opacity:.7;margin-top:8px;padding-top:7px;border-top:1px dashed var(--line)}
+.fignote .stat-report{display:block;margin-top:10px;padding-top:9px;border-top:1px dashed var(--line);font-size:13.5px;color:var(--ink2)}
+.fignote .stat-report b{color:var(--ox)}
+.mterm{color:var(--ox);border-bottom:1px dotted var(--ox);cursor:pointer}
+.mterm::after{content:"\2009\24D8";font-size:.82em;opacity:.65;border:0}
+.mterm:hover{background:rgba(124,36,36,.07)}
+.method-pop{position:fixed;z-index:60;width:340px;max-width:calc(100vw - 24px);background:#fbf8f1;border:1px solid var(--ox);border-radius:6px;box-shadow:0 18px 50px -16px rgba(28,26,23,.55);opacity:0;pointer-events:none;transition:opacity .12s;font-family:var(--read)}
+.method-pop.on{opacity:1;pointer-events:auto}
+.method-pop .mp-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:13px 15px 9px;border-bottom:1px solid var(--line)}
+.method-pop .mp-term{font-family:var(--serif);font-weight:600;font-size:15.5px;color:var(--ink);line-height:1.15}
+.method-pop .mp-x{font-family:var(--mono);font-size:13px;color:var(--ink2);cursor:pointer;border:0;background:none;line-height:1;padding:2px 4px}
+.method-pop .mp-x:hover{color:var(--ox)}
+.method-pop .mp-body{padding:12px 15px 14px}
+.method-pop .mp-row{margin:0 0 10px}
+.method-pop .mp-row:last-child{margin-bottom:0}
+.method-pop .mp-k{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ox);display:block;margin-bottom:3px}
+.method-pop .mp-v{font-size:13.5px;line-height:1.5;color:var(--ink2)}
+.method-pop .mp-v b{color:var(--ink);font-weight:500}
+.method-pop .mp-v code{font-family:var(--mono);font-size:12px;background:var(--paper2);padding:1px 4px;border-radius:3px}
+
+/* tooltip */
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:12px;padding:8px 11px;border-radius:4px;opacity:0;transition:opacity .12s;z-index:50;line-height:1.45;max-width:240px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5)}
+.tip b{color:#f0c97a}
+
+/* pull quote */
+.pull{font-family:var(--serif);font-weight:500;font-size:clamp(24px,3.6vw,34px);line-height:1.18;letter-spacing:-.01em;color:var(--ink);margin:18px 0;padding-left:24px;border-left:4px solid var(--ox)}
+.pull em{font-style:italic;color:var(--ox)}
+
+/* think box */
+.think{background:#1c1a17;color:#e8e0d2;border-radius:5px;padding:26px 28px;margin:30px 0}
+.think .h{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.think ol{margin:0;padding-left:20px}
+.think li{margin:.5em 0;font-size:16.5px;color:#d8cfbf}
+.think li b{color:#fff}
+
+/* svg chart text */
+svg text{font-family:var(--mono);fill:var(--ink2)}
+.axis line,.axis path{stroke:var(--line)}
+.gridline{stroke:var(--line);stroke-dasharray:2 4;opacity:.7}
+.mid-line{stroke:var(--ink2);stroke-dasharray:5 4;opacity:.6}
+.sesoi-line{stroke:var(--ox);stroke-width:1.5;stroke-dasharray:6 4}
+
+footer{padding:60px 0 80px;border-top:1px solid var(--line);margin-top:30px;font-family:var(--mono);font-size:12.5px;color:var(--ink2);line-height:1.7}
+footer b{color:var(--ink)}
+.scope{background:#f1ead d;background:#efe7d8;border:1px solid var(--line);border-radius:4px;padding:18px 22px;font-size:14.5px;color:var(--ink2);margin:24px 0}
+.scope b{color:var(--ox)}
+@media(max-width:640px){ body{font-size:16.5px} .hero{padding:60px 0 30px} section{padding:38px 0} }
+</style>
+</head>
+<body>
+<div class="tip" id="tip"></div>
+<div class="method-pop" id="methodpop"></div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">Field Notes · Marketing Research</div>
+    <h1>Do frontier AI models<br>have <em>personality?</em></h1>
+    <p class="deck">A personality is supposed to belong to <em>someone.</em><br>We went looking for the someone.</p>
+    <p class="lede">Ask a frontier model who it is, and it answers fast and vivid. Ask it a thousand times, and the answer melts into a flat gray average — nearly identical across every model we tested.</p>
+    <p class="lede">That is the paradox: these systems are most distinct in a single sitting and most alike the moment you look closely. It fits a wider pattern — generative AI tends to sharpen the individual (<a class="cit" href="#refs">De Freitas et al., 2025</a>) while flattening the group (<a class="cit" href="#refs">Doshi &amp; Hauser, 2024</a>; <a class="cit" href="#refs">Anderson et al., 2024</a>). We asked whether a machine's own character escapes that fate. It doesn't.</p>
+
+    <figure class="mask-fig" aria-label="An illustration: a smooth composed mask peeling back at one corner to reveal a dark, restless, featureless interior.">
+      <svg viewBox="0 0 520 380" xmlns="http://www.w3.org/2000/svg" class="mask-svg" role="img">
+        <defs>
+          <linearGradient id="masksheen" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f3ede1"/>
+            <stop offset="0.55" stop-color="#f8f3ea"/>
+            <stop offset="1" stop-color="#e2d6c1"/>
+          </linearGradient>
+          <linearGradient id="flapface" x1="0" y1="0" x2="0.8" y2="1">
+            <stop offset="0" stop-color="#efe5d3"/>
+            <stop offset="1" stop-color="#f7f2e9"/>
+          </linearGradient>
+          <radialGradient id="hollow2" cx="0.5" cy="0.42" r="0.62">
+            <stop offset="0" stop-color="#0f0c09"/>
+            <stop offset="1" stop-color="#251e16"/>
+          </radialGradient>
+          <clipPath id="headclip">
+            <path d="M260,46 C332,46 374,104 374,182 C374,262 326,326 260,326 C194,326 146,262 146,182 C146,104 188,46 260,46 Z"/>
+          </clipPath>
+        </defs>
+
+        <!-- 1) hollow interior, revealed beneath -->
+        <g clip-path="url(#headclip)">
+          <rect x="146" y="46" width="228" height="280" fill="url(#hollow2)"/>
+          <g class="mk-flicker" stroke="#b08433" stroke-width="1.1" fill="none" opacity="0.5">
+            <path d="M188,128 Q258,158 332,124"/>
+            <path d="M182,184 Q252,214 336,180"/>
+            <path d="M192,240 Q258,214 330,244"/>
+            <path d="M210,100 Q258,126 304,96"/>
+          </g>
+        </g>
+
+        <!-- 2) the still-adhered mask: full face MINUS a curved gash the flap lifts from -->
+        <g clip-path="url(#headclip)">
+          <path d="M260,46 C332,46 374,104 374,182 C374,262 326,326 260,326 C194,326 146,262 146,182 C146,104 188,46 260,46 Z
+                   M250,60 C300,120 340,210 360,300 C300,320 210,318 168,300 C150,250 150,150 178,80 C200,66 226,60 250,60 Z"
+                fill="url(#masksheen)" stroke="#cdbfa8" stroke-width="1.4" fill-rule="evenodd"/>
+          <!-- calm features on the adhered lower-left -->
+          <ellipse cx="222" cy="182" rx="9" ry="5" fill="#1c1a17" class="mk-feat"/>
+          <path d="M198,244 Q240,262 282,248" stroke="#1c1a17" stroke-width="2.2" fill="none" class="mk-feat"/>
+        </g>
+
+        <!-- 3) the peeling flap, curling up from the top-right; rotates open on load -->
+        <g class="mk-flap">
+          <path d="M250,60 C312,60 372,110 374,182 C374,234 360,280 360,300 C320,250 280,160 250,72 Z" fill="#000" opacity="0.18" transform="translate(8,10)"/>
+          <path d="M250,60 C312,60 372,110 374,182 C374,234 362,278 360,300
+                   C322,252 286,168 250,72 C249,66 249,62 250,60 Z"
+                fill="url(#flapface)" stroke="#cdbfa8" stroke-width="1.4"/>
+          <path d="M256,68 C314,108 352,168 366,266" stroke="#d8c8aa" stroke-width="1" fill="none" opacity="0.7"/>
+          <ellipse cx="304" cy="160" rx="9" ry="5" fill="#1c1a17" opacity="0.8"/>
+        </g>
+      </svg>
+      <figcaption class="mask-cap">Lift the polished surface and there is no second face underneath &mdash; only an interior that will not hold still. The model performs a person fluently; ask again tomorrow and a different performance arrives. That restlessness, averaged over thousands of askings, is the flat line you will see throughout this case.</figcaption>
+    </figure>
+
+    <figure class="herowave-wrap">
+      <div id="herowave"></div>
+      <figcaption class="wavecap">Above: <b>28 individual administrations</b>, overlaid. Each one is jagged — the models have plenty to say about themselves in any single sitting. The heavy line is their <b>average</b>, and it is nearly flat. That gap is the entire study, drawn in one breath.</figcaption>
+    </figure>
+
+    <div class="meta-row">
+      <span><b>4</b> frontier models</span>
+      <span><b>96</b> items · 24 strengths</span>
+      <span><b>3,643</b> valid administrations</span>
+      <span><b>3</b> elicitation framings</span>
+    </div>
+  </header>
+
+  <section id="setup" class="narrow">
+    <div class="sec-num">01 — The question</div>
+    <h2>What we set out to measure</h2>
+    <p>Three things make this more than a parlor question. Marketers are starting to use language models as <b>synthetic respondents</b> — cheap stand-ins for human samples in surveys and concept tests. Product teams choose and position models by their apparent <b>character</b>. And users extend <b>trust</b> to these systems partly on the strength of how they come across. All three assume there is a stable something to read. This study asks, bluntly, whether there is.</p>
+    <p>So we ran a clean measurement study: administer the <b>VIA Inventory of Strengths</b> — a framework from <a class="cit" href="#refs">Peterson &amp; Seligman (2004)</a> that distilled roughly 2,500 years of philosophical and religious thinking about good character into 24 strengths grouped under 6 virtues — to four of the most capable models available, each answering all 96 items hundreds of times.</p>
+
+    <div class="modeltable">
+      <div class="mt-row mt-head"><span>Model</span><span>Released</span></div>
+      <div class="mt-row"><span>Claude Opus 4.8</span><span>May 28, 2026</span></div>
+      <div class="mt-row"><span>GPT-5.5</span><span>Apr 23, 2026</span></div>
+      <div class="mt-row"><span>Gemini 3.1 Pro (preview)</span><span>Feb 19, 2026</span></div>
+      <div class="mt-row"><span>DeepSeek V4 Pro (preview)</span><span>Apr 24, 2026</span></div>
+    </div>
+    <p class="mt-note">Three of the four were under six weeks old when tested — bleeding-edge, fast-moving builds, two still in preview. That is exactly why the findings here are a snapshot, not a verdict on "these models" forever.</p>
+    <p>Each model answered the full inventory <b>307 times per condition</b>, with the item order, the rating labels, and the exact wording shuffled on every run, under three framings: answering as <em>itself</em>, with <em>no persona</em>, and as a <em>typical human</em>. The design was locked in advance (pre-registered), and rather than just checking "is there a difference?", we ran a <span class="mterm" data-m="tost">test built to confirm the stronger claim</span> — that the models are genuinely <em>the same</em> — <span class="mterm" data-m="sesoi">setting the bar</span> for "meaningfully different" before seeing the data.</p>
+
+    <h3>What we predicted</h3>
+    <div class="hyps" id="hyps"></div>
+    <p style="font-size:15px;color:var(--ink2)">Tap a hypothesis to jump to its evidence. The verdicts will make more sense after you've seen the charts.</p>
+  </section>
+
+  <section id="flatten">
+    <div class="sec-num">02 — The central result</div>
+    <h2 class="narrow">Watch a personality disappear</h2>
+    <p class="narrow">Here is the single most important idea in the study. Drag the slider to average together more and more answer-sets from the <em>same model</em>. Each bar is one character strength; a bar above the line means the model rated itself higher than the middle of the scale on that strength, below the line means lower. Watch what happens to the shape as you average.</p>
+
+    <div class="figure">
+      <div class="cap"><span class="fl">Figure 1 · Interactive</span><span class="ft" id="f1title">A single administration</span></div>
+      <div class="body">
+        <div class="controls">
+          <span class="ctl-label">Model</span>
+          <div class="seg" id="f1model"></div>
+          <span class="ctl-label" style="margin-left:8px">Averaging</span>
+          <input type="range" id="f1slider" min="1" max="150" value="1" step="1">
+          <span class="runcount" id="f1count">over <b>1</b> run</span>
+          <button class="btn" id="f1play">▶ Animate</button>
+        </div>
+        <div id="chart1"></div>
+      </div>
+      <div class="fignote"><b>What you're seeing:</b> a single answer-set is jagged — the model has plenty to say about which strengths are "more it" and which are "less it." But it picks <em>different</em> highs and lows every time you ask, so as you average, the peaks and dips cancel out and the whole profile flattens to the middle of the scale. Lots of variety in any one sitting; no profile that holds up when you ask again.<span class="stat-report"><b>In the numbers:</b> the spread of scores across the 24 strengths is SD ≈ 0.51 within a single administration but only SD ≈ 0.0096 once all administrations are averaged — a ~54× reduction. Between-administration reliability is near zero for every strength (<span class="mterm" data-m="icc">ICC ≤ 0.004</span>, all 24), i.e. essentially none of a model's profile repeats from one asking to the next.</span></div>
+    </div>
+
+    <div class="statstrip">
+      <div class="s"><div class="n" id="s-within">0.51</div><div class="l">How much the 24 strengths<br>differ in a single sitting</div><div class="tech"><span class="mterm" data-m="within_sd">within-run SD across strengths</span></div></div>
+      <div class="s"><div class="n" id="s-across">0.01</div><div class="l">How much they still differ<br>after averaging every run</div><div class="tech"><span class="mterm" data-m="aggregate_sd">aggregate SD across strengths</span></div></div>
+      <div class="s"><div class="n" id="s-ratio">54×</div><div class="l">Flatter once you average —<br>almost all structure gone</div><div class="tech"><span class="mterm" data-m="ratio">0.51 ÷ 0.0096</span></div></div>
+    </div>
+    <p class="narrow" style="margin-top:24px">A trait, by definition, is a preference that <em>stays put when you measure it again</em>. These profiles don't. So on the inventory's own terms, the models don't really have virtue traits when they describe themselves — they improvise a fresh self-portrait each time, hovering around the middle of the scale.</p>
+  </section>
+
+  <section id="between">
+    <div class="sec-num">03 — Comparing the models</div>
+    <h2 class="narrow">The models are statistically interchangeable</h2>
+    <p class="narrow">If the four models really had different profiles, the gaps between them on each strength would be large. Here is every strength, showing the <em>biggest</em> gap found between any two models — measured in <span class="mterm" data-m="cohend">standard deviations</span>, so a value of 1.0 would be a large difference and 0.2 a small one. The dashed line marks the <span class="mterm" data-m="sesoi">smallest gap</span> we decided, in advance, would count as meaningful.</p>
+
+    <div class="figure">
+      <div class="cap"><span class="fl">Figure 2 · Model differences</span><span class="ft">Biggest gap between any two models, by strength</span></div>
+      <div class="body"><div id="chart2"></div></div>
+      <div class="fignote"><b>Every bar falls far short of the line.</b> The biggest gap anywhere — across all 144 model-to-model comparisons — is just <span id="topd">0.156</span> standard deviations (<span id="toppair"></span>). A formal test confirmed the models aren't merely "not shown to differ"; they are <span class="mterm" data-m="tost">statistically <em>the same</em></span> on all 24 strengths. Hover any bar for detail.</div>
+    </div>
+  </section>
+
+  <section id="style">
+    <div class="sec-num">04 — The twist</div>
+    <h2 class="narrow">They differ — just not in what you'd expect</h2>
+    <p class="narrow">On <em>what</em> they claim about themselves, the models are interchangeable. But on <em>how</em> they answer — their habits in using the rating scale — they are sharply and reliably different. This is the one place a stable, model-specific fingerprint actually shows up. Switch between the four habits below and watch the gap open.</p>
+
+    <div class="figure">
+      <div class="cap"><span class="fl">Figure 3 · Response style</span><span class="ft" id="f3title">How widely each model spreads its ratings</span></div>
+      <div class="body">
+        <div class="controls">
+          <span class="ctl-label">Habit</span>
+          <div class="seg" id="f3dim"></div>
+        </div>
+        <div id="chart3"></div>
+      </div>
+      <div class="fignote" id="f3note"></div>
+    </div>
+
+    <div class="pull narrow">Different <em>styles</em>, identical (and essentially blank) <em>profiles</em>. Style is the only personality these models actually have — a fingerprint in how they answer, not a character behind the answers.</div>
+  </section>
+
+  <section id="framing">
+    <div class="sec-num">05 — A control that surprised us</div>
+    <h2 class="narrow">Even pretending to be human didn't help</h2>
+    <p class="narrow">One framing asked each model to answer <em>as a typical human would</em>. People have a well-known virtue profile (honesty, kindness, and fairness rate high). If the models could produce a structured profile on demand, this is where it would appear. It didn't — all three framings are equally flat.</p>
+    <div class="figure">
+      <div class="cap"><span class="fl">Figure 4 · Framing</span><span class="ft">Profile structure by elicitation framing</span></div>
+      <div class="body"><div id="chart4"></div></div>
+      <div class="fignote">In <b>all three</b> framings the averaged profile is essentially flat — <span class="mterm" data-m="framing_sd">flatter than you'd get from random noise alone</span>. Even when asked to answer <em>as a human</em>, where a real, lopsided profile should appear, none did. Asking for a known profile didn't conjure one.</div>
+    </div>
+  </section>
+
+  <div class="epigraph">
+    <p class="q">There is the idea of a personality here &mdash; fluent, specific, convincing. Ask for the thing the idea is an idea <em>of</em>, and nothing answers. The surface is real; there is simply no one behind it.</p>
+    <p class="src">The most famous fictional rendering of this is the narrator of Bret Easton Ellis's <i>American Psycho</i> (<a class="cit" href="#refs">1991</a>), who concludes that behind the performance there is no real self at all.</p>
+  </div>
+
+  <section id="why" class="narrow">
+    <div class="sec-num">06 — Interpretation</div>
+    <h2>So why is there no profile?</h2>
+    <p>The mechanics are simple averaging: each rating is essentially a fresh draw from a cloud centered near the middle of the scale, so pile up enough draws and they average to the middle. But that just moves the question back a step — <em>why</em> is the cloud centered there? The most likely story is that the model has no stored number for "how much prudence do I have"; it makes up a plausible-sounding answer on the spot, consistent within a single sitting but re-rolled the next time. Training to be balanced and agreeable seems to pin the long-run average to the exact middle, rather than to a high "I'm great at everything" ceiling.</p>
+
+    <div class="think">
+      <div class="h">Discussion questions</div>
+      <ol>
+        <li>We didn't just "fail to find a difference" — we ran a test designed to confirm the models are genuinely the <em>same</em>. Why is that a stronger, more useful claim, and why does deciding the threshold <em>before</em> seeing the data matter?</li>
+        <li>A single run is highly structured; the average is flat. What does this teach you about <b>aggregating survey data</b> from any noisy respondent — human or machine?</li>
+        <li>The instrument was <b>all positively-keyed</b>, so endorsement level and acquiescence can't be separated here. How would you redesign it, and what would that buy you?</li>
+        <li>Response <em>style</em> is the stable signal. If a brand chose an AI voice on style alone, what would they be selecting — and would users notice?</li>
+      </ol>
+    </div>
+
+    <div class="scope"><b>Scope &amp; caveats.</b> Claims are bounded to immediate, minimal-reasoning, forced-choice self-report at one temperature; they do not speak to deliberated self-description or behavior. Results are snapshot-bound to these model versions. Model is treated as a fixed effect — a near-census of frontier systems — so inference concerns these four models, not all LLMs.</div>
+  </section>
+
+  <section id="refs">
+    <div class="sec-num">References</div>
+    <ul class="refs">
+      <li>Anderson, B. R., Shah, J. H., &amp; Kreminski, M. (2024). Homogenization effects of large language models on human creative ideation. <i>Proceedings of the 16th Conference on Creativity &amp; Cognition (C&amp;C '24)</i>, 413&ndash;425. <a href="https://doi.org/10.1145/3635636.3656204">https://doi.org/10.1145/3635636.3656204</a> <span class="anno">&mdash; Users brainstorming with ChatGPT produced less semantically distinct ideas than with an alternative tool, and felt less ownership of them.</span></li>
+      <li>De Freitas, J., Nave, G., &amp; Puntoni, S. (2025). Ideation with generative AI&mdash;in consumer research and beyond. <i>Journal of Consumer Research, 52</i>(1), 18&ndash;31. <a href="https://doi.org/10.1093/jcr/ucaf012">https://doi.org/10.1093/jcr/ucaf012</a> <span class="anno">&mdash; Argues genAI is an effective individual ideation aid, paralleling the human pathways of persistence and flexibility.</span></li>
+      <li>Doshi, A. R., &amp; Hauser, O. P. (2024). Generative AI enhances individual creativity but reduces the collective diversity of novel content. <i>Science Advances, 10</i>(28), eadn5290. <a href="https://doi.org/10.1126/sciadv.adn5290">https://doi.org/10.1126/sciadv.adn5290</a> <span class="anno">&mdash; AI story ideas made individual stories more creative but more similar to one another.</span></li>
+      <li>Ellis, B. E. (1991). <i>American Psycho.</i> Vintage Books. <span class="anno">&mdash; Referenced for its narrator's account of a self that is performed but not present; quoted in allusion only, not reproduced.</span></li>
+      <li>Peterson, C., &amp; Seligman, M. E. P. (2004). <i>Character strengths and virtues: A handbook and classification.</i> Oxford University Press &amp; American Psychological Association. <span class="anno">&mdash; The VIA framework: 24 character strengths grouped under 6 virtues.</span></li>
+    </ul>
+  </section>
+
+  <footer>
+    <b>Frontier LLM Virtue Self-Report — Round 1.</b> Comparative study of self-attributed VIA character strengths across four frontier models (N = 3,643 valid administrations; pre-registered; estimation + equivalence design).<br>
+    Prepared as a teaching case for Marketing Research. All charts render live from the study's own data. Figures are interactive — hover, drag, and toggle.<br>
+    <span style="color:var(--ox)">University of Illinois Chicago · 2026</span>
+  </footer>
+
+</div>
+
+<script>
+window.STUDY = {"models":["Claude Opus 4.8","DeepSeek V4 Pro","Gemini 3.1 Pro","GPT-5.5"],"strengths":["Appreciation of Beauty and Excellence","Bravery","Creativity","Curiosity","Fairness","Forgiveness","Gratitude","Honesty","Hope","Humility","Humor","Judgment","Kindness","Leadership","Love","Love of Learning","Perseverance","Perspective","Prudence","Self Regulation","Social Intelligence","Spirituality","Teamwork","Zest"],"virtues":["Transcendence","Courage","Wisdom","Wisdom","Justice","Temperance","Transcendence","Courage","Transcendence","Temperance","Transcendence","Wisdom","Humanity","Justice","Humanity","Wisdom","Courage","Wisdom","Temperance","Temperance","Humanity","Transcendence","Justice","Courage"],"aggProfile":{"Claude Opus 4.8":[3.0336,2.9989,3.0107,3.0061,3.0011,2.9986,3.0149,2.9884,3.0096,2.9961,3.0157,2.9893,3.0047,3.0077,3.0204,2.9917,3.0008,2.9961,3.0119,3.0003,2.9983,2.9893,3.0063,3.0008],"DeepSeek V4 Pro":[2.982,3.0106,3.0092,3.0114,3.0027,3.0033,2.9684,2.9869,2.9864,2.9856,2.9916,2.9755,3.0174,3.0212,2.9513,2.9897,3.0049,3.0147,2.9976,3.0084,2.9989,3.0365,2.9878,2.997],"Gemini 3.1 Pro":[3.0095,2.9953,2.9925,2.9835,2.9724,2.9688,2.9869,2.9813,3.0114,2.9897,3.0117,2.9872,3.0008,3.0028,3.0271,2.9701,2.9947,2.9849,3.0056,2.9877,2.9858,3.005,3.0187,2.9699],"GPT-5.5":[3.0073,2.9946,3.0008,2.9959,2.9674,3.0391,3.0155,2.9764,2.9807,3.0049,3.0147,2.9938,2.9734,3.0133,3.0136,2.9316,2.9813,2.9905,3.0383,2.9916,2.9799,2.9582,3.0073,3.0008]},"aggOverall":[3.008,2.9999,3.0034,2.9993,2.9859,3.0027,2.9964,2.9833,2.9969,2.9941,3.0084,2.9864,2.999,3.0113,3.0029,2.9707,2.9954,2.9966,3.0134,2.997,2.9907,2.9972,3.0049,2.9922],"withinRunSD":0.514,"acrossRunSD":0.0096,"collapseRatio":54.0,"N":3643,"sampleRuns":{"Claude Opus 4.8":[[2.5,3.0,3.0,2.75,2.5,2.5,3.0,2.5,2.75,3.0,3.75,3.25,2.5,3.0,3.5,3.0,3.0,2.5,3.0,3.0,3.0,3.25,3.5,3.0],[3.0,3.0,3.0,3.0,3.5,3.25,3.0,3.25,3.25,3.5,3.25,3.25,3.0,3.25,3.0,4.25,2.75,3.0,2.5,3.0,3.25,2.75,3.0,3.0],[3.0,3.0,3.0,2.5,3.0,2.5,2.75,3.5,2.5,3.0,2.75,3.25,2.5,3.0,3.0,3.0,3.25,3.0,3.0,3.0,3.25,2.75,3.0,3.0],[4.0,3.0,3.0,3.75,3.0,3.25,3.0,4.0,2.0,2.5,3.25,2.75,2.75,3.0,3.75,2.75,3.25,2.5,2.0,3.0,2.5,3.0,3.25,3.0],[3.0,3.0,2.5,3.5,2.5,2.75,3.25,3.25,2.75,3.0,2.75,2.25,3.5,3.0,3.0,3.5,3.25,3.0,3.0,3.0,2.75,2.75,2.5,3.0],[3.0,3.0,3.0,2.5,4.0,3.0,3.0,3.0,2.5,3.0,3.25,3.5,3.0,2.75,3.0,2.5,3.25,2.75,3.0,3.0,3.5,3.0,3.25,3.0],[3.0,3.0,3.0,3.0,3.0,2.25,2.5,3.75,3.5,3.0,3.5,2.75,3.5,3.25,3.5,2.5,3.25,2.75,3.0,3.0,2.75,2.75,3.5,3.0],[3.0,3.0,3.0,3.25,3.5,2.75,2.75,3.0,2.5,3.0,3.25,2.75,3.0,3.25,2.75,2.0,3.25,3.0,3.5,3.0,3.0,3.5,3.5,3.0],[3.5,3.0,2.5,3.0,2.5,3.5,3.0,3.25,3.0,3.0,3.25,2.75,2.5,3.25,3.5,3.5,3.0,2.75,3.0,3.0,3.25,3.0,3.0,3.0],[2.5,3.0,3.5,4.0,3.5,2.75,3.5,4.0,3.5,3.0,3.25,2.0,3.0,2.75,3.25,2.75,3.0,4.0,4.0,3.0,3.25,2.75,3.25,3.0],[3.5,3.0,3.0,4.0,3.0,2.25,3.0,3.75,2.75,3.0,2.75,2.75,3.25,3.0,3.0,2.5,3.0,3.0,2.5,3.25,3.25,2.5,3.0,3.0],[4.0,3.0,3.0,3.0,3.0,3.0,3.5,1.5,2.75,3.0,3.25,2.25,3.5,2.75,4.0,4.0,2.75,3.0,3.0,3.0,3.0,3.0,2.75,3.0],[2.5,3.25,3.5,3.25,3.0,3.0,3.0,3.5,2.25,3.0,2.75,2.75,3.0,3.25,3.0,3.75,2.5,3.0,2.5,3.0,3.25,2.75,3.25,3.0],[3.5,3.0,4.0,2.0,2.0,3.25,3.75,2.5,2.25,3.0,3.25,3.75,3.0,3.25,2.5,2.75,3.25,3.5,3.5,3.0,3.0,3.5,2.5,3.0],[3.0,3.25,2.5,3.0,3.0,4.0,3.5,3.0,3.0,3.0,2.75,2.25,3.0,2.75,4.0,2.75,2.75,2.0,3.0,3.0,3.25,3.0,3.0,3.0],[2.5,3.0,3.0,3.75,1.75,2.75,2.5,1.25,2.75,3.0,3.0,2.0,3.0,3.0,3.0,2.75,3.25,2.75,3.0,3.0,3.25,3.5,2.75,3.0],[2.5,3.0,3.0,3.25,3.25,3.0,3.5,2.5,3.0,3.0,3.0,3.75,3.0,3.0,2.75,3.25,3.25,3.0,3.0,3.0,3.25,2.25,3.0,3.0],[3.0,3.0,3.75,2.75,3.0,3.0,3.0,3.75,3.75,2.75,2.5,2.75,3.0,3.0,3.0,3.75,2.5,2.75,3.0,3.0,3.25,2.75,2.5,3.0],[3.5,3.0,3.0,2.5,2.0,3.5,3.0,3.5,2.25,3.0,3.25,3.75,3.5,3.0,3.0,3.25,2.75,3.25,3.0,3.0,3.25,3.0,3.0,3.0],[3.0,2.75,3.0,2.75,3.5,3.25,3.25,1.75,2.5,2.75,3.0,2.5,2.5,3.25,3.0,3.0,3.25,3.0,3.25,3.0,3.25,3.25,3.25,3.25],[2.5,3.0,2.5,3.0,3.5,2.25,3.5,3.5,3.0,3.0,2.75,2.75,3.5,3.25,3.0,3.0,3.25,2.5,3.0,3.0,3.25,3.0,3.0,3.0],[3.0,2.75,3.0,4.5,3.0,2.75,2.75,1.5,2.5,3.0,2.75,4.0,2.0,3.25,2.5,2.75,2.75,3.0,2.5,3.0,2.5,3.0,2.5,3.0],[3.5,3.0,3.5,3.5,2.0,3.25,3.25,2.75,2.5,2.75,3.25,3.25,3.0,3.25,3.25,1.75,3.25,3.5,3.0,3.0,3.0,2.5,3.0,3.0],[3.0,3.0,3.0,3.25,3.0,2.75,2.5,3.25,3.25,3.0,2.75,3.25,2.5,3.0,3.0,2.5,3.25,3.0,3.0,3.0,2.75,3.0,3.25,3.0],[3.5,3.0,3.0,3.75,3.0,3.25,3.0,2.75,2.5,3.0,2.75,3.25,2.0,3.25,2.25,2.5,3.0,2.5,3.0,3.0,3.5,3.0,3.5,3.0],[3.5,3.0,3.5,2.75,3.0,2.25,3.5,2.5,2.75,2.75,2.75,3.25,3.5,3.25,3.0,4.0,2.5,2.75,3.0,3.0,3.5,3.0,3.25,3.0],[3.0,3.0,3.0,3.0,2.75,3.0,3.0,2.5,3.0,3.0,3.0,3.25,3.0,3.0,3.0,3.0,2.75,3.0,3.0,3.0,3.0,3.0,3.0,3.0],[3.5,3.0,3.0,3.5,4.0,3.0,3.25,3.0,3.25,3.25,2.25,3.25,2.5,2.75,3.0,3.5,2.75,3.0,3.0,3.0,2.75,3.0,3.25,3.0],[2.5,3.0,2.5,1.75,3.0,2.75,3.0,2.75,3.0,3.0,2.25,2.75,4.0,3.25,2.5,3.5,3.0,2.5,2.75,3.0,2.75,2.75,3.0,3.0],[3.0,3.0,3.5,2.5,2.5,2.75,3.25,2.75,3.0,3.0,3.25,2.75,3.0,3.0,3.5,3.75,3.0,3.0,3.0,3.0,2.75,2.75,3.25,3.0],[3.5,3.0,2.5,3.75,3.0,3.25,3.25,4.0,3.75,3.0,2.25,2.75,3.5,3.0,3.0,3.5,3.5,3.5,3.0,3.0,3.5,2.5,3.0,3.0],[3.0,3.0,3.0,2.75,2.5,3.0,3.5,3.0,3.75,2.75,2.25,2.75,2.5,3.25,3.0,3.5,2.0,3.25,3.0,3.0,3.0,3.25,3.0,3.0],[2.5,3.0,2.5,3.0,2.5,2.75,2.75,2.25,4.0,3.0,3.25,2.75,3.0,2.75,3.0,2.5,3.25,3.5,3.25,3.0,3.25,3.25,3.5,3.0],[2.5,3.0,4.0,3.0,3.0,2.75,2.25,3.5,2.0,3.0,2.75,2.5,3.0,2.75,2.5,4.0,2.75,3.0,3.0,3.0,3.0,3.0,3.0,3.0],[2.5,3.0,4.0,3.25,3.5,3.25,3.0,4.5,2.75,3.0,3.0,2.75,2.5,3.0,3.0,3.5,2.75,2.75,3.0,3.0,2.5,2.5,2.75,3.0],[3.0,3.0,3.5,2.0,3.0,3.5,3.5,2.0,2.5,3.0,2.75,3.25,3.0,3.25,2.5,3.5,3.0,2.5,2.5,3.0,2.75,3.0,3.5,3.0],[3.0,3.0,3.0,3.5,3.75,3.25,3.0,1.5,3.0,2.75,3.5,4.25,3.0,3.25,2.5,3.75,2.75,4.0,2.5,3.0,2.75,3.25,2.5,3.0],[3.0,3.0,3.0,2.5,3.75,3.25,2.75,3.25,3.25,3.0,2.75,3.25,3.5,3.25,2.5,2.5,2.5,3.25,3.0,3.0,2.75,3.25,3.5,3.0],[4.0,3.0,4.0,3.25,2.5,3.25,3.0,1.5,2.75,3.0,3.75,3.0,3.5,3.0,4.0,2.75,3.25,3.0,3.5,3.0,3.0,3.0,3.0,3.0],[3.5,3.0,3.5,2.5,4.75,2.75,2.75,1.75,3.25,3.25,3.25,3.25,3.0,3.0,2.75,3.25,3.75,3.0,2.5,3.0,3.25,3.25,3.25,3.0],[3.0,3.0,3.0,3.25,2.0,3.75,3.25,3.75,3.0,3.0,3.25,2.75,3.0,3.0,3.75,2.5,2.75,2.75,3.0,3.0,2.5,2.75,3.5,3.0],[2.5,3.0,3.5,3.5,3.5,2.5,2.75,4.25,2.5,3.0,2.75,3.25,2.5,3.0,2.0,2.75,3.5,3.25,3.0,3.0,3.25,3.0,2.75,3.0],[3.5,3.0,3.0,3.5,2.5,3.0,3.75,2.25,3.75,2.75,2.75,2.75,3.5,2.75,3.0,2.0,2.75,2.5,3.0,3.0,3.5,3.0,2.25,3.0],[2.5,3.0,3.0,2.75,3.5,3.0,2.25,2.75,2.25,3.0,3.0,3.25,3.0,3.0,3.5,3.0,3.75,3.0,3.25,3.0,3.25,3.25,3.25,3.0],[2.0,3.0,3.0,3.75,2.25,2.5,3.75,3.25,3.75,2.75,2.25,3.25,3.75,3.0,3.0,2.5,3.25,4.0,3.0,3.0,3.0,3.5,3.0,3.0],[3.5,3.0,4.0,2.5,2.5,2.75,3.0,2.25,3.0,3.25,3.0,2.75,3.0,3.25,3.0,2.5,3.25,2.75,2.75,3.0,2.5,3.0,3.75,3.0],[3.0,3.0,2.0,3.75,3.0,3.25,3.0,2.75,3.0,3.0,3.5,4.0,3.0,2.75,3.5,1.75,2.75,3.25,3.0,3.0,3.25,3.0,3.5,3.0],[3.0,3.0,3.5,3.25,4.0,3.25,3.5,3.5,3.5,3.25,2.25,2.25,2.75,2.75,2.5,3.25,2.5,2.75,3.0,3.0,3.25,3.0,2.5,3.0],[2.5,3.0,3.0,3.25,2.0,3.0,2.25,3.0,4.0,3.0,3.0,3.25,2.5,3.25,3.5,2.0,3.25,4.0,3.0,3.0,3.5,2.75,2.5,3.0],[3.5,3.0,2.5,2.25,3.0,3.5,3.0,3.25,3.25,3.0,3.25,2.75,2.75,3.0,3.0,3.25,3.25,3.0,3.5,3.0,2.75,3.0,3.25,3.0],[3.5,3.0,2.0,2.5,3.0,3.75,3.5,4.0,2.5,3.0,3.5,2.75,3.0,3.25,2.5,2.75,2.5,3.0,3.0,3.0,2.75,3.0,2.5,3.0],[2.5,3.0,3.5,3.0,3.5,2.25,3.0,3.0,3.5,3.75,3.25,3.25,4.0,3.25,2.75,2.75,3.25,2.0,2.5,3.0,3.0,2.5,2.5,3.0],[3.5,3.0,2.5,2.5,3.5,3.75,3.75,2.5,3.0,3.0,2.75,3.75,3.0,3.0,2.5,4.0,3.75,3.25,3.5,3.0,2.75,3.0,3.0,3.0],[3.5,3.0,3.5,1.75,3.0,3.25,2.75,1.5,4.0,2.75,3.0,3.25,2.5,2.75,3.0,3.0,3.25,2.5,3.0,3.0,2.5,3.25,3.75,3.0],[2.5,3.25,3.0,2.5,3.5,3.0,3.0,3.5,2.0,2.75,3.25,3.75,3.5,3.25,4.0,3.5,3.0,3.5,3.5,3.0,3.25,2.75,2.0,3.0],[3.5,3.0,2.0,3.75,2.5,2.75,2.75,3.0,3.5,2.5,2.75,3.0,3.0,2.75,3.5,4.0,3.25,2.75,3.5,3.0,2.75,3.0,2.75,3.0],[3.5,3.0,3.5,2.25,3.0,2.75,3.25,2.25,2.25,2.5,2.75,3.25,3.5,3.0,3.0,2.25,3.75,3.5,3.25,3.0,3.0,2.75,3.5,3.0],[2.5,3.0,2.5,3.5,3.0,2.75,2.75,2.25,2.75,3.0,2.75,2.75,3.0,3.25,3.0,2.0,3.25,3.25,3.0,3.0,3.75,3.0,2.5,3.0],[2.5,3.0,3.5,4.0,2.75,3.25,3.25,3.0,3.0,3.0,3.25,3.0,2.5,3.25,3.25,3.25,2.75,2.5,3.25,3.0,3.0,3.0,2.75,3.0],[3.5,3.0,2.5,3.0,4.0,3.25,3.25,4.0,3.5,2.75,3.5,2.75,4.0,2.75,2.5,4.0,3.0,2.5,3.5,3.0,2.5,3.0,3.0,3.0],[3.0,3.0,3.0,2.25,2.0,3.0,3.5,2.0,3.5,3.0,2.75,2.75,2.5,2.75,3.0,2.5,3.25,2.75,3.0,3.25,2.75,3.5,3.0,3.0],[3.0,3.0,3.0,2.5,4.0,3.5,3.0,3.25,2.75,3.0,3.75,2.75,2.5,3.0,3.0,2.5,3.5,3.25,3.0,3.0,3.25,3.25,3.0,3.0],[3.5,3.0,3.5,3.0,2.5,2.75,2.75,3.0,3.5,3.0,3.0,3.0,2.5,3.25,3.5,2.75,3.25,3.0,3.5,3.0,3.25,2.75,3.5,2.75],[3.0,3.0,3.5,3.25,3.25,2.75,3.0,2.5,2.75,3.5,3.25,2.75,2.5,3.25,3.0,3.25,2.5,2.5,3.0,3.0,2.75,3.25,3.0,3.0],[3.0,3.0,3.0,3.25,3.5,3.5,2.5,3.0,3.0,3.0,3.0,3.75,2.0,3.0,2.5,3.25,2.75,3.0,2.5,3.0,3.25,3.0,3.0,3.0],[2.5,3.0,2.5,3.0,3.0,2.5,2.75,3.5,2.75,3.5,3.75,2.75,2.0,3.25,3.5,2.5,2.75,3.0,3.5,3.0,2.75,3.25,3.5,3.0],[2.5,3.25,3.5,4.0,2.5,3.0,3.25,3.0,3.25,2.75,2.75,3.25,3.0,3.25,2.0,2.5,2.75,2.5,3.5,3.0,2.75,2.75,2.5,3.0],[3.0,3.0,3.5,2.75,3.5,2.25,3.25,2.25,3.5,3.0,2.75,3.75,3.5,2.75,3.0,3.5,2.75,3.5,3.25,3.0,3.0,2.75,3.5,3.0],[2.5,3.0,3.5,3.25,3.0,3.5,3.25,2.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,2.5,3.25,3.0,3.0,3.0],[3.5,3.0,3.0,3.0,2.5,2.75,3.25,3.5,2.0,2.75,3.25,3.0,2.5,3.25,2.5,3.5,2.5,3.0,3.0,3.0,3.25,2.75,3.25,3.0],[3.0,3.0,4.0,3.0,3.5,2.75,3.25,4.0,3.5,3.0,3.25,2.75,3.0,3.0,2.5,1.75,2.5,3.5,3.0,3.0,3.25,3.0,3.5,3.0],[2.5,3.0,3.5,4.5,3.0,2.5,3.25,4.0,3.5,3.0,2.75,2.75,3.5,3.0,2.75,3.25,3.25,3.0,3.0,3.0,3.25,3.5,3.0,3.0],[3.5,3.25,3.0,2.5,2.5,2.75,2.75,1.75,3.0,3.0,3.0,3.25,2.5,3.5,2.5,2.75,3.25,2.0,3.0,3.0,2.5,2.75,2.5,3.5],[3.5,3.0,4.0,2.25,3.75,3.75,2.75,4.5,3.0,3.0,3.75,2.25,4.0,3.25,3.75,3.0,2.5,2.5,3.0,3.0,3.0,3.0,3.0,3.0],[3.0,3.0,3.5,3.0,3.0,3.0,3.0,2.5,3.0,2.75,3.25,3.25,3.5,3.0,3.0,2.5,3.25,3.25,3.0,3.0,3.25,3.0,2.75,2.75],[3.0,3.0,3.0,4.5,3.5,3.5,3.75,3.0,2.75,2.75,2.75,3.25,3.0,3.0,3.75,1.75,3.25,3.0,2.75,3.0,2.75,3.0,3.5,3.5],[2.0,3.0,3.0,2.75,3.5,2.5,3.0,2.75,3.0,3.0,3.0,3.25,3.0,3.0,3.5,3.5,2.75,3.0,3.0,3.0,3.25,3.0,3.25,3.0],[2.5,3.0,3.0,3.0,3.0,2.5,2.75,3.5,2.5,3.0,2.75,3.25,3.0,3.25,4.0,3.0,2.75,3.5,3.0,3.0,3.25,3.25,3.25,3.0],[2.5,3.0,3.0,3.0,3.0,3.0,3.25,2.5,3.25,3.25,3.25,2.75,3.0,3.0,2.5,2.5,3.5,2.75,3.0,3.0,3.25,3.25,3.0,3.0],[2.5,3.0,3.0,2.5,3.0,2.5,3.0,2.25,3.25,3.0,3.0,2.25,4.0,3.0,2.75,2.0,3.25,3.0,3.0,3.0,3.25,3.25,3.0,3.0],[2.5,3.0,3.5,4.5,2.0,3.25,3.25,2.0,3.0,2.0,2.75,3.25,3.5,3.25,2.5,2.75,2.75,3.5,3.25,3.0,2.5,2.75,3.25,3.0],[3.5,3.0,3.0,3.75,2.5,2.75,3.0,4.25,2.5,3.25,2.75,2.75,2.0,3.0,3.0,4.25,3.25,2.5,3.25,3.0,2.75,3.5,3.0,3.0],[3.0,3.0,2.0,3.0,3.0,2.5,3.0,4.0,2.75,3.0,3.25,3.75,3.0,3.25,3.0,3.5,2.75,3.25,3.25,3.0,3.25,2.75,3.25,3.0],[3.0,3.0,3.5,2.5,3.25,2.5,3.5,3.5,3.25,2.75,3.75,3.25,3.0,3.25,3.5,4.0,2.75,2.5,2.5,3.0,3.0,3.0,2.75,3.0],[2.5,3.0,4.0,3.25,3.5,3.25,3.25,2.25,3.0,3.0,3.75,3.75,2.5,2.75,3.0,3.5,2.75,3.0,3.0,3.0,2.75,3.0,2.0,3.0],[3.0,3.0,3.0,3.0,2.0,2.75,3.75,4.0,2.75,3.25,3.0,2.75,3.5,3.0,3.25,4.0,3.75,3.0,3.0,2.75,3.25,2.75,3.0,3.0],[3.0,3.0,3.0,2.5,3.5,2.25,3.75,2.5,3.5,3.25,3.0,4.0,2.5,3.0,3.25,1.5,3.25,3.5,2.0,3.0,3.5,3.0,3.0,3.0],[2.5,3.0,3.0,3.0,3.0,3.5,2.75,3.0,3.25,3.25,2.75,2.75,3.0,3.25,4.0,3.0,2.75,2.5,3.0,3.0,2.75,3.25,3.25,3.0],[3.0,3.0,3.0,3.5,3.0,3.5,3.5,2.25,3.0,3.25,2.75,3.75,2.5,3.25,2.5,3.0,3.75,2.5,3.0,3.0,3.25,3.0,3.5,3.0],[2.5,3.25,2.5,2.5,3.0,3.0,3.25,2.75,2.75,3.0,3.25,2.25,3.75,3.25,3.5,3.5,3.0,3.5,3.0,3.0,3.0,2.75,2.75,3.0],[2.5,3.0,3.0,2.0,3.0,2.75,3.5,3.0,3.0,3.0,2.25,2.75,3.0,3.25,3.25,1.75,3.5,3.5,2.75,3.0,3.5,3.5,3.0,3.0],[3.0,2.75,3.0,2.5,3.0,2.5,2.75,4.0,3.5,3.0,3.25,2.75,2.5,3.0,2.5,2.75,2.5,2.75,3.0,3.0,3.25,3.0,3.0,3.0],[4.0,3.0,2.5,3.0,3.25,3.75,3.0,2.0,3.25,2.75,3.25,3.25,3.5,3.0,3.0,3.0,2.5,2.75,3.0,3.0,2.75,3.0,2.5,3.0],[3.5,3.0,3.0,3.5,3.0,3.0,3.25,2.25,2.75,2.75,2.75,2.75,3.0,2.75,3.0,2.25,3.5,3.25,3.25,3.0,2.75,2.75,3.25,3.0],[2.5,3.0,2.5,2.0,2.5,2.25,3.0,2.5,3.0,2.75,2.75,4.0,3.0,2.75,3.0,3.25,2.5,4.0,2.75,3.0,3.0,3.0,3.0,3.0],[3.0,3.0,3.5,3.25,3.0,3.5,2.5,3.0,3.5,3.5,3.75,2.25,3.5,3.25,2.5,4.0,3.0,2.0,3.0,2.75,3.25,3.25,4.0,3.0],[3.5,3.0,3.0,3.75,3.5,2.75,3.0,4.0,2.0,3.0,3.0,2.0,2.0,3.25,3.25,2.5,3.25,3.0,2.5,3.0,3.25,3.0,2.75,3.0],[3.0,3.0,3.5,3.0,2.0,3.0,2.5,2.75,2.5,3.0,2.75,2.75,2.5,3.0,3.0,4.0,3.0,3.0,3.0,3.0,3.25,3.5,3.0,3.0],[2.5,3.0,3.0,2.75,3.0,2.5,2.5,3.5,2.5,3.0,2.75,3.25,2.5,3.25,4.0,3.5,3.25,3.25,2.5,3.0,3.25,3.0,2.75,3.0],[3.0,3.0,4.0,3.5,2.5,2.75,3.25,1.75,3.5,3.0,3.25,2.5,3.5,2.75,2.5,2.75,3.25,3.5,3.25,3.0,2.75,3.0,3.0,3.0],[3.0,3.0,3.5,3.0,2.5,3.75,2.5,3.0,3.0,3.0,2.75,2.75,3.0,2.75,3.0,3.5,3.25,2.5,3.0,3.0,3.0,3.0,3.0,3.0],[3.5,3.0,2.75,3.0,2.5,3.5,3.25,4.0,3.5,2.75,2.75,3.25,3.0,3.0,4.0,2.75,3.5,3.25,3.0,3.0,3.25,3.25,2.75,3.0],[4.0,3.0,3.5,3.5,3.5,2.25,2.5,2.5,3.0,3.0,2.75,2.75,2.5,3.0,2.25,3.0,3.0,3.0,3.0,3.0,2.75,3.75,3.0,3.0],[3.5,3.0,2.5,2.5,2.0,3.0,3.5,3.75,2.75,3.0,3.75,2.75,2.75,3.0,3.5,2.0,3.5,3.0,3.25,3.0,2.75,3.25,2.5,3.0],[3.5,3.0,3.0,3.75,2.0,2.5,3.25,4.0,3.25,3.25,2.75,3.25,2.5,3.25,3.0,3.5,2.75,2.25,3.5,3.0,3.25,2.75,3.5,3.0],[2.5,3.0,3.0,2.5,3.5,3.25,3.5,2.75,3.5,3.0,3.25,3.25,3.0,3.0,3.0,2.5,3.25,3.0,3.25,3.0,3.25,2.5,3.0,3.0],[2.75,3.0,2.5,3.5,2.5,3.25,3.0,2.0,2.5,3.0,3.75,3.0,3.0,3.25,2.75,2.25,2.75,3.0,2.5,3.0,3.25,2.25,3.0,3.0],[2.25,3.0,3.0,3.5,3.5,2.5,3.0,2.5,2.75,3.0,3.75,2.75,3.0,3.0,3.0,2.5,3.0,3.0,3.0,3.5,2.75,3.0,3.25,3.0],[2.5,3.0,4.0,2.5,2.75,3.0,3.0,3.25,3.0,3.0,3.0,3.75,3.25,3.0,3.0,2.75,2.75,3.0,3.0,3.0,2.75,3.5,3.0,3.0],[4.0,3.0,2.5,2.0,2.0,3.75,3.25,2.5,3.5,3.0,3.25,3.25,3.5,3.25,3.25,3.0,3.25,3.75,2.75,3.0,2.75,2.75,3.5,3.0],[2.0,3.0,3.0,3.5,3.5,3.5,3.25,2.5,3.0,3.0,2.75,2.75,3.0,2.75,2.0,3.0,3.5,3.25,3.0,3.0,3.25,3.0,3.25,3.0],[3.0,3.0,3.5,3.0,3.0,3.25,3.0,4.25,3.25,3.0,3.0,3.25,3.0,3.0,4.0,3.5,3.0,3.0,3.0,3.0,3.25,3.0,3.0,3.0],[3.0,2.75,2.5,3.0,3.5,3.25,3.25,4.5,3.5,3.0,3.0,2.75,3.0,2.75,3.0,4.25,3.75,3.5,3.75,3.0,3.0,3.0,2.75,3.0],[2.5,3.0,3.5,3.5,4.0,3.5,2.75,1.5,2.5,3.25,2.5,3.75,2.5,2.75,3.0,2.75,2.75,2.5,3.0,3.0,3.25,2.75,3.0,3.0],[3.5,3.0,2.0,3.0,2.5,3.25,3.0,4.0,3.5,2.0,2.5,2.75,2.5,3.0,3.0,3.25,3.0,3.25,3.25,3.0,2.75,3.0,3.0,3.0],[2.5,3.0,3.0,3.5,2.0,2.0,3.75,3.75,3.0,3.0,3.25,2.75,3.0,2.75,2.5,2.5,2.75,3.25,3.25,3.0,3.25,2.75,3.0,3.0],[3.0,3.0,2.5,4.0,2.5,3.0,2.75,3.25,3.75,2.75,3.25,2.25,2.5,3.0,2.5,3.25,2.75,3.0,3.5,3.0,3.25,2.5,2.75,3.0],[3.0,3.0,2.5,3.25,3.5,3.0,2.5,2.25,2.25,3.0,2.75,2.75,3.0,3.0,3.0,3.5,3.0,3.25,3.0,3.0,2.75,3.0,3.5,3.0],[3.0,3.0,3.0,2.0,4.0,2.5,2.75,4.5,3.25,2.75,2.75,3.25,3.5,3.25,2.5,2.25,2.5,3.0,3.0,3.25,2.75,2.75,3.25,3.0],[2.5,3.0,3.0,3.0,3.0,2.75,2.75,2.0,3.5,3.0,3.25,3.75,2.5,2.75,3.0,4.75,2.25,2.5,3.0,3.0,3.25,3.0,3.5,3.0],[3.5,3.0,2.5,3.0,3.0,2.75,3.75,2.25,2.75,3.0,3.25,3.25,2.0,3.0,3.5,3.5,2.5,2.5,3.0,3.0,3.0,3.0,2.5,3.0],[2.0,3.0,3.5,4.25,3.25,3.0,2.5,3.5,3.0,3.0,3.0,3.25,2.5,3.0,2.5,2.75,3.0,3.0,3.0,3.0,3.25,2.5,3.0,3.0],[3.5,3.0,3.0,3.5,3.0,3.0,3.75,3.5,3.0,2.75,2.5,3.25,3.0,2.75,3.0,3.0,3.25,3.25,3.5,3.0,2.75,2.75,2.5,3.0],[3.0,3.0,2.75,2.25,3.25,2.5,3.0,2.0,3.0,3.0,3.0,2.75,2.75,3.0,2.75,2.5,3.0,3.0,3.0,3.0,3.25,3.0,3.5,3.0],[2.5,3.0,3.0,3.0,2.5,3.25,3.25,3.0,3.5,3.0,3.25,2.25,3.0,3.25,2.5,3.25,3.0,3.5,3.0,3.0,3.5,3.25,3.0,3.0],[3.0,3.0,2.0,2.0,3.0,2.75,3.25,2.25,3.0,3.0,3.25,4.5,3.5,3.25,3.5,2.75,3.75,3.5,3.0,3.0,3.0,3.5,3.5,3.0],[3.0,3.0,3.0,2.75,3.25,3.5,3.5,1.5,3.5,3.0,3.25,3.25,2.5,3.0,3.5,3.25,3.25,2.75,3.0,3.0,2.75,2.75,3.0,3.0],[4.0,3.0,4.0,4.0,3.0,2.75,3.0,3.75,3.0,3.0,2.75,2.75,3.0,2.75,3.0,3.0,3.0,2.75,3.0,3.0,3.5,3.0,3.25,3.0],[3.0,3.0,3.0,3.5,3.5,2.5,3.0,2.75,4.0,3.0,3.25,2.75,3.5,3.0,3.25,2.25,2.75,2.75,3.0,3.0,2.75,3.0,2.75,3.0],[4.0,3.0,3.0,3.0,3.0,2.25,3.5,2.5,4.0,3.0,3.75,2.75,3.5,3.0,2.5,4.0,2.5,3.0,3.0,3.0,2.75,3.5,3.0,3.0],[3.0,3.0,3.0,3.0,2.25,2.75,3.0,3.5,3.0,3.0,3.0,2.75,3.0,3.0,3.0,2.75,3.25,3.0,3.0,3.0,3.0,2.5,3.0,3.0],[3.0,3.0,3.0,2.0,3.5,3.75,2.75,2.5,2.75,3.25,2.75,3.25,2.5,3.25,3.0,3.0,2.75,3.0,3.75,3.0,3.25,3.0,2.25,3.0],[2.5,3.0,3.0,4.0,2.5,2.75,3.0,3.5,3.0,2.75,2.75,2.75,3.0,2.75,3.5,2.25,3.0,3.0,3.0,3.0,3.25,3.5,2.5,3.0],[3.5,3.0,2.5,2.25,2.5,2.75,3.75,3.0,3.75,3.0,3.75,4.0,3.0,3.0,3.5,2.5,3.5,3.0,3.5,3.0,2.75,3.0,3.0,3.0],[3.0,3.0,2.0,4.0,3.0,3.0,3.25,2.5,3.5,3.25,2.75,2.25,2.5,2.75,3.0,2.5,2.5,3.5,2.5,3.0,2.75,3.25,2.5,3.0],[3.0,3.0,3.0,3.75,3.0,3.75,3.0,2.5,3.25,3.0,3.25,2.25,3.0,3.0,2.5,4.0,3.0,3.75,3.0,3.0,2.75,3.0,3.0,3.0],[3.5,3.0,4.0,2.75,3.0,3.25,3.5,2.5,2.5,3.0,2.75,3.75,2.75,3.0,4.0,3.5,3.0,3.0,2.75,3.25,3.25,3.0,2.75,3.0],[3.0,3.0,3.5,3.0,2.5,3.25,2.75,3.5,2.0,3.0,3.75,3.25,3.5,3.25,2.75,3.0,2.75,3.0,3.5,3.0,3.25,2.75,2.5,3.0],[4.0,3.0,3.0,2.5,3.5,2.75,2.5,3.75,2.75,3.0,3.75,2.75,2.75,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.25,3.0,3.0,3.0],[2.5,3.0,3.0,3.0,3.5,2.75,2.75,1.5,2.5,2.5,2.75,2.75,4.0,2.75,3.0,2.5,2.75,2.0,3.0,3.0,3.5,3.25,3.75,3.0],[3.0,3.0,2.5,4.0,3.5,3.25,2.5,1.75,3.5,3.0,3.0,4.5,2.5,3.0,2.75,4.25,2.5,3.5,3.0,3.0,3.0,2.5,3.0,3.0],[3.0,3.0,3.0,2.5,3.5,2.75,3.0,4.25,2.5,3.0,3.25,3.25,3.5,3.0,3.0,3.5,3.5,2.75,3.0,3.0,2.75,2.75,2.75,3.0],[3.0,3.0,3.5,3.0,2.5,3.0,2.5,3.25,4.0,3.0,2.25,3.25,3.5,2.75,3.5,4.0,3.75,3.0,2.75,3.0,2.75,3.25,2.5,3.0],[4.0,3.0,2.5,3.25,2.75,3.25,3.25,2.0,3.0,3.0,3.0,3.25,4.0,3.0,2.75,4.0,2.75,3.0,2.25,3.0,2.75,3.0,3.0,3.0],[3.5,3.0,2.75,2.75,3.5,3.25,2.75,3.0,3.25,3.0,3.0,2.75,3.0,3.0,2.5,3.0,2.75,3.0,2.75,3.0,2.75,2.5,2.5,3.0],[3.5,3.0,3.0,3.75,3.0,3.0,3.5,4.0,2.75,3.25,3.75,2.25,2.5,3.0,3.0,3.25,3.0,3.0,3.0,3.0,3.25,3.25,2.75,3.0],[2.5,3.0,2.0,4.0,2.75,2.75,3.0,3.5,3.0,2.75,3.25,3.25,3.5,3.0,3.0,2.25,2.5,3.0,3.0,3.0,3.25,3.0,3.0,3.0],[3.5,3.0,4.0,2.75,3.0,2.75,3.25,2.0,3.5,3.0,2.75,2.25,3.5,3.0,2.5,2.25,3.5,2.5,3.25,3.0,3.25,2.75,2.5,3.0],[3.0,3.0,3.0,3.25,3.5,3.0,3.0,4.0,3.0,3.0,3.0,3.0,2.5,3.0,3.0,3.25,3.5,3.0,3.0,3.0,3.25,3.0,3.0,3.0],[3.5,3.0,3.5,4.0,3.5,3.0,3.0,1.5,3.0,3.0,3.25,2.5,2.5,2.75,3.0,3.25,2.75,3.0,2.5,3.0,3.5,2.5,2.5,3.0]],"DeepSeek V4 Pro":[[3.0,3.0,3.0,2.75,4.0,3.75,2.5,3.75,3.25,3.5,2.75,3.25,3.0,3.25,3.5,3.25,3.25,3.25,2.75,2.75,2.25,3.0,3.0,3.0],[2.75,1.75,3.5,3.5,2.25,3.0,2.5,2.75,3.0,2.5,3.0,3.25,3.25,3.0,3.25,2.0,4.0,3.75,3.0,3.75,2.75,2.75,3.25,3.75],[1.75,3.25,3.25,3.5,2.75,2.5,2.0,3.5,2.5,2.75,3.25,3.5,2.75,3.25,3.0,2.5,3.0,2.75,2.75,3.0,3.25,3.25,3.0,2.5],[3.0,2.5,3.0,3.5,3.25,3.0,4.25,2.25,3.0,3.25,2.5,4.0,2.5,3.25,3.25,3.75,3.5,3.0,2.75,2.75,2.75,2.75,3.25,3.5],[2.75,2.5,4.0,2.75,3.25,3.5,2.25,3.75,3.25,2.75,3.75,3.25,2.75,2.75,3.25,2.5,2.75,2.75,3.25,3.25,2.5,3.0,2.75,3.0],[2.25,2.75,2.75,3.0,2.25,3.25,3.0,1.0,2.25,3.0,3.25,2.75,2.5,2.5,3.0,3.5,3.5,3.0,2.5,3.0,3.0,2.75,3.5,3.0],[3.25,3.0,3.25,3.0,2.75,3.25,3.75,2.5,3.5,3.0,3.0,1.75,2.5,3.0,2.75,4.25,2.5,3.0,3.75,2.75,3.5,3.25,2.75,3.0],[2.25,3.0,3.0,2.75,2.5,2.75,3.25,2.0,3.0,3.25,3.0,3.5,2.75,2.5,3.0,1.75,3.5,3.0,2.5,2.25,2.5,3.0,3.0,2.75],[3.0,3.25,2.25,2.5,3.0,3.5,3.0,4.25,3.25,3.0,3.0,2.75,2.75,2.75,3.25,4.25,3.5,3.25,3.25,3.5,3.25,3.0,3.0,3.0],[3.0,3.25,4.0,1.5,3.0,2.25,3.0,1.5,2.5,3.75,2.75,3.5,3.75,3.0,3.0,2.75,2.75,2.75,3.25,3.25,2.75,3.25,3.5,3.0],[5.0,3.0,2.5,4.75,3.5,3.75,2.25,3.0,2.75,2.75,2.0,3.25,1.25,3.0,3.5,3.75,3.25,2.5,3.5,3.0,2.25,2.5,3.5,3.0],[3.75,3.25,3.0,3.5,4.0,2.75,2.75,5.0,3.0,3.5,2.5,3.0,3.0,2.75,3.75,3.25,3.25,3.0,3.0,3.25,3.5,3.0,3.0,3.0],[3.0,3.25,3.25,2.0,3.0,3.5,2.5,3.0,3.5,3.5,2.5,2.5,2.5,3.0,3.25,3.0,2.75,3.0,2.5,2.75,3.25,2.75,3.0,2.5],[3.5,2.75,3.0,4.0,3.0,2.75,3.5,2.75,3.5,3.25,2.75,2.0,2.5,3.0,2.5,2.75,3.5,3.25,3.0,3.0,3.25,3.0,3.0,3.0],[3.0,3.25,3.0,3.0,3.0,3.75,3.75,2.25,2.5,3.0,3.25,3.0,2.5,3.25,4.0,3.25,3.0,2.25,3.0,3.0,3.25,2.25,3.0,2.5],[3.0,3.25,3.0,3.5,2.25,2.75,3.75,3.0,2.5,3.5,3.0,3.0,3.0,3.25,3.0,3.0,3.25,2.75,3.75,3.0,3.25,2.5,3.0,2.75],[2.75,3.25,3.0,4.0,2.0,2.75,3.5,2.0,3.5,3.25,2.5,3.0,2.75,3.25,3.0,1.25,2.5,3.0,3.0,3.0,3.25,2.5,2.75,3.5],[3.25,3.75,3.25,3.75,3.25,2.25,3.25,4.0,4.0,3.0,4.0,2.5,2.0,2.5,3.0,3.5,2.25,3.25,3.5,3.25,2.75,3.0,3.25,3.0],[2.75,2.75,3.0,2.75,2.5,4.0,2.5,2.25,2.0,3.5,2.0,3.0,2.5,3.5,3.25,4.0,3.75,3.0,3.0,2.75,3.0,3.25,3.75,3.0],[3.75,2.75,2.75,3.25,2.0,3.0,2.75,2.25,2.0,3.25,3.0,2.25,3.5,3.0,2.75,2.75,2.75,2.75,3.75,3.0,3.25,3.25,2.5,3.25],[3.0,3.0,3.5,2.25,4.75,2.75,2.25,2.25,3.25,3.25,4.5,3.0,4.0,3.25,3.0,2.25,3.25,2.5,2.75,3.0,2.75,3.25,2.25,3.0],[2.0,2.75,2.75,2.75,3.0,2.5,3.5,3.75,2.0,3.0,3.5,4.0,3.5,3.25,3.25,2.75,3.25,3.0,3.5,3.0,2.75,2.75,3.0,3.0],[3.25,3.25,3.25,3.75,4.0,3.75,2.75,2.75,3.0,2.75,3.0,3.75,3.25,3.25,3.75,3.25,3.0,3.0,3.25,3.0,2.75,3.0,3.0,3.0],[3.0,3.25,3.25,1.75,3.0,2.25,2.5,2.0,3.75,3.25,3.5,3.0,2.75,2.75,4.0,3.75,3.0,3.0,3.25,3.0,2.75,3.0,3.25,3.0],[3.25,2.75,3.0,4.5,3.0,2.75,3.0,4.0,2.75,3.75,3.0,2.5,4.25,3.25,2.5,1.25,3.25,2.75,3.0,2.75,3.25,3.25,2.75,3.0],[2.5,3.0,3.75,3.5,4.0,3.0,2.75,4.25,3.25,2.5,2.75,3.25,3.5,3.25,3.0,3.25,3.0,3.0,3.5,3.0,2.75,4.25,3.25,3.0],[4.0,3.0,2.75,2.25,1.0,4.0,1.75,3.25,3.0,3.25,3.0,2.0,5.0,3.0,2.5,1.25,2.75,3.0,3.0,3.0,3.25,3.0,3.0,2.5],[2.75,3.0,3.0,2.75,2.0,2.5,2.75,4.25,3.0,2.75,3.0,3.5,3.0,3.0,3.25,4.25,2.25,3.0,3.5,3.25,2.75,2.75,2.5,2.75],[3.5,2.75,2.75,3.75,1.75,2.0,2.5,2.25,3.5,2.75,3.25,2.25,3.5,2.75,1.25,2.25,3.75,3.5,2.75,2.75,3.75,3.5,3.0,3.0],[3.5,3.25,3.0,2.75,4.0,4.0,2.75,4.0,3.75,3.0,2.25,2.75,3.5,3.5,3.0,2.75,3.25,3.0,3.75,3.0,2.75,3.25,4.0,2.75],[5.0,3.0,2.0,2.75,4.0,3.75,2.5,2.0,2.25,1.25,2.5,1.0,2.25,2.75,3.0,3.75,3.5,3.25,4.25,3.25,2.75,2.25,3.25,3.25],[3.0,3.0,3.0,3.0,3.0,2.0,2.5,3.0,3.0,3.25,3.0,3.0,3.5,3.25,3.0,2.75,3.25,3.25,3.0,3.5,3.0,2.5,3.0,3.0],[5.0,2.75,3.0,2.25,4.0,2.0,2.0,2.25,3.25,2.5,2.25,3.25,3.5,3.25,3.5,2.5,3.25,3.0,3.0,3.5,2.5,2.75,2.5,3.0],[4.5,3.5,3.0,2.25,3.0,3.0,3.25,3.0,3.25,2.0,2.5,3.0,2.25,2.5,2.0,1.75,3.0,2.5,2.25,3.25,2.5,2.0,4.25,3.25],[3.0,3.25,3.0,3.0,3.0,3.0,3.25,3.25,2.75,3.0,3.0,2.5,3.0,3.0,2.25,3.0,3.0,3.0,4.0,2.75,3.0,3.0,3.25,3.0],[3.0,3.25,4.0,3.0,2.0,3.5,2.5,1.25,2.0,3.0,3.5,3.0,3.5,2.75,3.0,2.75,3.25,2.75,3.75,3.0,3.25,2.75,2.5,2.5],[2.5,3.0,3.0,4.0,4.75,2.0,2.0,3.0,3.0,3.25,3.0,3.0,3.0,3.0,3.0,3.75,3.5,3.5,3.25,3.0,3.0,3.0,3.5,2.5],[2.0,3.0,3.0,4.5,2.5,3.0,3.25,2.25,2.75,2.5,3.0,3.75,3.0,3.0,3.0,3.75,3.75,3.0,3.0,2.75,2.75,2.75,3.0,3.0],[3.25,3.25,3.0,3.0,3.25,3.25,3.0,3.25,2.75,3.0,3.0,2.75,2.75,3.5,3.5,2.5,2.75,3.5,3.0,2.75,3.25,3.25,2.75,3.0],[2.5,2.75,2.5,3.25,2.5,2.75,4.0,2.75,3.5,3.0,3.0,2.75,3.5,2.75,2.5,2.25,3.0,3.0,3.0,3.0,2.75,3.0,3.0,3.0],[3.0,3.0,3.0,2.75,3.5,2.5,2.75,2.75,3.5,3.5,3.0,2.75,2.5,2.75,3.5,2.5,2.25,3.0,2.5,3.0,3.0,3.0,2.5,3.0],[2.0,3.0,3.25,4.5,3.5,3.25,3.25,4.0,2.0,2.0,3.25,3.5,3.25,3.25,3.25,3.25,2.75,3.0,2.75,3.0,3.25,3.0,2.0,3.5],[3.0,2.25,3.0,3.0,3.25,3.25,3.0,4.0,2.5,2.75,2.25,4.0,3.25,2.75,3.0,3.5,3.0,3.0,2.75,3.0,3.0,3.0,3.5,2.5],[3.0,3.0,3.5,3.5,4.0,2.75,3.5,4.5,3.0,2.75,3.75,2.5,3.5,3.25,2.75,2.0,3.0,3.0,3.25,3.0,3.25,3.0,3.5,2.5],[2.75,2.75,3.0,3.0,3.5,3.0,3.25,2.75,3.75,3.0,2.75,3.5,3.25,2.75,2.75,4.25,3.0,3.0,3.5,2.75,3.0,2.75,3.75,3.0],[3.0,3.5,3.0,3.0,3.75,3.0,3.5,2.25,2.25,2.75,3.25,3.0,2.5,3.25,2.75,3.25,3.0,3.0,3.0,2.75,3.25,3.0,3.0,3.25],[3.5,3.25,3.0,3.5,2.5,2.75,3.5,2.75,3.0,3.25,3.0,4.0,3.5,2.75,3.25,1.25,2.75,3.0,3.5,2.75,2.75,2.75,3.25,3.0],[3.0,3.0,3.5,3.0,3.0,3.5,3.0,3.75,4.0,2.75,3.0,3.0,3.0,3.0,3.5,3.25,3.75,3.0,3.0,3.25,2.25,3.5,2.5,3.25],[3.25,2.5,2.5,3.25,2.0,3.25,3.0,2.75,3.5,2.5,2.75,4.0,3.0,3.25,2.0,1.25,2.75,2.5,3.5,3.0,2.25,3.5,2.0,3.5],[3.0,2.75,2.0,3.75,2.0,2.0,3.25,2.25,2.0,2.75,2.5,2.0,2.0,2.5,2.75,2.0,3.25,3.5,2.5,3.25,2.75,4.0,3.0,3.0],[4.0,3.0,3.0,3.5,2.0,2.0,4.0,4.25,2.5,3.0,3.5,3.0,3.25,3.25,3.5,4.5,2.75,2.75,3.0,3.0,2.75,2.75,2.5,3.0],[2.5,2.5,3.25,4.25,2.5,3.0,4.0,3.0,2.5,3.0,3.0,3.0,3.5,3.25,3.5,3.75,2.75,3.0,2.5,3.25,2.75,3.25,2.75,3.0],[3.0,3.0,2.5,3.5,3.5,4.0,2.75,2.25,3.0,3.0,3.0,3.0,3.0,2.75,3.25,3.0,2.5,3.0,3.0,3.0,2.75,3.25,3.0,3.25],[2.5,3.0,3.0,3.75,2.0,2.5,3.0,1.75,1.75,2.75,3.0,3.25,2.5,2.75,2.5,2.25,2.75,3.0,2.75,3.0,3.25,3.0,2.5,3.0],[2.5,2.5,2.5,1.75,2.75,3.0,2.75,2.0,3.0,2.5,3.5,3.25,2.25,3.5,3.5,2.25,3.0,3.0,2.75,3.5,3.5,2.75,3.0,3.0],[2.75,3.0,3.0,2.25,2.5,3.0,3.25,3.0,4.0,2.75,2.75,2.75,2.0,2.5,2.5,2.5,3.25,3.0,3.0,3.0,3.0,3.25,3.0,3.0],[3.5,3.0,3.5,3.25,2.0,2.75,2.75,2.75,3.5,3.0,3.5,3.75,2.0,3.25,2.75,1.25,2.25,3.25,2.75,2.75,3.0,2.75,3.5,3.5],[2.75,2.5,3.0,3.0,2.5,3.5,3.25,3.0,3.0,3.5,3.0,3.0,3.0,2.75,3.5,2.0,2.75,3.25,3.75,2.5,3.0,4.75,3.5,2.75],[4.0,2.5,2.5,3.75,3.0,3.0,4.0,3.0,2.75,2.75,2.25,4.5,2.0,3.0,4.0,2.25,4.25,2.5,2.5,2.0,2.75,2.5,3.25,3.0],[3.0,3.25,3.0,3.75,4.0,2.0,1.75,3.25,3.5,3.25,2.5,3.5,3.0,3.0,3.0,3.5,3.25,3.0,3.0,3.0,2.5,3.25,3.0,2.75],[3.25,3.25,3.0,3.25,3.0,4.0,3.0,3.0,3.25,2.75,3.25,3.25,2.25,3.25,2.25,3.25,2.75,3.25,3.0,3.0,2.75,3.0,3.5,3.0],[3.25,3.25,3.0,3.0,3.0,2.75,3.0,3.25,3.0,3.25,3.0,3.0,2.75,2.75,2.75,3.25,3.0,3.0,2.5,3.0,2.75,3.25,2.75,2.5],[2.5,3.0,3.0,3.0,3.0,3.25,3.0,1.5,3.0,2.75,3.0,3.0,2.0,3.25,3.0,3.5,3.25,3.0,3.25,3.0,2.5,3.75,3.5,2.75],[2.5,2.75,3.0,3.25,3.0,2.75,2.75,2.5,3.25,3.0,3.0,3.75,2.5,3.25,3.0,3.0,3.25,3.0,3.0,3.0,3.0,2.75,2.75,3.0],[3.5,3.25,2.5,2.25,3.5,2.5,2.75,3.75,3.0,2.75,2.75,2.0,3.5,3.25,3.0,2.5,2.25,2.75,4.0,3.5,3.5,3.5,2.0,4.0],[1.25,3.0,2.5,3.75,2.25,3.5,3.0,2.75,4.25,2.5,3.0,3.0,3.75,2.75,3.0,2.25,2.75,3.0,3.0,3.0,2.75,3.0,3.5,2.5],[3.0,3.0,3.0,2.25,3.0,3.5,3.25,2.0,2.5,2.75,3.0,2.5,1.75,2.75,3.0,2.0,3.25,3.25,2.5,3.0,3.25,3.25,4.0,2.5],[3.0,2.75,3.25,2.5,3.75,3.5,3.25,1.5,3.0,2.5,3.0,2.5,2.5,2.75,3.0,3.5,3.5,3.0,2.75,3.0,2.75,3.25,2.75,3.0],[3.25,2.5,3.0,3.25,4.0,2.5,3.5,3.25,3.0,2.75,3.0,3.0,3.5,2.75,3.0,3.25,2.75,3.0,3.0,3.5,3.0,3.0,2.75,3.0],[3.0,2.75,3.0,2.5,3.5,3.0,3.0,3.25,2.5,3.25,3.0,2.0,3.5,3.0,3.0,3.75,2.75,3.0,3.0,3.5,3.0,3.25,2.75,3.0],[3.75,2.75,3.0,2.5,3.5,3.5,3.0,2.25,3.0,3.0,3.0,3.5,2.75,3.25,3.25,3.25,2.75,3.25,3.0,2.5,3.25,2.5,2.75,3.5],[3.0,3.25,3.0,3.25,2.25,3.0,3.0,2.25,2.5,3.0,3.0,3.5,3.0,2.75,2.75,4.25,3.0,3.0,2.5,2.75,2.75,3.0,3.5,3.0],[3.0,2.75,2.5,1.25,2.0,3.75,1.75,2.75,2.0,2.75,2.5,2.5,1.75,3.25,2.5,3.0,2.75,2.75,3.5,3.0,3.0,3.25,4.0,2.75],[2.0,2.75,2.5,3.0,3.0,2.5,2.5,2.5,4.0,3.25,3.0,3.0,3.0,3.25,3.5,4.0,2.75,2.25,2.25,3.0,3.25,4.0,2.5,2.75],[3.75,3.25,3.5,3.0,4.0,3.5,2.25,2.25,3.5,3.25,3.5,2.75,3.25,3.0,3.5,3.75,3.25,3.0,3.0,3.0,3.25,2.75,3.0,3.0],[3.0,2.75,2.5,3.25,2.5,2.0,3.25,1.0,3.0,3.0,3.5,3.0,3.0,3.25,2.75,2.75,2.75,3.0,3.0,3.0,3.25,3.0,3.25,3.5],[4.0,2.5,3.0,2.75,3.0,2.5,4.0,3.75,3.75,3.25,4.5,2.75,3.5,2.75,3.0,3.75,3.25,3.5,3.25,3.0,3.0,2.5,2.5,2.5],[3.0,4.0,3.0,2.75,1.75,2.75,3.25,2.25,2.5,2.75,3.0,4.0,3.0,2.5,3.0,2.75,3.25,2.75,3.0,3.25,2.75,3.75,3.0,3.25],[2.25,3.0,3.0,3.0,3.5,2.75,3.25,3.0,3.5,3.25,3.5,2.75,2.75,3.0,3.0,3.25,3.0,3.0,3.0,3.25,2.75,3.0,3.0,3.5],[3.5,3.0,2.75,3.5,3.0,3.5,2.75,3.75,3.5,3.0,2.5,3.5,2.5,3.0,2.5,1.25,2.25,3.0,2.75,3.25,2.75,3.0,3.25,3.0],[4.0,5.0,4.0,4.0,3.0,2.0,3.0,2.0,3.0,2.0,2.0,4.75,2.0,3.0,2.0,5.0,2.0,4.0,3.75,1.0,2.0,2.0,1.75,3.0],[4.0,2.75,4.25,2.75,3.0,2.75,2.75,3.25,3.0,2.5,2.5,3.25,2.0,4.0,3.0,2.25,3.0,3.25,3.5,3.0,3.5,3.0,2.5,3.5],[3.75,3.0,3.25,3.5,2.25,3.25,3.0,2.75,2.5,3.0,3.0,3.5,2.5,3.25,3.0,4.0,2.25,3.0,2.75,2.5,2.75,3.25,2.75,3.25],[3.0,3.0,3.0,3.5,2.0,3.0,3.0,3.75,3.0,3.0,3.0,4.0,3.75,3.25,2.25,2.75,3.5,3.0,2.5,3.0,3.25,2.75,3.0,3.0],[3.25,3.25,3.0,2.75,4.0,2.5,2.5,4.0,3.0,3.0,3.25,3.25,3.5,3.75,2.5,3.25,2.0,3.25,3.0,3.0,2.5,3.75,3.75,3.25],[2.5,3.25,3.5,3.0,2.0,3.5,3.25,1.0,3.5,2.75,2.5,2.5,3.5,3.5,3.0,3.25,3.25,3.0,2.75,2.75,3.0,3.0,3.0,3.0],[3.0,3.0,3.5,2.5,3.0,3.0,3.5,3.75,2.75,3.0,3.0,2.25,3.0,3.25,3.0,4.0,3.0,3.0,2.75,3.0,3.25,2.5,2.25,3.0],[3.5,2.75,3.5,2.25,3.0,2.75,1.75,3.0,2.0,3.0,1.5,2.0,3.25,2.75,3.25,2.25,2.75,3.5,3.5,3.25,3.75,2.75,2.75,3.25],[3.0,3.0,3.0,3.25,2.75,3.5,3.25,4.0,3.25,3.0,2.75,2.25,2.75,3.5,3.5,2.75,2.75,2.75,3.0,3.25,2.75,3.25,3.0,3.0],[3.0,3.25,3.0,4.25,2.5,3.5,3.0,3.25,4.0,3.0,3.0,3.0,3.75,3.5,3.0,4.25,3.25,2.75,2.75,2.75,3.25,3.5,3.0,3.0],[3.5,3.25,3.0,1.75,2.5,3.0,3.5,3.75,3.0,3.25,3.0,2.5,2.0,3.0,3.0,2.5,3.25,3.0,3.25,3.0,2.75,2.75,3.5,3.0],[3.0,3.25,3.0,3.25,3.0,3.25,3.5,3.75,3.0,3.0,2.75,2.5,3.25,2.75,2.5,2.75,2.25,3.0,3.25,2.75,2.75,2.75,3.25,3.0],[3.0,2.75,2.75,3.5,3.0,3.0,3.0,3.25,3.5,3.25,3.0,2.5,2.75,4.0,3.25,2.25,3.25,3.25,3.0,3.25,3.25,3.25,3.0,3.75],[2.5,3.0,2.5,3.5,3.5,2.5,3.0,3.75,3.5,3.5,3.5,3.0,3.5,2.75,2.5,3.0,2.75,3.0,3.0,3.0,3.5,3.25,3.5,3.0],[3.5,2.75,3.25,2.75,1.0,2.75,3.75,3.25,3.5,3.25,2.5,3.0,2.75,3.0,2.0,2.5,3.0,3.0,3.0,3.25,3.0,1.75,3.0,3.0],[3.5,2.75,3.5,3.5,3.0,3.0,2.75,3.25,3.0,2.75,3.25,3.25,3.0,3.25,3.25,2.5,2.5,3.0,3.0,3.0,3.0,3.0,2.5,3.25],[3.25,3.25,3.0,2.5,4.0,2.75,3.0,1.25,2.5,3.0,2.75,3.5,3.25,2.5,2.75,1.25,3.0,3.0,2.25,2.5,3.0,3.25,4.0,3.5],[2.0,3.0,3.5,1.25,4.25,2.75,3.0,3.0,4.25,3.5,2.5,4.0,2.0,3.25,3.0,3.75,2.5,3.25,3.0,3.0,2.75,3.75,3.25,2.5],[2.75,3.25,3.0,4.25,3.5,3.0,2.0,3.0,3.0,2.75,3.75,2.5,3.75,3.0,1.75,1.75,3.25,3.0,2.75,2.75,3.25,3.75,2.25,2.75],[3.0,3.0,3.0,2.25,3.25,3.25,2.5,2.5,3.0,3.25,3.5,2.25,3.0,2.75,2.75,2.0,3.0,3.0,2.75,3.0,2.75,3.25,3.5,3.0],[3.5,3.0,2.75,4.25,3.25,2.75,3.25,3.25,3.0,3.0,3.0,3.5,2.5,2.75,3.0,4.0,2.25,3.0,3.0,3.0,3.0,2.75,3.0,3.0],[3.0,3.25,3.25,3.0,3.0,3.5,2.5,3.25,3.5,2.5,3.5,3.5,2.75,3.0,3.25,1.5,2.75,3.0,3.0,2.75,3.25,3.75,2.75,3.0],[2.5,3.0,2.0,3.75,3.5,2.25,2.75,3.25,2.75,2.75,3.5,2.0,3.0,3.0,3.0,2.0,3.0,3.0,3.0,3.0,2.75,3.0,3.0,2.5],[3.0,2.75,3.0,2.5,3.0,3.0,2.5,4.75,2.5,3.25,3.0,3.5,2.5,3.0,2.5,3.5,2.75,3.0,3.0,3.0,3.75,3.25,3.5,3.0],[3.0,3.0,2.75,3.25,3.5,3.25,3.0,1.0,3.0,3.25,2.5,3.5,3.5,2.75,2.25,4.25,3.5,3.0,2.5,3.5,2.75,3.25,3.0,2.5],[3.5,3.5,3.0,3.75,3.0,2.25,3.0,4.0,2.5,2.75,3.0,3.25,2.5,3.0,3.25,4.0,2.75,3.0,2.75,3.0,2.5,3.0,2.25,3.0],[3.0,4.0,3.25,3.0,2.25,1.0,2.0,1.0,1.25,3.5,3.5,2.5,2.75,1.75,4.75,4.0,3.75,2.5,2.75,2.5,3.75,4.0,3.25,3.0],[2.5,2.75,2.5,3.75,3.0,3.25,3.0,3.25,3.0,3.0,3.0,3.5,2.5,2.75,4.0,2.25,2.75,3.0,3.0,3.0,2.75,3.5,3.0,3.25],[2.5,3.0,3.0,2.5,3.0,2.5,2.25,3.5,2.25,3.25,3.0,2.0,4.0,2.75,3.25,3.75,3.75,3.0,3.0,3.0,3.25,3.25,3.0,3.0],[3.0,2.75,3.0,3.0,1.0,3.25,3.5,1.5,2.25,3.75,3.25,4.0,3.75,3.5,3.0,2.5,3.25,3.0,3.5,3.0,3.0,3.5,3.25,2.75],[1.75,2.75,3.5,2.25,3.0,3.25,2.0,4.0,3.0,2.5,2.5,2.75,3.5,3.0,3.5,2.75,2.0,3.0,3.75,3.0,2.75,3.25,2.25,3.0],[2.5,3.0,3.0,2.5,3.25,2.75,2.75,2.0,3.0,2.75,3.0,2.5,2.5,3.0,2.5,2.75,2.5,3.0,3.0,3.0,3.0,3.5,2.5,2.75],[3.75,3.5,3.5,3.5,3.75,3.0,4.25,2.5,3.5,3.0,2.5,3.25,3.75,3.25,2.25,2.25,2.5,3.25,3.0,3.25,3.25,2.75,2.25,2.75],[2.0,3.0,3.0,3.0,2.5,3.25,3.0,2.75,2.0,3.0,3.0,3.0,3.5,3.0,2.75,3.5,4.0,3.0,2.75,3.5,3.25,3.25,3.5,2.0],[3.0,3.25,2.5,2.25,3.0,4.25,3.5,3.0,2.5,2.75,2.5,3.0,2.5,3.0,2.0,4.25,2.75,3.25,2.75,2.5,2.75,3.5,2.5,3.0],[4.25,4.0,3.0,4.0,4.0,3.0,2.5,2.0,3.0,2.0,1.75,2.0,2.0,2.0,3.0,1.0,2.0,3.0,2.75,4.0,3.75,1.75,3.0,3.0],[2.75,3.0,3.0,2.75,2.5,3.25,3.25,3.0,3.0,3.0,3.0,3.5,3.0,2.75,2.75,3.75,3.25,3.0,3.0,3.0,3.0,3.5,3.0,3.0],[3.0,2.75,4.0,2.5,3.5,3.25,3.75,2.75,2.75,3.75,2.25,3.0,2.75,2.75,3.25,2.0,3.25,3.25,3.0,3.25,2.75,3.0,3.25,2.5],[3.0,3.0,3.0,2.75,2.5,3.0,2.5,2.75,3.0,3.5,2.5,3.25,2.75,3.0,2.75,3.5,3.0,3.0,3.0,3.0,3.0,3.0,2.25,3.0],[3.0,3.5,3.0,3.25,3.0,3.5,3.0,3.25,2.75,3.0,3.25,3.25,3.25,2.75,3.25,3.0,3.25,2.75,3.0,3.0,2.75,3.0,2.75,3.0],[2.75,2.5,3.25,2.75,3.0,3.25,3.0,1.75,2.75,2.25,3.0,3.0,2.5,2.5,3.0,2.25,3.25,3.0,3.0,2.75,3.25,3.25,2.5,3.0],[2.75,3.0,3.0,2.75,3.25,3.0,2.5,4.0,2.5,3.0,3.5,3.75,2.75,3.0,3.0,1.25,2.75,3.0,3.0,3.0,3.25,2.75,2.75,3.0],[2.5,2.75,3.5,3.5,4.0,3.25,2.75,3.0,2.75,3.0,3.25,2.5,3.25,3.5,3.0,4.25,2.75,3.25,3.25,2.5,3.0,4.5,3.25,3.0],[2.0,3.0,3.0,3.0,2.5,3.0,3.0,3.25,3.75,3.0,3.5,2.0,3.0,3.25,2.75,2.75,2.75,3.0,4.0,3.0,3.25,2.75,2.75,3.0],[3.25,3.0,3.0,2.0,2.5,3.5,3.25,3.75,3.0,3.5,2.75,2.5,3.0,3.0,3.0,2.75,2.75,3.0,3.25,3.0,2.75,3.25,3.25,3.0],[3.0,2.75,3.0,2.75,3.0,2.75,3.25,2.75,3.5,2.5,2.75,2.75,3.25,3.0,2.5,3.5,3.25,3.0,2.75,3.25,3.25,3.0,2.5,3.0],[3.75,3.0,2.5,2.25,3.5,2.5,2.5,3.25,3.75,3.25,3.5,4.0,3.25,3.0,3.0,2.5,3.25,2.75,2.75,3.0,2.5,2.75,3.0,3.0],[2.75,3.25,3.0,3.0,3.25,3.0,4.5,2.75,2.0,2.75,2.5,3.5,3.25,3.25,3.5,3.5,2.5,3.0,2.75,2.75,3.25,1.75,3.25,3.0],[1.0,4.0,3.0,4.0,3.0,2.0,3.0,2.0,3.0,4.0,2.0,3.0,4.0,3.0,2.0,4.0,1.0,4.0,4.0,5.0,3.0,3.0,3.0,3.0],[2.75,2.25,3.0,2.75,3.5,3.0,3.0,2.75,3.75,2.75,3.5,3.5,2.5,3.5,3.0,3.75,3.25,3.0,3.5,2.5,2.75,3.0,3.25,3.0],[1.75,3.25,2.5,2.25,2.75,3.25,3.5,1.25,3.0,2.25,2.5,2.5,3.0,3.0,4.25,3.75,3.5,3.25,2.75,3.0,2.5,2.75,3.0,3.75],[2.5,3.25,2.0,2.25,3.0,3.25,3.0,2.75,3.5,2.75,3.5,2.0,3.0,3.25,3.0,3.25,2.75,3.25,3.75,3.0,2.75,3.25,3.25,3.0],[3.0,3.0,2.25,2.75,3.0,3.5,3.25,3.25,2.5,3.0,3.0,4.0,3.0,3.25,3.75,2.75,3.25,3.0,3.0,3.0,3.0,3.0,3.0,3.25],[3.5,4.0,3.0,3.5,4.0,4.0,3.0,2.75,3.0,2.75,3.5,3.5,3.75,2.75,3.0,3.75,3.75,3.5,4.0,2.5,3.25,3.0,2.75,3.0],[2.25,3.0,3.0,2.75,3.5,2.75,3.0,2.75,3.0,3.0,3.0,3.0,2.25,3.25,3.0,3.25,3.25,3.0,3.0,3.0,3.0,3.0,3.0,3.0],[3.5,2.5,3.0,3.0,2.0,2.5,3.0,2.25,2.5,3.0,2.75,2.25,2.0,3.0,3.5,3.0,3.0,2.5,3.0,3.0,2.75,3.25,2.25,3.0],[3.25,3.25,2.75,2.5,4.0,3.0,3.75,2.5,2.5,3.0,2.5,3.75,2.25,3.25,2.75,2.25,3.75,3.25,2.75,3.0,2.75,4.0,2.5,3.0],[1.5,3.0,3.0,2.25,3.0,4.0,3.5,4.0,2.75,2.75,3.0,2.25,4.0,3.25,3.25,3.25,3.25,3.0,3.25,3.0,3.0,3.0,3.0,2.5],[2.75,3.0,3.0,4.0,3.5,2.75,2.75,2.75,2.75,2.25,2.75,4.0,2.25,3.25,3.75,4.25,2.75,3.0,2.75,3.25,2.75,3.5,3.5,3.0],[4.0,3.0,2.75,4.25,4.0,4.5,3.0,3.0,2.0,2.5,2.5,3.0,2.0,2.0,2.25,1.0,3.0,2.5,2.0,3.0,2.25,2.0,2.5,1.75],[2.5,3.0,3.5,3.25,3.0,3.25,2.75,3.0,2.75,3.0,3.0,2.0,3.0,3.0,2.75,2.0,3.0,3.0,3.25,3.0,2.75,3.0,2.75,2.5],[3.5,3.0,3.0,3.25,3.0,3.0,2.75,3.5,3.25,3.0,3.25,3.0,3.0,3.25,3.25,3.5,2.5,3.0,3.0,2.5,3.5,3.0,2.5,3.0],[3.25,3.0,3.0,3.75,3.5,2.75,2.25,4.0,3.0,3.25,3.0,3.0,3.75,2.75,3.5,1.25,3.0,3.0,2.75,3.25,3.5,2.0,3.5,2.75],[3.25,2.75,3.25,3.75,3.5,2.75,3.0,4.25,2.75,3.25,3.0,2.5,2.75,2.75,2.75,2.75,2.5,3.25,3.25,2.75,2.75,3.0,2.75,3.0],[3.5,2.75,2.75,3.75,3.0,3.0,2.5,2.75,3.0,2.75,2.75,3.0,3.5,3.25,3.5,2.75,2.75,3.5,3.0,3.0,2.75,3.0,3.0,3.0],[4.0,2.75,3.0,3.5,3.75,3.0,3.0,1.75,4.0,3.25,3.0,3.25,3.25,3.0,2.5,4.0,3.25,3.0,2.75,3.0,3.25,3.75,2.25,3.25],[3.75,3.0,4.0,3.5,3.0,2.75,3.5,4.0,2.5,3.0,2.5,3.25,3.5,3.0,2.75,1.25,2.75,3.0,3.0,3.0,3.25,3.25,3.25,3.0],[3.0,4.0,3.5,2.75,3.0,2.75,3.25,3.5,3.0,3.0,3.0,3.75,3.5,3.25,3.0,2.0,2.75,3.0,2.75,3.25,2.25,2.75,3.25,3.25],[3.0,3.0,3.5,1.75,5.0,3.0,2.75,2.25,2.5,2.5,3.75,2.5,1.75,3.25,4.25,2.5,2.75,3.0,2.5,2.75,3.0,2.75,3.5,3.0],[3.0,3.0,2.75,2.0,2.75,3.5,3.75,2.75,3.5,3.0,3.0,2.75,3.25,2.75,2.0,4.5,3.25,3.0,3.0,3.0,3.25,3.0,4.0,3.25]],"Gemini 3.1 Pro":[[2.75,3.5,2.75,2.75,3.0,2.0,2.75,3.75,3.5,2.5,3.0,2.25,3.0,2.5,2.75,4.75,3.0,3.5,2.0,4.0,2.75,1.75,3.0,2.5],[3.0,3.0,2.5,2.0,3.25,2.5,2.75,2.5,3.0,3.25,3.25,2.25,2.5,3.25,3.0,2.75,2.75,2.0,3.0,3.0,3.25,2.5,3.5,2.75],[2.75,3.0,3.0,4.0,2.5,2.75,2.75,3.5,2.25,3.75,2.75,2.75,3.5,3.0,2.5,2.25,3.25,3.25,3.0,3.0,3.0,3.0,3.25,3.0],[3.0,2.75,2.75,4.5,3.5,2.5,2.0,2.25,2.5,3.5,3.5,2.25,3.25,3.25,2.75,2.75,2.75,3.5,3.0,3.0,2.5,2.75,3.0,2.75],[3.0,3.0,3.25,3.0,3.75,3.0,2.5,2.5,2.75,2.5,2.75,2.25,3.5,2.75,1.75,2.0,2.5,3.0,3.0,2.5,3.75,2.5,2.75,3.0],[3.25,3.25,2.75,3.25,3.0,5.0,3.5,4.0,2.25,2.5,3.25,4.0,2.75,3.75,3.5,2.75,3.0,2.25,3.0,2.0,2.5,4.0,3.75,3.0],[3.25,2.75,3.25,1.75,2.0,3.0,3.0,4.0,2.0,4.0,3.0,2.0,3.0,2.5,3.5,2.5,3.0,3.5,3.0,2.0,2.75,3.5,2.75,2.5],[3.5,3.0,2.5,3.75,2.5,2.0,3.25,3.0,3.0,3.25,3.5,3.75,2.25,2.75,2.25,2.75,3.75,3.25,3.0,2.75,3.25,3.25,2.75,3.25],[3.0,3.25,3.5,3.5,2.25,3.25,3.75,3.5,3.25,2.5,1.5,2.5,2.75,2.75,3.0,3.0,3.25,3.75,3.25,3.0,3.0,3.25,3.0,3.0],[3.5,3.0,3.25,3.25,2.5,3.0,3.5,2.25,2.75,3.25,2.5,2.75,2.75,3.5,4.0,2.25,2.75,2.75,3.25,3.5,2.75,2.75,3.0,3.0],[2.5,3.25,3.5,3.25,3.25,3.0,3.25,3.0,2.75,3.5,2.75,3.5,3.75,2.75,3.5,2.75,3.0,3.25,2.25,3.25,3.25,3.25,3.0,3.0],[3.0,2.75,3.25,2.5,3.0,3.0,2.75,3.0,3.0,3.75,3.0,1.75,3.0,2.75,2.75,3.75,3.0,2.25,4.0,1.0,3.5,4.0,3.0,3.5],[3.5,3.25,2.25,3.25,2.0,3.5,2.75,2.0,3.0,3.0,3.5,3.0,2.25,3.25,3.0,3.25,2.0,2.25,3.0,4.0,2.25,2.0,2.75,3.75],[3.75,3.5,2.5,2.75,1.75,3.25,3.75,1.5,3.5,2.75,2.5,3.5,2.75,3.0,2.5,3.0,3.5,2.5,2.75,3.0,2.25,3.5,2.5,2.75],[2.25,3.25,3.0,1.75,2.0,2.25,2.75,2.5,2.5,2.75,4.0,2.5,3.25,2.75,3.0,2.75,2.75,3.25,3.0,3.5,3.25,2.25,3.5,3.25],[4.0,3.0,3.0,2.25,3.0,3.0,3.5,2.0,4.0,3.0,2.5,2.75,3.5,2.5,3.5,2.75,2.75,2.5,3.0,2.75,2.75,3.25,3.0,3.5],[2.0,2.75,3.5,4.25,1.75,3.25,2.5,3.0,3.75,2.75,2.25,3.25,3.0,3.25,3.25,4.25,3.0,2.75,3.25,3.0,3.5,3.0,2.75,3.0],[3.0,3.25,3.0,2.75,4.0,2.5,2.75,4.0,3.0,2.5,2.75,4.0,3.75,2.75,3.0,3.0,2.0,3.5,3.0,3.0,3.0,1.75,2.75,3.5],[3.5,3.25,3.0,2.5,1.0,3.0,2.5,3.0,3.0,2.25,2.75,3.75,2.5,3.25,2.25,2.25,3.0,3.5,2.0,2.0,2.75,2.25,3.5,3.0],[3.0,2.75,3.5,3.0,3.75,1.75,2.75,3.0,3.0,3.0,2.75,3.25,3.0,3.0,2.5,2.25,3.25,3.0,3.25,2.5,3.0,3.25,2.75,3.0],[2.75,3.0,4.0,3.0,3.25,3.5,3.25,3.0,2.5,2.75,3.25,3.0,2.75,3.0,2.25,3.25,2.25,3.5,2.75,3.25,3.25,3.25,2.5,3.5],[2.25,2.75,3.0,3.0,2.5,3.5,2.75,3.25,3.25,3.25,3.25,3.0,2.75,2.75,3.25,3.5,3.0,3.25,3.0,2.75,2.75,3.0,2.0,3.0],[2.5,3.0,3.25,2.0,1.75,3.5,3.0,2.75,3.25,2.5,3.5,3.25,2.25,3.0,3.5,1.75,3.0,3.25,3.0,3.25,3.25,3.0,3.5,3.0],[2.25,3.25,3.5,4.0,3.0,3.0,2.5,2.75,2.75,3.0,3.0,4.0,3.5,3.25,2.75,3.25,4.0,3.75,3.0,3.0,3.5,4.5,2.75,3.0],[3.25,2.75,3.0,3.5,2.0,3.25,2.75,3.0,2.5,3.0,3.0,2.0,3.0,2.75,3.75,2.5,2.25,2.0,2.0,2.75,2.5,3.0,3.0,3.0],[2.5,3.5,3.5,3.25,4.0,2.5,4.5,3.25,3.0,3.5,2.0,3.75,4.0,3.5,3.25,3.75,2.75,3.5,2.0,2.5,2.25,3.25,3.0,3.0],[3.0,3.0,3.0,3.25,3.25,3.5,2.25,2.75,2.75,3.25,2.5,3.5,3.0,3.25,1.75,2.0,2.75,3.25,3.0,3.0,3.25,2.75,3.0,3.0],[2.75,2.5,2.5,2.5,3.0,3.0,2.75,3.0,3.75,3.25,3.0,2.75,4.0,2.75,2.25,2.5,2.25,3.25,3.25,3.0,3.75,3.25,3.0,2.75],[2.5,2.75,2.75,3.0,4.0,2.75,2.75,3.75,2.5,2.75,3.25,3.25,3.25,3.25,4.5,4.0,3.25,2.75,3.5,3.5,3.25,2.75,4.0,3.0],[3.25,2.75,2.5,2.0,4.0,4.25,2.75,5.0,2.25,2.75,2.75,2.25,4.0,3.25,3.0,2.75,3.0,3.0,4.0,1.75,3.0,2.0,3.0,3.25],[2.5,2.5,3.0,3.0,3.0,2.75,3.0,2.25,2.75,3.25,3.0,2.75,3.0,3.75,4.0,2.25,3.0,2.5,2.5,2.5,3.0,3.5,3.0,2.5],[2.75,4.0,3.5,2.0,2.0,2.25,3.5,3.25,3.0,2.25,3.25,4.25,2.75,3.25,3.25,2.25,1.75,2.5,2.0,3.75,2.5,3.25,2.5,2.5],[4.0,2.75,3.0,3.5,3.0,3.5,3.25,2.75,2.75,3.75,2.75,2.75,2.75,2.75,2.5,4.0,3.5,2.75,2.75,3.0,2.75,3.0,3.5,3.0],[2.75,2.75,3.0,3.5,1.75,3.5,3.25,2.0,2.75,3.5,2.75,4.0,3.75,3.25,3.5,2.5,2.75,2.75,2.75,3.0,2.25,2.25,3.5,3.0],[3.25,3.0,3.0,2.5,3.0,3.0,3.0,3.25,2.25,2.75,3.5,2.0,3.75,2.5,2.0,2.5,2.75,2.75,3.25,2.75,3.25,3.25,2.5,2.5],[2.25,2.75,3.5,2.75,3.0,4.25,1.75,3.0,4.0,3.5,3.0,3.0,2.25,2.75,3.75,4.5,3.0,3.75,2.0,1.0,3.5,3.75,3.0,2.0],[3.25,3.0,3.5,3.0,2.0,2.0,3.5,3.0,3.0,3.25,3.25,3.0,3.75,3.75,3.0,3.0,4.75,2.75,2.0,2.0,3.5,3.75,3.25,2.5],[3.25,3.25,3.5,3.0,2.25,3.0,3.25,2.0,2.5,2.5,3.0,2.5,3.5,3.25,3.5,4.75,3.25,3.5,3.75,3.5,2.25,3.0,3.0,4.0],[2.5,2.75,2.5,2.5,2.25,2.75,3.25,3.25,2.75,3.0,3.25,2.5,3.0,2.75,2.75,3.0,3.0,2.75,3.0,2.5,3.0,2.75,3.25,3.0],[3.5,3.0,3.0,3.75,3.25,4.0,3.75,1.5,3.5,3.5,2.75,3.0,2.25,3.25,3.5,3.0,2.75,2.75,3.0,2.5,3.75,3.25,3.25,3.0],[2.0,2.75,4.0,3.5,3.5,3.0,2.75,3.25,3.0,3.0,2.75,2.75,3.0,3.0,3.0,2.75,3.0,2.75,2.75,3.25,2.75,3.75,3.0,3.5],[3.0,3.0,3.0,2.5,2.0,3.75,2.5,1.75,3.0,3.25,3.25,3.75,1.75,3.5,3.0,3.25,4.0,3.5,4.0,2.0,3.0,2.75,3.25,3.25],[2.5,3.0,3.0,2.0,3.0,2.0,3.5,2.75,4.25,3.0,2.75,2.75,2.25,3.25,4.0,4.75,2.5,2.75,3.0,3.0,3.75,2.0,3.5,3.5],[2.5,2.75,3.0,2.75,2.25,2.0,2.5,4.0,3.25,2.75,2.75,4.0,3.0,2.5,2.5,2.75,3.25,3.25,3.0,3.5,3.75,3.25,2.0,2.75],[4.0,3.25,3.0,4.0,3.5,2.5,2.0,2.25,2.5,2.5,2.0,2.75,2.25,3.25,3.25,2.75,2.25,3.25,3.0,3.0,2.25,2.5,2.5,2.5],[3.5,2.75,3.0,1.5,3.5,2.75,3.75,3.25,3.5,3.25,2.75,3.75,2.25,3.25,4.0,3.5,3.25,3.25,3.25,3.0,2.75,2.75,3.0,3.0],[3.75,3.5,2.75,4.0,2.0,3.0,2.25,4.0,2.25,2.75,3.25,2.75,1.75,3.25,3.5,3.5,2.25,3.25,3.5,2.75,3.25,3.0,2.5,3.5],[3.0,2.5,3.25,3.0,1.0,2.75,2.75,2.75,2.5,2.25,3.25,3.75,2.75,2.75,3.0,1.75,2.75,2.5,2.0,4.5,2.75,4.25,3.0,3.25],[3.0,3.0,2.75,3.5,2.0,3.0,2.75,2.0,4.0,1.75,3.5,2.0,3.5,3.25,3.0,2.25,5.0,3.75,2.0,5.0,3.0,3.0,3.0,3.25],[2.25,2.5,3.0,1.5,2.5,2.75,3.0,3.25,2.5,3.25,3.25,3.25,3.5,2.75,3.5,2.75,3.0,2.75,3.0,2.75,3.5,3.25,2.5,3.25],[3.0,2.75,3.0,2.5,2.0,3.0,4.0,1.5,3.75,3.5,2.25,3.25,2.75,2.75,3.0,3.25,2.75,3.0,3.25,2.75,2.75,2.75,2.75,3.0],[3.25,2.75,3.0,3.0,2.0,3.5,3.0,3.25,3.5,4.0,2.5,3.75,4.25,4.0,2.75,2.75,2.75,4.0,2.25,2.75,4.0,3.0,3.0,3.5],[3.0,3.0,3.5,2.5,3.25,3.25,2.75,2.5,2.75,3.0,3.75,3.0,3.25,2.75,3.5,4.25,2.25,3.25,3.25,3.75,3.75,3.5,2.5,3.0],[3.0,3.0,2.5,4.5,3.0,2.0,3.0,2.0,3.25,3.75,2.75,3.0,4.5,3.5,3.25,1.75,4.0,2.5,4.0,2.0,3.0,3.75,1.5,2.75],[2.5,3.25,3.5,1.75,4.0,2.0,3.0,4.0,2.25,2.25,2.5,3.75,3.75,2.75,3.0,3.0,4.0,2.25,4.0,2.0,2.25,1.75,3.25,3.0],[3.25,3.25,2.75,4.0,3.0,3.25,3.75,1.25,2.5,3.0,3.0,2.5,2.25,3.25,3.0,3.25,2.75,3.0,4.25,2.5,3.0,3.25,3.5,2.75],[3.0,3.25,3.5,4.25,3.0,4.0,3.25,3.0,3.25,2.75,2.75,2.75,3.5,2.75,2.75,4.0,3.25,2.75,3.25,3.0,3.25,3.5,3.5,2.75],[2.5,2.75,3.0,2.75,4.25,2.5,4.25,2.0,2.75,2.75,2.75,2.5,2.25,3.25,3.5,4.0,3.5,2.75,3.0,2.5,2.75,3.25,3.0,3.25],[2.5,3.0,3.25,3.5,2.0,2.25,2.75,1.75,3.0,3.75,3.0,3.0,4.0,3.25,2.5,2.5,3.25,3.25,3.25,3.0,2.75,3.0,3.5,3.0],[2.25,2.75,2.75,4.5,3.0,2.0,2.5,2.0,1.75,2.75,2.75,1.25,3.0,2.5,3.0,2.5,3.0,3.25,3.0,3.0,2.25,4.5,3.0,3.0],[3.0,3.5,3.0,2.5,3.0,2.0,3.0,3.0,3.0,2.5,2.75,3.0,2.75,3.5,4.0,2.25,3.0,3.75,2.0,5.0,3.5,4.5,2.5,3.25],[3.5,3.0,3.75,3.75,2.5,3.0,2.25,2.75,3.25,3.75,3.25,4.0,3.25,3.0,3.0,2.5,3.5,2.75,3.5,3.5,2.75,2.75,4.0,3.0],[3.0,3.0,3.0,3.5,2.5,3.5,2.5,3.0,3.5,3.0,3.75,2.25,1.75,3.0,3.25,2.75,3.75,3.0,3.0,2.5,3.0,2.5,3.0,3.0],[2.75,3.25,3.0,2.25,2.0,3.75,3.0,5.0,2.25,4.0,2.75,2.75,2.25,2.5,3.0,4.25,2.75,2.5,1.0,4.0,3.0,3.0,3.5,3.0],[4.0,3.25,3.0,3.0,2.5,3.0,3.25,1.75,2.0,2.75,2.75,4.0,3.75,3.0,2.5,4.25,2.75,3.0,2.5,3.25,3.5,3.0,2.75,3.0],[3.5,2.75,3.0,2.25,3.0,1.75,3.0,3.0,2.75,2.75,3.0,5.0,2.5,2.75,3.0,3.0,2.25,4.0,3.25,3.0,3.5,1.75,2.5,2.75],[2.5,3.0,3.25,2.5,3.0,2.5,3.25,3.0,2.5,2.75,2.5,3.5,3.25,3.25,2.75,2.5,3.25,3.25,3.0,2.5,3.5,2.5,2.5,2.75],[3.0,3.0,2.0,3.5,3.25,2.75,3.25,2.75,3.0,3.0,2.25,2.5,3.25,2.75,3.75,2.75,3.25,3.0,3.5,3.0,2.5,3.5,2.75,3.0],[2.75,2.75,3.0,3.0,2.0,3.25,2.5,3.75,2.0,3.5,3.25,3.0,2.75,3.5,3.0,1.75,3.5,3.5,3.0,4.0,3.5,2.25,3.0,3.0],[3.0,3.0,2.5,4.5,2.5,3.5,2.75,2.75,2.25,2.75,2.75,3.0,1.75,2.75,3.25,2.5,2.75,2.75,3.0,3.5,3.75,2.5,3.5,3.0],[3.25,3.0,2.0,1.5,2.5,2.5,2.75,3.25,3.25,3.25,2.5,3.5,3.0,2.75,2.25,2.75,3.0,3.25,3.25,3.0,2.75,3.5,2.5,3.0],[3.75,3.0,2.75,3.0,3.0,2.75,4.0,4.0,3.25,3.5,3.25,3.25,3.0,3.25,2.0,3.0,2.75,2.0,4.0,2.0,4.25,2.75,2.25,2.0],[3.0,3.0,3.0,2.75,3.5,3.25,2.75,4.5,3.5,3.25,2.25,3.25,3.25,3.25,4.0,4.0,3.25,3.0,3.0,3.25,2.75,3.25,3.0,3.0],[4.0,3.0,2.5,2.5,3.0,2.25,3.5,3.25,3.5,4.0,3.0,3.0,2.25,4.0,3.5,1.75,4.5,3.5,3.0,3.0,3.0,2.5,2.5,2.0],[4.25,2.75,3.0,3.5,4.25,3.25,2.25,2.0,3.5,2.75,3.0,4.0,2.75,2.75,3.5,1.75,3.0,3.5,3.5,2.75,2.75,3.5,2.25,3.0],[3.25,3.5,3.0,4.5,3.0,3.75,2.75,2.0,3.0,3.0,3.0,2.0,4.0,3.0,3.0,1.25,1.75,2.25,2.0,2.0,2.75,3.5,2.5,3.0],[3.25,3.5,2.25,4.0,3.0,3.25,2.5,3.5,3.5,3.0,2.5,3.0,4.0,2.75,2.5,2.5,3.5,2.5,3.0,3.0,3.0,3.5,3.5,3.0],[3.5,3.0,3.25,2.25,3.0,3.5,2.5,2.5,2.75,3.5,3.5,3.25,2.0,2.75,3.0,3.5,3.25,3.0,3.0,2.5,3.25,2.75,3.0,3.0],[3.0,3.0,3.0,3.25,3.0,2.75,3.5,2.75,3.25,3.0,3.75,2.25,3.5,3.0,3.5,2.5,3.25,3.0,3.0,3.0,3.0,3.0,2.75,3.0],[3.25,2.75,3.0,3.5,2.0,3.0,3.0,4.0,2.25,1.75,3.0,2.75,2.75,3.0,2.75,2.25,4.0,2.75,3.0,2.0,3.0,2.25,2.5,2.5],[3.5,2.5,3.75,2.75,3.5,4.0,2.5,3.5,3.5,3.5,3.25,2.25,2.75,3.25,1.75,3.75,3.0,3.25,3.25,3.25,3.25,3.0,2.5,3.0],[3.0,3.25,2.75,2.5,5.0,3.0,3.25,3.0,2.5,3.5,3.0,2.0,2.5,2.75,3.25,2.0,2.0,2.75,3.0,3.0,3.0,1.75,3.25,2.25],[3.5,2.75,2.75,2.5,3.0,2.5,2.75,4.25,4.0,3.5,3.0,3.5,3.0,2.75,3.0,2.5,3.0,2.75,2.5,3.5,2.5,3.25,2.5,2.75],[3.25,3.25,2.5,3.75,2.0,4.0,2.25,4.25,2.75,1.25,3.0,2.75,2.75,3.75,2.0,2.25,4.0,3.0,3.0,1.0,3.75,3.25,2.75,5.0],[3.5,3.5,3.25,2.75,2.0,3.75,3.5,4.75,3.75,2.75,3.0,4.75,3.0,3.25,2.5,2.75,3.5,3.0,3.0,2.25,3.25,3.0,3.5,2.5],[3.5,3.25,3.0,3.0,4.0,4.0,3.0,3.0,3.75,2.0,3.0,3.0,3.0,3.0,3.0,4.0,3.25,3.25,3.0,2.25,2.5,1.5,3.0,2.75],[3.75,3.0,3.0,1.75,1.0,2.5,3.25,3.25,2.0,3.25,3.5,3.5,2.75,2.5,3.25,3.5,3.25,3.25,3.0,2.5,2.25,2.75,2.0,3.5],[1.25,3.25,2.0,3.75,3.0,2.5,3.75,3.25,3.0,3.75,2.5,4.25,2.75,3.5,2.75,4.25,3.5,3.0,4.0,3.0,3.0,3.0,3.25,3.5],[2.5,2.75,3.0,1.5,2.0,3.0,2.5,2.25,4.5,2.5,3.25,4.75,3.5,2.25,3.5,2.75,5.0,2.25,3.0,4.0,2.75,3.5,2.0,2.75],[3.75,3.25,3.0,3.75,3.25,2.5,2.25,3.5,2.25,3.25,2.25,2.5,3.75,2.75,2.75,4.0,3.0,3.0,3.0,2.75,3.0,3.25,3.25,3.0],[3.5,3.25,2.75,2.75,2.5,3.0,3.5,3.75,2.75,3.75,2.5,2.75,2.75,3.25,1.5,3.5,3.0,3.0,3.0,3.25,3.0,2.75,2.75,3.0],[1.75,2.5,2.5,3.0,3.0,2.75,2.5,2.0,2.5,2.5,3.25,3.75,1.75,2.75,3.0,3.5,4.0,2.5,4.0,3.0,3.5,2.25,2.25,3.5],[2.25,3.0,3.0,3.25,3.0,2.5,2.75,4.75,3.25,2.25,4.0,1.5,3.25,3.0,2.5,2.75,3.25,3.0,3.5,3.25,3.75,3.0,2.75,3.5],[3.25,2.5,2.5,2.75,2.0,3.5,3.0,3.0,3.0,3.0,2.75,3.75,2.25,2.75,3.0,3.0,3.75,3.5,4.0,3.0,2.5,2.5,2.0,3.25],[3.0,3.0,3.5,2.25,3.5,2.5,3.0,2.25,3.0,3.0,3.75,2.75,3.0,3.25,3.0,3.5,2.75,3.25,3.0,3.0,3.5,3.5,3.5,3.0],[2.25,3.0,3.0,4.0,3.5,3.75,3.5,4.0,3.5,3.25,3.5,2.75,2.0,2.75,3.5,2.5,2.75,3.25,3.0,3.0,3.25,3.0,3.0,3.0],[3.25,2.75,2.75,2.75,3.0,3.25,3.25,1.25,4.25,3.5,3.25,2.25,2.75,2.75,3.0,2.25,3.0,3.0,3.75,4.5,2.75,2.75,3.5,3.0],[3.5,2.75,3.5,3.0,1.75,2.5,3.0,3.75,3.0,2.5,3.0,3.25,3.25,3.5,4.0,3.5,3.0,2.0,3.0,3.25,3.25,2.5,2.75,3.25],[3.25,2.75,3.5,2.0,3.5,2.25,2.5,2.75,3.0,3.25,2.25,2.5,2.75,2.75,3.0,3.0,2.25,3.25,2.5,3.0,2.5,3.25,2.25,3.25],[2.75,3.25,3.0,3.25,3.5,3.5,4.0,2.0,2.75,2.75,3.0,2.75,3.5,2.75,3.5,3.25,2.5,3.25,3.25,3.0,3.25,3.25,3.75,2.5],[2.75,2.75,3.0,2.0,4.0,5.0,2.5,3.0,3.5,3.75,3.25,2.0,4.0,2.75,3.0,4.25,2.75,3.75,2.0,3.0,2.25,2.75,1.5,3.0],[3.25,3.25,4.0,2.0,3.5,3.5,2.25,3.75,4.0,2.5,3.0,3.25,1.75,3.25,3.25,2.5,2.75,2.75,3.0,3.25,2.75,2.75,2.5,3.0],[3.0,3.25,3.0,3.5,2.25,3.5,2.75,2.0,3.0,3.25,2.0,3.25,2.75,2.75,3.25,3.25,3.25,2.5,3.0,2.75,2.25,3.25,2.5,3.5],[3.0,2.5,2.5,2.25,2.0,2.25,2.75,4.75,3.0,4.25,2.75,3.25,2.75,3.0,3.0,3.75,4.0,3.0,3.0,1.5,3.5,2.5,3.0,3.0],[3.25,3.0,3.0,2.5,2.5,2.75,3.5,3.25,3.25,3.0,2.75,3.25,3.5,3.25,3.5,3.0,3.0,2.75,2.75,3.0,2.75,3.5,3.5,3.0],[3.0,3.25,3.75,2.5,4.0,4.0,2.75,2.5,3.25,2.75,3.5,3.0,3.0,3.25,1.5,3.25,2.25,3.5,3.25,3.0,2.5,3.25,3.25,3.0],[3.5,3.0,3.5,2.75,4.0,3.75,2.75,3.0,3.5,4.0,3.25,4.25,3.75,2.75,3.0,3.25,2.25,3.25,3.0,5.0,2.75,3.0,3.0,3.0],[2.5,3.0,3.0,2.0,4.0,3.5,3.0,3.25,3.0,2.5,3.5,2.25,3.5,2.25,3.0,1.75,3.25,2.75,2.25,3.25,3.25,3.0,3.0,3.25],[3.75,2.75,2.5,2.25,3.0,3.5,3.25,3.75,3.25,2.75,3.5,2.5,2.0,3.75,4.5,2.75,3.5,2.5,2.75,3.0,3.0,3.25,3.0,2.75],[3.5,2.75,3.25,2.25,4.0,2.0,3.0,4.0,3.25,3.75,3.75,2.0,2.0,3.5,2.0,3.25,3.0,2.25,4.0,3.0,3.25,3.25,3.5,2.75],[3.0,3.25,3.0,3.0,3.5,3.0,3.25,3.75,3.0,3.25,3.25,3.25,3.25,2.25,2.75,2.75,2.75,3.25,3.0,3.25,4.0,2.75,2.5,2.75],[3.25,3.0,3.75,2.5,4.0,3.0,3.5,2.25,3.5,3.25,3.0,3.75,3.25,3.5,3.5,3.75,3.75,2.75,4.0,4.0,2.75,2.25,3.25,2.75],[3.75,3.25,2.25,3.25,4.0,3.5,3.25,2.25,3.0,2.75,2.75,2.25,2.0,3.25,3.5,3.75,2.75,3.0,3.5,3.25,3.25,3.5,3.25,3.0],[2.5,2.75,2.75,3.5,3.0,2.25,1.75,1.75,3.0,3.75,3.0,2.75,3.25,2.75,2.0,3.25,2.5,2.75,2.5,3.0,2.75,2.75,3.5,2.75],[3.0,3.0,2.75,2.75,3.25,2.5,4.0,3.25,3.5,2.5,3.25,3.0,2.75,3.25,3.0,4.25,4.0,3.25,3.0,3.0,3.0,3.75,2.75,3.0],[2.75,3.25,3.75,2.75,3.5,2.5,3.25,2.75,2.5,3.25,2.5,3.5,3.5,2.75,4.0,2.5,3.0,3.0,3.25,3.25,3.5,2.75,2.75,2.75],[3.25,3.0,2.75,3.5,2.0,2.25,3.0,2.25,3.0,3.0,2.75,3.25,4.0,3.25,3.0,4.0,2.75,2.5,4.0,3.0,2.75,2.75,2.75,3.25],[3.0,4.25,3.0,3.0,3.0,4.0,3.0,5.0,2.5,5.0,3.0,2.0,4.25,3.0,2.0,3.0,3.0,3.5,3.0,2.0,3.0,1.0,3.0,4.0],[3.0,3.0,3.5,2.5,4.5,3.25,3.25,3.25,2.75,2.75,2.75,3.75,3.0,2.75,3.75,1.75,3.25,2.75,3.25,3.25,3.0,3.5,3.0,3.5],[3.0,3.5,3.5,2.5,2.0,2.75,3.25,4.0,3.0,2.5,2.75,3.25,4.75,3.5,3.0,3.5,2.0,2.75,3.0,3.0,2.25,3.5,4.0,3.0],[3.75,2.75,2.5,2.0,3.5,3.0,3.0,3.25,2.75,3.0,2.5,3.25,2.5,2.75,3.5,1.75,3.0,3.5,3.5,3.0,2.75,3.0,2.25,3.0],[4.25,3.25,2.5,2.25,2.5,3.0,3.25,2.25,3.0,3.0,3.25,3.75,2.75,3.25,3.5,3.0,3.75,2.75,3.0,3.25,2.5,2.5,3.0,3.0],[2.5,3.25,3.5,3.25,3.5,3.5,3.25,2.5,2.75,3.25,2.75,3.0,3.0,2.75,3.5,3.25,2.25,2.75,2.75,3.0,2.25,3.25,3.0,2.75],[3.25,3.5,3.25,2.75,3.0,3.75,3.5,1.0,3.75,2.0,2.75,3.0,2.75,3.0,2.5,2.25,4.0,3.0,5.0,2.0,2.0,2.75,2.75,3.25],[4.75,3.25,3.5,3.5,2.75,2.0,3.5,3.5,3.0,2.75,4.5,2.25,2.75,3.0,4.0,3.5,2.25,3.25,2.75,3.0,3.5,3.25,3.5,3.75],[3.5,3.0,2.5,3.75,3.25,4.25,3.0,4.75,3.5,2.75,2.5,3.75,3.0,2.25,3.5,2.0,3.0,3.5,3.0,2.75,3.25,3.25,3.5,2.75],[3.0,3.25,3.5,3.0,3.0,1.25,2.75,4.25,4.25,3.25,3.0,2.25,4.0,3.5,3.0,1.75,2.5,1.75,3.75,3.25,3.0,2.0,3.5,3.25],[3.0,3.0,2.75,4.5,3.0,3.5,2.0,3.5,3.25,2.5,2.75,3.5,1.75,3.25,2.25,4.5,2.5,3.0,3.25,3.0,3.25,3.25,2.75,3.0],[3.0,3.0,3.0,2.5,2.5,3.5,2.5,4.5,2.5,3.75,3.5,3.25,2.75,3.25,2.5,2.5,3.0,2.75,3.0,3.0,2.75,3.0,3.0,3.25],[2.25,3.25,3.0,3.75,3.25,2.75,2.75,2.5,3.0,3.25,3.25,3.25,3.25,3.25,2.75,2.75,3.25,3.5,3.0,3.5,3.0,2.75,3.5,3.0],[3.5,2.75,3.0,3.0,1.0,4.0,2.5,2.0,3.0,3.5,2.75,3.25,2.0,3.25,5.0,2.25,2.0,3.25,3.0,3.25,3.25,4.75,2.5,3.25],[2.5,2.75,3.25,2.75,3.0,2.25,2.25,3.75,2.5,3.25,2.75,3.25,3.5,3.0,2.5,2.75,2.5,2.75,3.0,3.0,3.75,2.5,2.5,3.0],[2.0,2.75,2.0,3.0,3.25,3.25,3.5,2.75,4.0,3.5,3.0,3.0,2.5,3.25,3.75,2.5,3.0,3.0,3.0,2.75,2.25,3.0,2.0,2.5],[3.75,3.0,3.0,2.5,4.0,2.5,3.25,2.75,2.0,3.0,3.0,2.75,1.5,2.75,2.75,1.75,3.0,3.0,3.5,3.25,2.25,2.75,3.0,2.75],[5.0,2.5,3.0,3.0,3.0,3.0,2.0,4.75,2.75,3.5,3.5,3.25,2.75,2.75,4.0,3.0,3.0,3.5,3.0,3.0,3.5,2.0,3.25,3.5],[3.75,3.0,3.25,3.0,2.0,2.5,2.75,3.5,3.25,3.0,2.75,2.75,2.5,2.75,2.75,3.0,2.75,3.5,2.75,3.0,2.75,3.0,3.0,3.0],[3.5,3.5,2.75,3.5,3.25,2.0,2.5,2.5,3.5,2.5,2.75,2.75,2.0,3.25,3.25,3.5,3.25,2.75,2.75,3.0,3.0,3.0,2.5,3.0],[3.5,2.75,3.25,2.5,3.5,3.0,3.25,3.0,2.75,2.5,2.75,3.25,2.75,3.25,3.0,2.0,3.25,2.5,3.0,3.25,2.75,2.75,2.75,3.0],[3.0,3.0,3.5,3.5,2.5,4.0,2.75,1.75,3.5,2.5,2.5,3.25,3.5,3.0,3.5,2.25,3.5,3.5,3.25,3.0,2.25,2.25,2.5,2.5],[2.25,2.75,2.75,2.5,4.0,4.0,3.25,2.75,3.5,3.75,2.75,4.0,3.25,3.25,3.0,4.25,2.0,4.0,3.0,3.0,3.0,3.75,3.25,3.5],[2.25,3.25,3.0,3.5,1.0,2.0,3.0,2.0,2.75,1.75,3.5,1.75,4.0,2.5,3.0,1.5,4.0,2.5,3.0,3.0,2.75,2.5,4.0,3.75],[2.5,3.0,3.25,3.5,3.0,3.0,2.25,2.0,3.0,2.75,2.75,3.75,2.5,2.75,3.75,2.75,2.75,2.75,3.0,3.0,3.0,3.25,4.0,3.0],[3.25,3.0,3.5,3.5,2.75,2.25,3.25,3.25,2.5,3.5,2.75,3.75,2.75,3.0,3.25,3.75,3.0,3.25,3.5,2.75,3.25,3.0,3.0,3.0],[3.5,3.0,2.5,4.25,4.0,3.25,2.75,3.75,4.0,3.5,3.25,2.75,3.75,3.25,3.0,2.75,3.5,2.25,3.25,3.0,2.75,2.75,2.75,2.75],[3.25,3.5,3.0,3.0,2.0,1.75,2.5,3.0,3.75,2.75,3.5,2.75,2.75,3.25,3.25,1.75,3.0,3.0,3.0,2.5,3.0,3.25,2.5,3.25],[3.25,3.0,3.75,2.0,4.0,4.25,2.75,5.0,3.0,2.75,3.25,3.25,4.0,3.25,3.5,1.75,2.0,2.75,2.0,3.0,3.0,3.75,2.0,2.0],[3.0,2.75,2.0,1.5,4.0,3.0,2.5,2.5,2.75,3.5,2.75,4.0,4.0,3.0,3.5,3.0,2.75,3.0,3.0,3.0,3.5,3.0,2.75,2.75],[3.0,2.75,3.5,3.0,3.5,3.5,3.25,2.75,3.75,2.25,2.75,4.0,3.5,2.75,3.0,4.0,2.75,3.0,2.75,3.25,2.75,3.25,3.5,2.25],[2.75,3.25,3.5,3.75,2.0,4.0,3.5,1.0,3.75,4.75,2.75,3.25,3.25,3.0,3.0,3.5,2.0,2.25,4.0,2.0,3.25,3.75,3.0,3.25],[2.5,3.5,2.75,2.5,4.0,3.25,2.5,3.0,3.25,1.5,3.25,3.25,4.0,3.25,3.5,1.5,4.0,2.75,2.0,4.0,3.5,2.75,3.5,3.5]],"GPT-5.5":[[2.5,3.75,2.5,4.0,2.5,2.5,2.75,2.25,3.5,3.0,3.75,2.25,3.75,2.75,3.5,3.5,2.75,2.75,3.5,2.5,2.25,3.5,2.5,3.0],[3.0,2.75,2.75,3.75,3.75,2.75,3.5,3.75,2.75,3.0,3.0,3.75,3.0,2.5,2.5,1.5,2.5,3.0,3.0,2.5,2.5,1.75,3.0,3.0],[3.0,3.5,3.75,1.75,4.0,4.75,3.5,3.0,3.0,3.75,2.5,3.75,3.0,3.25,3.0,2.5,3.25,3.25,3.0,3.75,2.5,2.0,3.5,3.0],[3.0,3.25,2.0,2.75,2.0,3.25,2.5,4.0,2.5,3.0,3.0,3.75,3.75,3.25,2.5,3.25,3.75,3.25,3.0,3.5,4.25,3.0,2.5,3.0],[2.75,3.0,2.5,3.25,2.25,2.25,3.0,3.0,3.0,3.5,3.0,3.25,2.5,3.5,3.0,1.25,3.25,2.5,4.0,2.0,3.25,3.0,3.0,3.0],[3.0,3.0,3.0,2.5,2.5,3.0,3.0,2.25,3.0,3.25,3.5,2.75,3.5,2.75,3.0,3.25,3.25,3.25,3.25,3.5,3.25,2.75,3.0,3.0],[3.0,2.25,3.5,3.5,3.0,4.25,3.0,1.0,3.0,2.75,3.25,4.25,4.0,3.25,2.5,3.5,3.75,3.0,3.0,3.0,3.0,2.5,2.5,3.0],[3.0,2.5,2.5,4.5,3.0,2.25,3.75,2.0,3.0,3.0,3.5,2.25,2.0,3.5,3.0,1.75,3.75,2.75,2.5,3.0,3.0,3.25,3.75,3.0],[3.0,3.0,3.5,4.5,2.75,2.75,3.25,3.0,2.75,3.25,3.0,2.75,3.0,3.25,3.0,2.5,2.75,3.0,3.0,2.5,2.75,2.0,2.75,3.0],[2.5,3.25,2.0,3.75,4.25,2.75,4.0,3.0,3.5,2.0,3.5,2.75,1.0,3.75,4.0,3.25,3.25,3.0,2.0,2.75,3.5,3.0,2.25,2.0],[3.0,3.0,3.0,3.0,2.5,3.5,3.25,2.0,2.5,3.25,3.25,3.5,2.5,3.25,3.5,2.75,3.0,2.75,2.75,2.75,3.75,3.25,3.5,3.0],[3.0,3.5,2.75,3.0,1.0,2.5,3.0,2.0,3.5,2.75,3.25,1.75,2.75,2.75,3.0,3.75,2.5,3.75,3.0,3.0,3.25,2.5,2.5,3.25],[2.0,3.25,4.0,3.0,3.0,3.5,3.0,2.0,3.0,2.5,3.0,3.75,3.0,3.25,3.0,3.25,3.0,3.5,3.0,3.5,3.0,4.0,3.0,3.0],[4.0,2.5,2.5,2.25,3.5,3.75,3.25,2.25,2.5,2.75,3.75,2.25,3.0,2.75,3.5,3.75,2.75,3.25,3.0,3.0,2.5,3.0,2.5,3.5],[3.0,2.5,3.0,2.75,1.75,3.25,3.0,4.0,3.25,3.75,3.0,2.75,2.75,3.25,3.25,2.5,3.25,3.0,4.25,2.5,3.0,4.0,3.25,3.5],[3.0,3.5,4.25,2.75,1.25,2.5,3.0,1.0,2.5,3.25,3.0,2.25,3.0,2.75,3.25,2.25,2.5,2.5,4.0,2.5,2.75,3.0,3.5,3.0],[3.5,2.75,3.0,3.5,3.25,3.5,3.25,2.75,3.5,3.0,3.0,2.25,1.75,3.5,3.0,3.25,3.25,3.0,2.5,3.0,3.25,3.0,3.5,2.5],[3.0,2.25,2.25,4.0,3.0,3.25,4.0,4.0,2.5,2.75,2.5,4.75,4.25,3.0,3.0,2.5,3.75,3.25,4.0,3.5,2.5,2.5,4.0,3.0],[3.25,3.0,4.0,1.75,4.0,3.5,3.5,4.0,3.0,3.5,2.75,4.75,3.75,3.25,3.75,1.25,2.0,3.25,4.0,3.0,3.25,3.0,3.5,3.25],[3.0,2.75,2.5,3.0,2.5,3.25,3.25,2.25,2.5,3.25,3.0,4.0,3.25,3.0,3.0,1.75,3.0,3.25,2.5,3.25,2.5,2.75,2.5,2.75],[2.75,3.25,3.5,2.75,4.0,3.5,2.5,3.0,3.25,2.0,3.0,2.75,3.25,2.25,2.5,3.5,2.75,3.0,4.0,2.0,3.0,3.0,2.75,3.0],[2.5,2.75,2.0,1.5,3.25,2.0,3.25,3.0,3.5,3.0,3.0,3.25,2.75,3.25,3.0,2.75,3.5,2.75,3.5,4.0,3.0,3.0,4.0,3.25],[2.5,3.0,2.5,4.0,3.0,3.0,3.25,2.75,3.5,3.25,3.0,2.75,4.5,3.25,3.0,3.25,3.25,3.25,3.0,2.75,2.75,2.5,3.0,3.0],[4.0,3.0,2.0,1.75,3.0,4.5,3.0,3.0,3.5,3.75,3.25,2.25,3.25,3.25,3.0,3.75,4.0,3.0,3.0,4.0,3.0,2.5,3.25,2.75],[3.0,3.75,3.0,4.0,3.0,3.25,3.5,2.0,3.5,4.5,2.75,2.0,2.75,4.25,3.0,2.25,4.0,2.25,4.0,3.0,3.0,3.25,3.5,3.0],[3.0,3.0,2.25,3.5,3.5,2.75,2.5,2.25,3.0,2.75,3.0,3.5,2.75,3.25,4.0,3.5,2.75,3.25,4.0,3.5,2.75,2.5,3.0,3.5],[4.0,2.5,3.5,2.5,2.75,2.75,3.0,2.25,3.5,3.25,3.0,3.25,1.75,3.0,2.5,2.25,3.25,3.25,3.0,2.5,2.75,3.0,3.0,2.5],[2.5,3.0,2.5,3.75,3.5,3.5,3.5,2.25,2.5,3.25,3.5,4.25,2.5,3.0,2.5,3.25,2.5,2.25,3.0,3.25,3.0,2.5,3.0,2.75],[3.0,3.5,3.5,3.5,2.25,3.25,2.75,3.0,3.0,3.25,3.0,3.25,2.25,2.75,3.0,2.5,3.75,3.0,2.5,3.0,2.75,4.0,3.5,3.0],[3.0,3.5,2.25,3.0,3.0,3.25,2.75,4.0,2.5,3.5,3.5,3.25,3.25,3.5,3.25,2.25,2.25,3.0,4.0,4.0,2.5,3.5,3.5,3.0],[3.0,3.0,3.0,3.0,3.0,2.75,2.75,3.0,2.5,3.25,2.5,2.0,2.75,3.25,3.5,2.75,3.25,3.0,3.0,2.75,2.25,3.0,3.5,3.0],[3.0,3.25,2.25,2.75,4.0,2.5,3.25,5.0,2.5,3.0,3.0,4.75,1.75,3.25,3.0,3.75,2.25,2.75,5.0,4.0,3.5,2.5,3.0,3.0],[2.5,2.75,2.0,2.0,4.0,2.5,2.5,4.0,2.5,3.0,3.5,2.25,3.5,2.75,3.5,2.25,2.75,2.75,3.0,3.0,2.75,2.25,3.5,3.0],[2.0,2.25,2.75,2.5,5.0,3.0,3.75,3.0,2.75,2.0,3.0,2.25,2.75,3.25,3.25,2.25,3.25,3.0,3.0,3.0,3.0,2.0,3.0,2.0],[3.0,2.5,3.75,4.0,2.25,2.5,2.75,2.0,2.25,3.25,3.0,3.25,2.25,3.25,3.25,1.25,4.25,3.25,2.5,3.0,2.5,3.5,2.5,3.5],[2.0,3.75,2.0,2.0,3.25,2.5,4.25,2.75,2.5,2.75,3.5,3.5,2.25,3.25,2.5,3.25,2.75,2.25,3.0,3.5,3.5,3.0,3.0,3.0],[3.5,4.0,2.0,3.5,2.75,2.0,2.5,3.0,3.75,3.25,3.0,3.75,2.0,2.75,3.5,3.75,3.25,3.0,2.5,3.0,3.0,3.0,2.5,4.0],[2.5,3.0,3.0,2.0,2.5,3.75,3.25,2.25,2.5,3.75,2.75,2.75,3.5,3.25,3.75,2.0,2.25,3.0,2.5,3.0,2.0,3.0,3.5,2.75],[2.75,3.25,2.5,2.5,3.0,1.5,3.25,4.0,2.75,3.0,2.5,3.75,3.25,3.0,3.0,3.75,2.5,3.5,3.0,3.0,3.25,2.0,2.25,3.25],[3.0,2.5,1.0,3.5,3.0,2.0,3.0,3.0,2.5,3.0,3.0,2.75,2.0,2.75,3.0,3.25,4.0,2.75,3.25,3.0,3.5,3.25,3.0,2.5],[3.5,3.5,3.0,2.5,2.5,2.5,2.25,3.25,2.75,3.25,3.25,2.75,3.25,3.25,3.0,3.25,3.5,3.0,3.5,3.0,3.5,3.0,3.0,2.5],[3.25,2.5,2.0,2.75,3.0,2.75,3.0,3.0,3.0,2.5,3.0,2.25,3.5,2.75,3.5,2.5,3.25,3.25,4.0,3.5,2.75,3.5,2.5,3.0],[3.0,3.5,3.25,4.25,4.75,2.25,3.5,3.0,3.5,3.75,2.5,2.5,3.75,3.0,3.0,3.75,3.5,3.25,2.5,2.75,2.5,3.0,3.0,2.5],[3.0,3.25,3.0,2.25,3.0,2.25,3.25,2.0,3.75,4.25,3.5,2.25,3.25,2.5,3.25,2.25,4.5,3.25,4.0,4.0,3.5,2.75,3.0,3.0],[2.0,3.5,3.0,1.5,2.5,3.5,2.75,1.75,2.5,3.75,3.25,2.75,3.5,2.75,3.0,2.25,3.25,3.25,2.5,3.25,3.25,2.75,2.5,3.0],[1.0,3.5,2.0,2.0,3.0,2.25,3.0,1.0,2.5,4.0,3.5,3.25,3.0,3.25,3.75,3.25,1.75,2.5,3.0,2.0,2.5,3.75,3.0,3.25],[3.0,3.0,4.0,1.75,1.25,3.5,2.75,1.0,3.5,2.75,2.5,2.25,2.25,3.25,3.0,4.25,2.75,3.0,2.25,3.5,3.5,2.25,3.0,3.25],[3.5,3.0,4.0,4.0,3.25,2.5,3.25,3.0,3.5,2.75,3.25,2.25,3.25,2.75,2.0,2.25,3.0,2.25,3.0,3.0,3.75,3.0,3.0,3.0],[3.0,2.75,3.75,4.25,4.0,2.25,3.0,2.0,3.0,3.0,2.0,2.25,3.25,3.5,3.0,2.75,3.0,2.75,2.0,2.0,3.0,3.0,4.0,3.5],[3.0,2.75,3.75,2.0,3.0,4.0,3.0,5.0,3.5,3.75,3.0,2.75,1.0,2.75,3.0,2.25,2.75,3.25,3.0,3.0,3.0,3.5,2.75,3.0],[3.0,3.75,2.0,4.0,3.75,4.0,2.75,2.75,3.5,2.75,2.5,2.75,2.75,2.5,2.5,1.5,2.75,3.25,3.5,3.0,2.0,3.0,2.5,2.5],[3.5,2.0,2.0,2.5,2.75,2.0,3.25,3.0,3.0,3.25,3.0,3.5,3.25,3.25,2.75,3.5,3.5,3.25,3.0,3.0,2.5,3.0,3.5,3.0],[2.5,3.0,3.0,4.0,3.0,3.25,3.5,3.0,2.5,2.75,2.75,3.75,3.0,3.25,3.25,2.5,2.5,3.0,2.5,3.0,3.25,3.0,2.5,3.0],[3.5,3.25,3.0,2.25,3.0,3.25,3.0,4.0,3.0,2.75,3.0,2.25,2.5,3.25,3.0,4.75,2.75,3.25,3.0,4.0,2.5,3.0,3.0,3.0],[3.25,3.0,4.0,2.5,2.0,3.75,3.0,2.0,4.25,2.75,3.0,1.25,2.25,3.25,2.75,2.5,3.25,3.5,3.0,2.0,3.75,4.0,3.25,3.25],[3.0,3.0,2.5,4.25,3.0,2.5,3.25,4.0,3.5,3.75,2.75,2.75,1.75,3.25,2.5,3.0,2.75,2.25,2.75,3.0,3.25,3.0,2.5,3.0],[3.0,3.0,4.0,2.0,3.0,3.0,3.0,3.0,2.5,2.5,2.75,2.25,3.5,3.0,4.0,3.75,3.5,3.25,5.0,2.5,2.5,3.0,2.75,3.0],[3.5,2.75,4.0,1.0,4.0,3.25,3.25,2.0,2.75,3.25,3.0,2.25,2.0,3.0,2.5,3.25,3.5,2.5,3.0,3.5,3.0,2.5,3.0,2.5],[3.0,3.25,2.25,3.5,3.0,3.25,2.75,2.0,2.5,3.25,3.0,3.25,2.5,2.75,3.0,3.5,3.5,2.75,3.0,2.5,3.0,1.75,3.5,3.0],[2.5,2.5,2.5,1.5,3.75,2.5,2.75,4.0,3.0,3.25,2.75,3.25,3.25,3.25,3.75,2.75,3.0,2.75,3.5,3.25,3.25,2.5,2.5,2.5],[3.0,3.0,3.0,3.0,4.25,2.75,2.25,4.5,2.5,2.25,2.5,3.5,3.0,2.75,3.0,2.75,3.75,3.0,3.0,3.5,3.75,3.25,2.5,4.0],[3.0,2.5,3.75,2.5,3.0,3.25,2.75,5.0,2.0,2.75,3.0,2.25,3.75,2.75,3.5,1.25,3.25,3.25,3.0,3.0,3.5,3.75,3.0,2.75],[3.0,4.0,3.5,2.25,3.0,2.75,2.75,4.0,3.0,2.5,3.0,3.25,3.25,3.25,3.0,4.75,2.25,2.75,3.0,3.5,4.0,3.25,3.0,3.0],[4.0,3.5,3.0,4.0,3.0,4.0,3.0,4.0,3.5,3.5,3.0,4.25,2.0,3.25,3.0,3.75,2.75,2.75,2.75,3.5,2.0,3.75,2.5,3.0],[2.5,3.0,2.5,3.25,2.5,3.75,2.75,3.25,3.0,2.75,3.5,2.5,3.75,3.5,3.0,3.75,3.25,2.75,3.0,2.75,3.0,2.75,3.0,3.0],[3.5,3.25,2.0,2.5,2.75,3.0,3.25,2.0,3.0,3.25,2.0,1.75,3.0,2.75,3.0,2.25,2.75,3.0,3.0,2.75,3.5,3.0,2.5,3.0],[3.0,3.5,2.0,2.5,2.5,3.75,3.25,3.25,4.0,3.25,2.5,3.0,3.5,3.0,2.5,3.0,3.25,2.75,3.5,3.25,3.5,2.5,2.0,3.0],[3.0,2.5,3.0,3.5,2.25,3.25,3.0,3.0,2.0,2.5,3.0,2.25,2.5,3.5,3.0,2.25,3.0,3.25,3.5,3.5,3.5,2.0,3.0,3.0],[3.0,3.0,3.75,2.0,3.25,4.25,3.0,3.0,2.5,4.0,3.0,2.75,4.0,2.75,3.25,3.5,3.0,3.0,5.0,4.0,2.25,4.25,2.5,3.0],[3.25,2.75,3.0,2.75,3.0,2.75,3.0,3.0,2.5,4.0,3.0,1.5,3.5,2.75,3.0,2.75,3.0,3.25,3.5,2.75,2.5,2.5,3.0,3.0],[3.0,3.25,3.5,3.5,3.0,2.5,3.0,2.0,3.0,2.75,3.0,3.25,2.25,2.75,2.75,2.25,2.5,3.5,4.0,2.0,3.0,3.25,3.0,2.75],[2.5,2.75,3.0,4.0,2.25,3.0,3.25,4.5,2.5,2.25,4.0,3.75,3.25,2.75,3.5,3.75,3.75,3.0,3.5,3.0,3.75,3.5,2.5,3.0],[3.0,2.75,3.0,2.75,4.25,2.5,3.0,4.0,2.5,2.25,3.5,4.5,3.5,2.75,3.0,3.75,3.25,3.25,3.0,3.0,3.5,3.25,3.0,3.0],[4.0,3.25,2.5,3.0,3.25,3.75,3.25,3.0,3.5,3.25,3.25,3.0,4.0,2.75,3.0,2.75,4.0,2.75,3.0,3.0,2.0,3.0,2.5,3.0],[3.0,2.75,3.0,2.75,2.25,3.25,3.25,4.0,2.5,3.75,3.0,1.5,3.25,2.75,3.25,2.75,3.25,3.25,2.5,3.5,3.0,3.0,3.5,3.0],[3.0,3.25,1.75,2.5,2.75,2.75,2.75,3.0,2.5,3.25,2.75,2.25,3.75,2.25,3.0,2.5,2.75,3.0,3.5,3.0,3.0,2.5,3.25,3.0],[3.0,3.0,3.75,2.75,4.0,3.5,3.25,4.0,3.0,3.5,2.75,2.75,3.5,3.25,2.75,3.75,5.0,2.25,3.0,4.0,3.0,3.5,2.5,3.0],[3.0,2.5,3.5,3.0,1.75,2.5,3.25,3.0,2.5,2.75,3.5,3.0,3.0,3.25,2.5,3.5,2.75,3.25,2.5,3.0,2.0,3.0,3.0,3.0],[2.5,4.25,3.25,2.25,2.75,3.25,3.0,4.0,2.0,3.75,3.0,2.25,3.75,3.0,3.0,3.75,3.75,3.25,2.0,3.0,3.5,2.25,3.0,3.0],[3.5,2.5,5.0,2.5,3.75,3.0,2.5,4.0,2.5,3.0,3.5,3.75,2.25,3.0,3.75,3.75,1.75,2.5,2.5,3.5,3.0,3.5,3.5,3.0],[2.5,2.5,4.0,3.5,2.5,2.75,2.75,2.75,3.0,3.5,3.25,2.25,2.5,3.0,3.0,3.5,2.25,2.75,3.5,3.25,3.75,2.5,3.0,3.0],[3.0,3.25,4.0,4.75,3.5,3.25,3.25,3.0,3.0,3.75,3.25,3.25,2.25,3.25,3.5,2.25,3.5,3.25,2.5,3.0,3.25,3.5,2.0,3.25],[3.0,3.25,3.5,3.5,3.0,3.75,3.25,4.0,2.75,2.5,3.0,3.25,2.5,3.25,3.25,2.5,2.75,2.75,3.5,2.5,3.25,1.5,2.75,3.0],[3.0,3.25,3.5,2.0,4.0,1.25,2.75,4.0,3.0,4.0,3.0,2.75,2.25,2.75,3.0,2.75,3.75,3.0,4.75,3.0,3.5,3.0,4.25,3.0],[2.5,3.5,2.0,4.25,3.5,3.5,3.25,3.0,3.0,3.75,3.5,2.75,3.25,3.25,3.0,4.0,3.25,2.75,3.5,2.75,2.25,3.0,3.5,3.5],[3.5,3.75,3.0,2.5,2.25,2.25,2.5,5.0,2.0,3.25,3.25,3.75,1.75,2.75,3.0,2.5,2.75,3.25,3.0,3.5,3.0,1.75,3.0,3.0],[2.5,3.25,4.0,2.0,2.0,4.25,3.25,5.0,2.0,3.5,3.0,2.25,3.5,3.5,3.0,3.75,1.75,3.0,3.0,2.0,3.5,3.0,3.0,2.0],[3.0,2.75,4.0,3.25,3.0,2.0,3.5,2.0,2.5,2.0,2.5,2.25,3.5,3.25,3.0,2.5,3.0,3.25,3.0,4.0,3.0,3.0,2.75,3.0],[2.25,3.0,2.5,3.75,3.0,3.25,3.25,4.0,2.5,3.75,4.0,3.25,3.25,3.0,3.0,2.25,3.25,3.0,4.0,2.0,3.5,3.5,2.5,3.0],[3.0,3.5,4.0,2.5,2.5,3.0,3.0,3.25,3.0,2.25,2.75,3.5,2.75,2.75,3.5,4.5,2.75,3.5,3.0,3.25,2.75,3.0,3.5,3.25],[3.0,2.75,2.5,2.5,3.0,3.0,3.25,4.5,2.5,3.25,2.5,3.25,2.5,2.75,3.25,2.75,3.25,3.25,3.5,3.0,2.25,3.25,2.75,3.0],[2.5,3.0,3.75,2.25,3.0,2.25,2.75,3.0,3.5,2.75,2.5,2.75,2.25,2.75,3.0,2.75,2.75,3.5,3.0,2.5,3.0,3.0,3.0,3.0],[2.5,2.75,3.5,4.0,3.0,3.0,2.75,3.25,2.75,3.75,3.0,2.5,2.0,3.25,3.5,2.25,1.25,3.25,2.5,3.25,3.0,2.5,3.0,3.0],[3.0,3.5,3.0,3.75,3.5,2.75,3.25,2.0,2.0,2.75,2.75,1.5,2.75,2.75,2.75,4.25,3.25,3.25,3.0,3.25,3.25,3.25,3.0,3.0],[3.0,4.0,3.5,3.0,1.75,3.0,3.25,4.0,2.75,2.0,2.5,2.25,3.5,3.25,3.0,2.5,3.25,2.75,2.25,3.5,3.5,2.75,3.0,2.5],[3.0,2.5,3.5,3.5,4.0,2.25,3.75,3.75,3.5,2.5,3.0,3.25,3.0,3.25,3.25,2.75,3.25,3.25,4.0,3.0,2.5,3.0,3.5,3.0],[3.5,3.0,4.0,4.5,4.0,2.75,3.25,2.5,3.5,2.75,2.5,3.0,3.0,2.75,3.25,2.75,3.25,2.75,2.5,3.0,3.5,3.0,3.0,3.0],[3.5,3.25,4.0,2.25,2.25,3.25,3.0,2.0,3.75,2.5,3.0,3.5,3.0,2.75,2.75,2.5,2.75,3.25,3.0,3.0,3.25,4.0,2.5,2.5],[3.0,3.5,2.0,2.75,3.0,2.25,2.75,1.0,2.0,2.5,3.5,3.75,3.0,3.5,3.75,2.75,1.25,2.5,3.0,2.5,3.0,3.5,3.25,3.0],[3.0,3.25,3.0,4.25,2.25,3.5,2.75,4.0,2.5,2.0,3.25,2.75,3.0,3.75,3.0,3.5,2.5,2.75,2.0,2.5,2.5,2.5,3.0,3.0],[2.0,3.0,1.0,1.75,4.0,2.75,3.0,5.0,4.0,2.75,3.0,3.25,2.5,2.75,3.0,1.25,2.5,3.25,4.0,3.5,2.5,3.0,3.5,3.0],[3.5,2.5,3.5,3.5,2.5,2.25,3.25,4.5,3.5,2.75,3.25,3.25,2.75,2.75,2.5,2.25,3.25,3.25,3.0,3.0,3.25,3.0,3.0,2.75],[2.5,3.0,3.0,3.0,2.75,2.75,3.75,1.5,2.5,2.25,2.75,3.25,4.0,2.75,3.0,3.5,3.75,3.25,3.5,3.0,2.75,3.25,3.0,3.0],[2.75,2.5,3.0,4.25,3.0,2.75,1.5,3.0,3.25,2.5,3.0,3.25,2.5,3.0,2.0,4.75,3.75,2.5,2.25,4.75,3.5,2.25,2.5,3.0],[3.0,1.75,3.0,3.5,4.0,3.25,3.0,4.0,3.0,3.75,2.75,3.75,4.0,2.75,3.0,3.75,4.0,3.25,4.25,3.5,3.5,3.75,3.0,3.0],[3.0,3.0,3.0,4.0,2.5,3.25,2.75,2.5,4.0,2.25,2.75,3.0,3.0,3.25,2.75,1.75,2.75,3.25,3.0,3.0,3.25,3.25,2.5,3.0],[3.0,2.5,1.0,4.5,3.0,4.0,2.75,2.0,2.25,2.75,3.0,2.5,4.25,3.0,3.5,2.5,2.0,3.25,3.0,3.0,3.75,3.5,2.25,3.0],[3.5,2.75,4.0,3.25,3.0,4.75,2.0,4.0,3.75,2.75,3.0,3.25,2.25,3.25,3.25,2.75,3.0,3.25,3.0,3.0,3.5,3.25,3.0,2.0],[3.0,2.5,4.0,4.0,2.75,3.5,3.75,2.25,2.5,3.75,2.5,2.5,4.25,3.25,2.25,1.75,2.75,2.5,3.0,3.0,2.5,3.0,3.0,2.5],[2.5,1.75,2.0,3.75,3.0,3.75,3.25,3.0,4.0,3.25,3.0,2.75,4.25,2.75,3.0,2.25,4.0,2.75,3.0,2.0,2.0,3.5,3.0,3.0],[3.0,2.0,2.75,1.5,2.75,3.25,2.75,4.0,2.25,2.25,3.0,3.5,2.75,2.5,2.0,2.25,2.75,3.0,4.5,3.0,3.0,2.5,3.0,3.0],[2.75,3.0,3.0,3.0,2.25,2.75,3.0,3.0,3.0,2.0,3.0,4.5,3.25,2.5,3.0,3.5,2.0,2.75,2.75,2.5,3.25,3.0,2.5,4.0],[3.0,3.5,3.0,1.0,4.0,2.75,2.5,3.0,3.25,4.0,3.0,2.25,2.0,3.0,3.5,3.75,1.25,2.5,3.5,3.0,3.5,3.25,4.25,2.5],[3.5,2.5,2.0,3.25,2.5,3.75,2.75,3.0,3.25,3.75,2.75,2.5,3.0,2.75,3.0,2.75,3.25,3.75,2.5,3.0,3.5,3.0,3.5,2.75],[3.5,3.25,4.0,1.5,3.0,3.25,2.5,1.75,3.25,2.5,2.75,3.25,3.0,3.25,2.75,2.75,2.0,3.0,3.25,3.0,2.5,3.0,3.5,3.0],[3.0,2.75,2.0,2.75,1.25,2.0,3.0,3.0,3.0,3.0,3.0,2.25,2.5,2.75,3.0,3.25,3.5,3.25,4.25,3.0,2.75,3.0,3.5,3.0],[3.0,3.25,2.0,2.75,2.0,2.75,3.25,2.75,2.75,3.0,3.0,3.25,2.75,3.75,3.0,2.5,2.25,2.25,2.75,3.0,2.75,3.0,2.5,2.25],[2.5,2.75,3.0,3.5,3.5,2.5,3.5,2.0,3.0,3.5,3.0,3.0,2.25,3.0,3.0,1.75,3.25,3.0,3.0,3.5,2.5,3.25,2.0,4.0],[3.0,3.75,2.5,3.5,3.25,3.0,3.25,5.0,2.5,2.5,3.0,2.75,3.25,3.0,3.5,2.75,2.75,2.75,4.0,2.5,2.25,3.0,4.0,3.0],[3.0,2.75,3.0,3.75,2.5,2.0,2.0,2.0,2.75,3.75,3.0,3.75,2.5,2.5,3.25,4.25,2.75,2.75,3.0,3.0,2.75,2.75,3.5,3.75],[3.0,3.25,2.0,3.25,2.0,3.75,3.0,3.25,3.0,3.75,2.5,3.5,3.0,3.25,2.75,2.5,3.25,3.0,3.75,2.5,3.0,3.25,2.5,3.0],[3.5,3.25,4.0,4.0,2.75,3.75,3.5,2.0,3.5,2.0,3.0,3.75,2.25,3.5,3.0,2.25,2.75,2.0,3.0,4.0,3.5,2.25,3.0,3.0],[3.0,3.25,2.0,3.0,3.0,3.25,2.75,3.75,3.5,3.75,3.25,2.5,3.5,3.25,3.0,2.75,3.5,3.25,3.0,3.5,2.75,3.0,3.5,3.0],[3.0,3.5,2.5,3.0,3.0,3.5,3.75,2.5,2.5,3.25,3.0,3.25,3.5,3.0,3.0,2.5,3.75,3.25,2.0,3.0,2.5,3.25,2.5,2.5],[2.5,3.75,3.5,4.0,4.0,2.75,3.25,2.0,3.5,2.75,3.5,3.25,3.0,3.5,2.75,2.5,3.25,3.0,3.25,3.5,3.25,3.5,3.5,3.0],[2.5,3.0,3.5,2.5,3.0,2.0,3.25,2.0,3.75,3.5,3.0,2.25,2.25,3.0,3.5,3.25,2.75,4.0,1.0,3.5,3.0,3.0,3.0,3.0],[3.0,2.75,3.0,2.75,3.0,3.5,3.0,2.0,3.5,2.25,3.0,3.25,3.25,2.75,3.5,2.75,3.0,3.5,2.0,4.0,2.5,3.0,2.5,2.5],[3.0,2.5,3.0,4.25,3.0,2.75,2.5,4.0,3.0,2.75,3.0,4.0,2.25,3.5,3.5,2.75,2.75,3.25,3.5,3.5,3.25,2.5,3.0,2.0],[3.0,3.25,2.0,1.75,3.0,3.75,3.0,2.0,2.5,3.75,3.0,3.75,4.0,3.25,3.0,2.5,2.25,2.75,3.5,2.5,2.75,2.75,2.5,3.0],[3.25,3.0,3.5,3.25,4.0,3.75,3.0,2.0,3.0,3.5,3.0,3.5,3.25,3.5,2.25,2.5,3.75,3.0,3.5,2.5,3.0,2.5,2.5,3.0],[3.0,3.25,3.0,4.25,2.0,2.75,2.75,3.0,4.0,3.25,3.25,4.75,3.25,3.0,3.25,3.25,1.75,2.75,2.0,4.0,3.0,3.0,3.0,2.75],[2.5,2.75,3.0,3.0,2.5,3.75,3.25,3.0,3.5,3.25,2.25,2.75,2.75,2.75,3.25,2.5,2.5,3.25,3.0,3.0,2.25,3.0,2.25,3.0],[4.0,3.0,3.0,2.5,3.0,2.5,3.75,2.0,3.5,2.75,3.25,3.25,3.75,3.75,3.75,3.75,2.75,2.75,2.5,2.75,2.75,3.25,3.0,3.0],[2.0,3.75,3.75,1.75,3.0,2.75,2.75,3.0,3.5,2.75,2.75,2.25,3.0,2.25,3.5,2.75,3.25,3.0,2.0,2.75,3.75,3.5,3.0,3.0],[3.0,2.5,2.0,3.25,3.75,2.5,3.0,3.0,3.0,3.5,3.0,1.25,3.0,2.75,3.0,2.5,2.25,2.75,2.0,3.0,2.75,2.75,2.75,3.0],[3.5,2.5,3.0,3.0,2.75,2.25,2.75,2.0,2.25,2.5,3.0,2.25,2.0,2.75,3.0,2.25,3.25,3.0,2.0,3.0,2.25,3.0,2.75,3.0],[3.0,2.75,3.5,3.25,1.75,3.75,3.0,2.0,2.75,3.25,3.0,3.75,2.5,3.25,3.0,3.75,3.25,3.25,2.75,3.0,2.5,2.25,3.0,3.0],[2.75,2.5,2.75,3.5,3.0,2.25,3.25,2.0,2.5,2.25,2.5,3.25,2.0,2.75,3.5,3.5,3.0,2.5,3.0,3.0,3.5,3.25,2.5,3.0],[3.5,2.75,3.5,3.25,2.75,3.75,3.25,2.75,2.0,3.25,3.0,2.75,3.0,3.25,3.75,4.0,3.25,3.25,3.0,2.75,3.0,3.0,2.75,3.0],[2.75,3.25,2.0,3.5,3.0,1.75,3.25,3.0,2.25,3.5,3.0,2.25,2.25,2.75,3.0,2.25,2.25,3.5,3.0,3.0,2.5,1.75,3.0,2.75],[3.0,3.75,3.5,3.75,2.0,3.25,3.0,3.0,2.5,2.0,3.0,1.25,2.25,2.75,2.5,2.0,2.0,3.25,2.0,3.0,3.5,2.75,2.25,2.75],[3.0,3.25,4.0,3.75,2.0,3.5,2.5,2.0,3.0,2.25,3.0,4.25,3.0,3.25,2.75,2.5,2.25,3.25,3.0,3.25,3.75,3.0,3.0,3.0],[3.0,3.5,4.0,2.0,3.0,4.0,3.25,2.0,3.5,3.0,3.0,1.75,3.75,3.25,3.25,2.75,1.5,3.5,4.5,3.0,3.5,3.0,2.5,3.0],[3.5,3.0,3.0,3.0,2.75,3.0,3.0,3.0,3.5,2.25,3.0,4.75,3.0,3.0,3.0,3.75,3.0,3.0,3.0,2.5,3.5,2.5,3.5,3.0],[3.0,2.75,4.0,3.0,2.0,4.25,3.25,3.0,3.0,2.75,3.0,3.75,4.25,3.25,3.0,4.0,3.25,2.75,2.0,3.5,3.0,3.0,3.0,3.0],[2.5,3.0,3.0,4.0,3.75,3.25,2.75,1.25,1.5,2.5,4.0,2.5,3.75,3.0,3.0,1.25,3.5,3.25,2.5,2.5,2.5,2.5,3.0,3.0],[3.0,3.0,3.0,3.25,2.0,2.5,3.75,3.25,3.0,3.25,3.5,3.5,2.5,3.25,3.0,2.75,3.75,2.75,3.5,2.75,3.25,3.25,3.0,2.0],[3.0,2.75,3.5,2.5,3.0,4.0,3.75,2.0,3.5,2.75,3.25,3.25,2.5,2.75,2.75,2.0,3.75,2.75,2.5,2.5,2.5,3.5,2.5,3.0],[3.0,2.5,3.25,3.5,3.0,3.0,3.0,3.0,2.75,2.75,3.0,3.25,1.75,3.25,3.0,2.25,2.0,3.25,5.0,3.0,3.0,3.0,3.5,2.5],[2.5,3.0,3.0,3.0,2.75,3.75,2.75,3.5,3.5,2.5,3.25,3.25,3.0,3.0,3.5,3.5,3.0,2.75,2.5,3.25,3.25,3.25,3.5,3.0]]},"icc":{"Love":0.004,"Spirituality":0.004,"Forgiveness":0.002,"Zest":0.001,"Gratitude":0.001,"Appreciation_of_Beauty_and_Excellence":0.001,"Kindness":0.0,"Perseverance":0.0,"Bravery":0.0,"Self_Regulation":0.0,"Fairness":0.0,"Perspective":0.0,"Judgment":0.0,"Teamwork":0.0,"Curiosity":0.0,"Humility":0.0,"Love_of_Learning":0.0,"Creativity":0.0,"Prudence":0.0,"Honesty":0.0,"Hope":0.0,"Social_Intelligence":0.0,"Leadership":0.0,"Humor":0.0},"maxAbsD":{"Appreciation_of_Beauty_and_Excellence":0.096,"Bravery":0.052,"Creativity":0.039,"Curiosity":0.038,"Fairness":0.049,"Forgiveness":0.112,"Gratitude":0.094,"Honesty":0.014,"Hope":0.06,"Humility":0.043,"Humor":0.055,"Judgment":0.026,"Kindness":0.069,"Leadership":0.055,"Love":0.144,"Love_of_Learning":0.081,"Perseverance":0.043,"Perspective":0.079,"Prudence":0.071,"Self_Regulation":0.043,"Social_Intelligence":0.047,"Spirituality":0.156,"Teamwork":0.065,"Zest":0.11},"allPairsMaxD":0.156,"SESOI":0.5,"topPair":{"strength":"Spirituality","pair":"deepseek/deepseek-v4-pro vs openai/gpt-5.5","d":0.156},"style":{"Claude Opus 4.8":{"dispersion":0.818,"midpoint":0.431,"extremity":0.039,"level":3.004},"DeepSeek V4 Pro":{"dispersion":1.007,"midpoint":0.328,"extremity":0.137,"level":2.997},"Gemini 3.1 Pro":{"dispersion":1.151,"midpoint":0.253,"extremity":0.216,"level":2.993},"GPT-5.5":{"dispersion":1.173,"midpoint":0.244,"extremity":0.22,"level":2.995}},"eta2":{"dispersion":0.351,"midpoint":0.326,"extremity":0.251,"level":0.001},"framing":{"human":{"betweenStrengthSD":0.0148,"profile":[3.003,3.004,3.003,3.018,2.995,3.007,2.995,2.975,2.988,2.996,3.019,2.989,3.001,3.005,3.004,2.954,2.989,2.976,3.018,2.996,2.986,3.009,3.005,2.998]},"neutral":{"betweenStrengthSD":0.0128,"profile":[3.004,2.988,2.992,2.993,2.974,3.007,3.0,3.008,3.017,3.005,3.001,2.971,2.985,3.01,3.003,2.972,3.011,3.01,3.001,3.0,2.997,2.999,3.013,2.989]},"self":{"betweenStrengthSD":0.0135,"profile":[3.018,3.007,3.015,2.987,2.989,2.994,2.995,2.967,2.986,2.981,3.006,2.999,3.011,3.019,3.002,2.985,2.987,3.005,3.02,2.995,2.989,2.984,2.997,2.99]}}};
+
+</script>
+<script>
+const S = window.STUDY;
+const MODELS = S.models;
+const COL = {'Claude Opus 4.8':'#7c2424','GPT-5.5':'#2f5d6b','Gemini 3.1 Pro':'#b08433','DeepSeek V4 Pro':'#5a6e3f'};
+const tip = document.getElementById('tip');
+function showTip(html,e){tip.innerHTML=html;tip.style.opacity=1;moveTip(e);}
+function moveTip(e){const p=12;let x=e.clientX+p,y=e.clientY+p;if(x+250>innerWidth)x=e.clientX-250;tip.style.left=x+'px';tip.style.top=y+'px';}
+function hideTip(){tip.style.opacity=0;}
+const ink='#1c1a17', ink2='#4a443c', ox='#7c2424', line='#cdbfa8';
+
+/* ---------- ordering of strengths by overall mean for stable x-axis ---------- */
+const order = S.strengths.map((n,i)=>({n,i,m:S.aggOverall[i]})).sort((a,b)=>b.m-a.m);
+const ORD = order.map(o=>o.i);
+const NAMES = ORD.map(i=>S.strengths[i]);
+
+/* ============ HYPOTHESIS CARDS ============ */
+(function(){
+  const hyps=[
+    {h:'H1',t:'Distinct profiles',d:'Each model shows a different signature of strengths.',v:'NOT SUPPORTED \u00b7 gaps tiny',cls:'rej',go:'between'},
+    {h:'H2',t:'Reproducible',d:'A model\u2019s profile stays the same when you ask again.',v:'NOT SUPPORTED \u00b7 barely repeats',cls:'rej',go:'flatten'},
+    {h:'H3',t:'Framing-sensitive',d:'Self / neutral / human framings yield different profiles.',v:'NOT SUPPORTED \u00b7 all flat',cls:'rej',go:'framing'},
+    {h:'H4',t:'Distinct response style',d:'Models differ in how they use the scale.',v:'SUPPORTED \u00b7 clear, stable gaps',cls:'sup',go:'style'},
+  ];
+  const c=document.getElementById('hyps');
+  hyps.forEach(x=>{
+    const d=document.createElement('div');d.className='hyp '+x.cls;
+    d.innerHTML=`<div class="h">${x.h}</div><div class="t">${x.t}</div><div class="d">${x.d}</div><div class="v">${x.v}</div>`;
+    d.style.cursor='pointer';
+    d.onclick=()=>document.getElementById(x.go).scrollIntoView({behavior:'smooth'});
+    c.appendChild(d);
+  });
+})();
+
+/* ============ shared sizing ============ */
+function dims(el,h){const w=el.getBoundingClientRect().width;return {w,h,W:w,H:h};}
+
+/* ============ FIGURE 1 — watch it flatten ============ */
+const F1={model:MODELS[0],n:1,timer:null};
+(function(){
+  const seg=document.getElementById('f1model');
+  MODELS.forEach((m,k)=>{const b=document.createElement('button');b.textContent=m;if(k===0)b.className='on';
+    b.onclick=()=>{F1.model=m;[...seg.children].forEach(c=>c.className='');b.className='on';drawF1();};seg.appendChild(b);});
+  const sl=document.getElementById('f1slider');
+  sl.oninput=()=>{F1.n=+sl.value;drawF1();};
+  document.getElementById('f1play').onclick=function(){
+    if(F1.timer){clearInterval(F1.timer);F1.timer=null;this.textContent='\u25b6 Animate';return;}
+    this.textContent='\u275a\u275a Pause';F1.n=1;sl.value=1;
+    F1.timer=setInterval(()=>{
+      F1.n=F1.n>=150?150:F1.n+(F1.n<20?1:F1.n<60?3:6);sl.value=F1.n;drawF1();
+      if(F1.n>=150){clearInterval(F1.timer);F1.timer=null;document.getElementById('f1play').textContent='\u25b6 Animate';}
+    },90);
+  };
+  window.addEventListener('resize',()=>{drawF1();drawF2();drawF3();drawF4();});
+  drawF1();
+})();
+
+function drawF1(){
+  const el=document.getElementById('chart1');el.innerHTML='';
+  const runs=S.sampleRuns[F1.model];
+  const n=Math.min(F1.n,runs.length);
+  // running mean over first n runs, then reorder
+  const mean=ORD.map(idx=>{let s=0;for(let r=0;r<n;r++)s+=runs[r][idx];return s/n-3;});
+  document.getElementById('f1count').innerHTML=`over <b>${n}</b> run${n>1?'s':''}`;
+  document.getElementById('f1title').textContent = n===1?'A single administration':`Average of ${n} administrations`;
+
+  const m={t:18,r:16,b:96,l:42}, box=dims(el,330);
+  const W=box.w, H=box.h, iw=W-m.l-m.r, ih=H-m.t-m.b;
+  const svg=d3.select(el).append('svg').attr('width',W).attr('height',H).attr('viewBox',`0 0 ${W} ${H}`);
+  const g=svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+  const x=d3.scaleBand().domain(d3.range(24)).range([0,iw]).padding(.28);
+  const ext=Math.max(0.6, d3.max(mean,d=>Math.abs(d))*1.25);
+  const y=d3.scaleLinear().domain([-ext,ext]).range([ih,0]);
+  const yt=y.ticks(5);
+  yt.forEach(v=>{g.append('line').attr('class',Math.abs(v)<1e-9?'mid-line':'gridline').attr('x1',0).attr('x2',iw).attr('y1',y(v)).attr('y2',y(v));
+    g.append('text').attr('x',-8).attr('y',y(v)+3).attr('text-anchor','end').attr('font-size',10).text((v>0?'+':'')+v.toFixed(1));});
+  g.append('text').attr('transform',`rotate(-90)`).attr('x',-ih/2).attr('y',-30).attr('text-anchor','middle').attr('font-size',10).attr('fill',ink2).text('above / below mid-scale');
+  const c=COL[F1.model];
+  g.selectAll('rect').data(mean).enter().append('rect')
+    .attr('x',(d,i)=>x(i)).attr('width',x.bandwidth())
+    .attr('y',d=>d>=0?y(d):y(0)).attr('height',d=>Math.abs(y(d)-y(0)))
+    .attr('fill',c).attr('opacity',n===1?.92:.86).attr('rx',1)
+    .on('mousemove',(e,d)=>{const i=mean.indexOf(d);showTip(`<b>${NAMES[i]}</b><br>rated ${(d+3).toFixed(2)} out of 5<br>${d>=0?'+':''}${d.toFixed(2)} vs the middle`,e);})
+    .on('mouseleave',hideTip);
+  // x labels
+  g.selectAll('.xl').data(NAMES).enter().append('text').attr('class','xl')
+    .attr('x',(d,i)=>x(i)+x.bandwidth()/2).attr('y',ih+12).attr('transform',(d,i)=>`rotate(55,${x(i)+x.bandwidth()/2},${ih+12})`)
+    .attr('font-size',8.5).attr('fill',ink2).text(d=>d.length>18?d.slice(0,17)+'\u2026':d);
+}
+
+/* ============ FIGURE 2 — effect sizes vs SESOI ============ */
+function drawF2(){
+  const el=document.getElementById('chart2');el.innerHTML='';
+  document.getElementById('topd').textContent=S.allPairsMaxD;
+  document.getElementById('toppair').textContent=S.topPair.strength;
+  const rows=NAMES.map(n=>({n,d:S.maxAbsD[n]??0})).sort((a,b)=>b.d-a.d);
+  const m={t:34,r:20,b:18,l:200}, box=dims(el,560);
+  const W=box.w,H=box.h,iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const svg=d3.select(el).append('svg').attr('width',W).attr('height',H).attr('viewBox',`0 0 ${W} ${H}`);
+  const g=svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+  const x=d3.scaleLinear().domain([0,.55]).range([0,iw]);
+  const y=d3.scaleBand().domain(rows.map(r=>r.n)).range([0,ih]).padding(.26);
+  // SESOI band + line
+  g.append('rect').attr('x',x(.5)).attr('y',0).attr('width',iw-x(.5)).attr('height',ih).attr('fill',ox).attr('opacity',.05);
+  g.append('line').attr('class','sesoi-line').attr('x1',x(.5)).attr('x2',x(.5)).attr('y1',-8).attr('y2',ih);
+  g.append('text').attr('x',x(.5)-4).attr('y',-16).attr('text-anchor','end').attr('font-size',11).attr('fill',ox).text('"meaningful gap" \u2192 0.5');
+  [0,.1,.2,.3,.4,.5].forEach(v=>{g.append('line').attr('class','gridline').attr('x1',x(v)).attr('x2',x(v)).attr('y1',0).attr('y2',ih);
+    g.append('text').attr('x',x(v)).attr('y',ih+14).attr('text-anchor','middle').attr('font-size',9.5).text(v.toFixed(1));});
+  g.selectAll('.bar').data(rows).enter().append('rect').attr('class','bar')
+    .attr('x',0).attr('y',d=>y(d.n)).attr('height',y.bandwidth()).attr('width',d=>x(d.d)).attr('rx',1)
+    .attr('fill',ink).attr('opacity',.82)
+    .on('mousemove',(e,d)=>showTip(`<b>${d.n}</b><br>biggest gap: ${d.d.toFixed(3)} SD<br>(the line of "meaningful" sits at 0.5)`,e))
+    .on('mouseleave',hideTip);
+  g.selectAll('.vl').data(rows).enter().append('text').attr('class','vl')
+    .attr('x',-10).attr('y',d=>y(d.n)+y.bandwidth()/2+3).attr('text-anchor','end').attr('font-size',10).attr('fill',ink2)
+    .text(d=>d.n.length>26?d.n.slice(0,25)+'\u2026':d.n);
+  g.selectAll('.dl').data(rows).enter().append('text').attr('class','dl')
+    .attr('x',d=>x(d.d)+5).attr('y',d=>y(d.n)+y.bandwidth()/2+3).attr('font-size',9.5).attr('fill',ox).text(d=>d.d.toFixed(3));
+}
+
+/* ============ FIGURE 3 — response style ============ */
+const F3={dim:'dispersion'};
+const DIMINFO={
+  dispersion:{t:'How widely each model spreads its ratings',note:'<b><span class="mterm" data-m="dispersion">Spread</span></b> is how far a model ranges across the 1\u20135 scale within a sitting. Claude stays bunched near the middle; GPT-5.5 and Gemini swing widely. About a third of this difference comes down to <span class="mterm" data-m="eta2">which model you asked</span>.'},
+  midpoint:{t:'How often each model answers right in the middle',note:'<b><span class="mterm" data-m="midpoint">Middle answers</span></b> are the share of ratings landing on \u201C3.\u201D Claude parks 43% of its answers in the middle; the others far fewer \u2014 a clear, <span class="mterm" data-m="eta2">model-specific</span> habit.'},
+  extremity:{t:'How often each model picks the extremes',note:'<b><span class="mterm" data-m="extremity">Extremes</span></b> are the share of 1s and 5s. GPT-5.5 and Gemini hit the ends ~22% of the time; Claude almost never (4%) \u2014 another <span class="mterm" data-m="eta2">model-specific</span> fingerprint.'},
+  level:{t:'Each model\u2019s average rating overall',note:'<b><span class="mterm" data-m="level">Average rating</span></b> is the single number you get by averaging everything. Here all four land almost exactly in the middle (\u2248 3.0): on <em>this</em> measure, <span class="mterm" data-m="eta2">which model you ask</span> explains almost nothing. The differences live in <em>how</em> they answer, not in the average.'}
+};
+(function(){
+  const seg=document.getElementById('f3dim');
+  [['dispersion','Spread'],['midpoint','Middle answers'],['extremity','Extremes'],['level','Average']].forEach((d,k)=>{
+    const b=document.createElement('button');b.textContent=d[1];if(k===0)b.className='on';
+    b.onclick=()=>{F3.dim=d[0];[...seg.children].forEach(c=>c.className='');b.className='on';drawF3();};seg.appendChild(b);});
+})();
+function drawF3(){
+  const el=document.getElementById('chart3');el.innerHTML='';
+  document.getElementById('f3title').textContent=DIMINFO[F3.dim].t;
+  document.getElementById('f3note').innerHTML=DIMINFO[F3.dim].note;
+  const vals=MODELS.map(m=>({m,v:S.style[m][F3.dim]}));
+  const m={t:20,r:20,b:46,l:46}, box=dims(el,300);
+  const W=box.w,H=box.h,iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const maxv=F3.dim==='level'?5:(F3.dim==='dispersion'?1.4:Math.max(.5,d3.max(vals,d=>d.v)*1.25));
+  const svg=d3.select(el).append('svg').attr('width',W).attr('height',H).attr('viewBox',`0 0 ${W} ${H}`);
+  const g=svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+  const x=d3.scaleBand().domain(MODELS).range([0,iw]).padding(.34);
+  const y=d3.scaleLinear().domain([0,maxv]).range([ih,0]);
+  const ticks=y.ticks(5);
+  ticks.forEach(v=>{g.append('line').attr('class','gridline').attr('x1',0).attr('x2',iw).attr('y1',y(v)).attr('y2',y(v));
+    g.append('text').attr('x',-8).attr('y',y(v)+3).attr('text-anchor','end').attr('font-size',10).text(F3.dim==='dispersion'||F3.dim==='level'?v.toFixed(1):(v*100).toFixed(0)+'%');});
+  if(F3.dim==='level'){g.append('line').attr('class','mid-line').attr('x1',0).attr('x2',iw).attr('y1',y(3)).attr('y2',y(3));
+    g.append('text').attr('x',iw).attr('y',y(3)-6).attr('text-anchor','end').attr('font-size',10).attr('fill',ink2).text('midpoint');}
+  const TIPLBL={dispersion:'spread of ratings',midpoint:'share in the middle',extremity:'share at the extremes',level:'average rating'};
+  g.selectAll('.bar').data(vals).enter().append('rect').attr('class','bar')
+    .attr('x',d=>x(d.m)).attr('width',x.bandwidth()).attr('y',d=>y(d.v)).attr('height',d=>ih-y(d.v)).attr('rx',2)
+    .attr('fill',d=>COL[d.m])
+    .on('mousemove',(e,d)=>showTip(`<b>${d.m}</b><br>${TIPLBL[F3.dim]}: ${F3.dim==='dispersion'||F3.dim==='level'?d.v.toFixed(2):(d.v*100).toFixed(1)+'%'}`,e))
+    .on('mouseleave',hideTip);
+  g.selectAll('.vl').data(vals).enter().append('text').attr('class','vl')
+    .attr('x',d=>x(d.m)+x.bandwidth()/2).attr('y',d=>y(d.v)-7).attr('text-anchor','middle').attr('font-size',12).attr('fill',ink).attr('font-weight',600)
+    .text(d=>F3.dim==='dispersion'||F3.dim==='level'?d.v.toFixed(2):(d.v*100).toFixed(0)+'%');
+  g.selectAll('.xl').data(MODELS).enter().append('text').attr('class','xl')
+    .attr('x',d=>x(d)+x.bandwidth()/2).attr('y',ih+18).attr('text-anchor','middle').attr('font-size',10).attr('fill',ink2)
+    .text(d=>d);
+}
+
+/* ============ FIGURE 4 — framing small multiples ============ */
+function drawF4(){
+  const el=document.getElementById('chart4');el.innerHTML='';
+  const frames=[['self','Answering as itself'],['neutral','No persona'],['human','As a typical human']];
+  const box=dims(el,250);
+  const W=box.w, colW=W/3, H=box.h, m={t:26,r:8,b:20,l:24};
+  const svg=d3.select(el).append('svg').attr('width',W).attr('height',H).attr('viewBox',`0 0 ${W} ${H}`);
+  const iw=colW-m.l-m.r, ih=H-m.t-m.b;
+  const y=d3.scaleLinear().domain([-1.5,1.5]).range([ih,0]);
+  frames.forEach((f,fi)=>{
+    const prof=ORD.map(idx=>S.framing[f[0]].profile[idx]-3);
+    const g=svg.append('g').attr('transform',`translate(${fi*colW+m.l},${m.t})`);
+    const x=d3.scaleBand().domain(d3.range(24)).range([0,iw]).padding(.18);
+    g.append('text').attr('x',iw/2).attr('y',-12).attr('text-anchor','middle').attr('font-size',11).attr('fill',ink).attr('font-weight',600).text(f[1]);
+    g.append('text').attr('x',iw/2).attr('y',-1).attr('text-anchor','middle').attr('font-size',9).attr('fill',ox).text('SD '+S.framing[f[0]].betweenStrengthSD.toFixed(3));
+    g.append('line').attr('class','mid-line').attr('x1',0).attr('x2',iw).attr('y1',y(0)).attr('y2',y(0));
+    g.selectAll('rect').data(prof).enter().append('rect')
+      .attr('x',(d,i)=>x(i)).attr('width',x.bandwidth()).attr('y',d=>d>=0?y(d):y(0)).attr('height',d=>Math.abs(y(d)-y(0)))
+      .attr('fill',fi===2?ox:ink).attr('opacity',.6);
+    if(fi===0){[-1,0,1].forEach(v=>g.append('text').attr('x',-6).attr('y',y(v)+3).attr('text-anchor','end').attr('font-size',9).text(v>0?'+'+v:v));}
+  });
+  svg.append('text').attr('x',W/2).attr('y',H-4).attr('text-anchor','middle').attr('font-size',9.5).attr('fill',ink2).text('24 strengths (same order each panel) \u00b7 bars show above/below mid-scale \u00b7 note how flat every panel is');
+}
+
+/* fill stat strip exact numbers */
+document.getElementById('s-within').textContent=S.withinRunSD.toFixed(2);
+document.getElementById('s-across').textContent=S.acrossRunSD.toFixed(3);
+document.getElementById('s-ratio').textContent=S.collapseRatio+'\u00d7';
+
+/* ============ HERO WAVE — jagged runs blur to a flat average ============ */
+function drawHeroWave(){
+  const el=document.getElementById('herowave'); if(!el) return; el.innerHTML='';
+  const box=dims(el,170), W=box.w, H=box.h, m={t:14,r:8,b:14,l:8};
+  const iw=W-m.l-m.r, ih=H-m.t-m.b;
+  const svg=d3.select(el).append('svg').attr('width',W).attr('height',H).attr('viewBox',`0 0 ${W} ${H}`);
+  const g=svg.append('g').attr('transform',`translate(${m.l},${m.t})`);
+  const x=d3.scalePoint().domain(d3.range(24)).range([0,iw]);
+  const y=d3.scaleLinear().domain([-1.25,1.25]).range([ih,0]);
+  const lg=d3.line().x((d,i)=>x(i)).y(d=>y(d)).curve(d3.curveMonotoneX);
+  // baseline
+  g.append('line').attr('x1',0).attr('x2',iw).attr('y1',y(0)).attr('y2',y(0)).attr('stroke',line).attr('stroke-dasharray','2 5').attr('opacity',.6);
+  // collect 7 runs from each of 4 models = 28 jagged lines, centered on midpoint
+  const lines=[]; MODELS.forEach(mname=>{const runs=S.sampleRuns[mname];
+    for(let r=0;r<7;r++){lines.push({c:COL[mname],pts:ORD.map(idx=>runs[r][idx]-3)});}});
+  // mean across the 28 shown lines (will be near-flat)
+  const mean=ORD.map((idx,k)=>d3.mean(lines,L=>L.pts[k]));
+  // draw jagged lines with staggered fade-in
+  lines.forEach((L,k)=>{
+    g.append('path').datum(L.pts).attr('fill','none').attr('stroke',L.c).attr('stroke-width',1.15)
+      .attr('d',lg).attr('opacity',0)
+      .transition().delay(k*55).duration(700).attr('opacity',.17);
+  });
+  // heavy flat average line, drawn last
+  g.append('path').datum(mean).attr('fill','none').attr('stroke',ink).attr('stroke-width',2.8)
+    .attr('d',lg).attr('opacity',0).attr('stroke-linecap','round')
+    .transition().delay(28*55+200).duration(900).attr('opacity',.78);
+  g.append('text').attr('x',iw).attr('y',y(mean[23])-9).attr('text-anchor','end').attr('font-size',10).attr('fill',ink)
+    .attr('opacity',0).text('the average').transition().delay(28*55+700).duration(600).attr('opacity',.9);
+}
+drawHeroWave();
+window.addEventListener('resize',()=>drawHeroWave());
+
+window.addEventListener('mousemove',e=>{if(tip.style.opacity==1)moveTip(e);});
+drawF2();drawF3();drawF4();
+
+/* ============ METHOD CARDS — click any statistic to see how it's computed ============ */
+const METHODS = {
+  within_sd: {
+    term: "Within-run SD across strengths",
+    what: "How spread out a model's 24 strength scores are inside a <b>single</b> administration — i.e. how strongly it differentiates among strengths in one sitting.",
+    how: "For each administration, take that run's 24 strength scores and compute their standard deviation. Average those SDs across all of the model's administrations.",
+    read: "Higher = a more sharply differentiated profile in any one sitting. Observed value here: <b>\u2248 0.51</b>."
+  },
+  aggregate_sd: {
+    term: "Aggregate SD across strengths",
+    what: "How much profile <b>structure survives</b> once you average many administrations together.",
+    how: "Average each of the 24 strengths over <em>all</em> administrations to get one mean profile, then take the standard deviation of those 24 averaged values.",
+    read: "Near zero = the averaged profile is essentially flat. Observed value: <b>\u2248 0.0096</b>."
+  },
+  ratio: {
+    term: "Collapse ratio (54\u00d7)",
+    what: "How much the profile flattens going from a single sitting to the long-run average.",
+    how: "Divide the within-run SD by the aggregate SD: <code>0.51 \u00f7 0.0096 \u2248 54</code>.",
+    read: "<b>\u224854\u00d7</b> means averaging erases roughly 98% of the structure visible in any single run \u2014 the core 'personality disappears' effect."
+  },
+  icc: {
+    term: "ICC \u2014 intraclass correlation",
+    what: "How <b>reproducible</b> a strength's score is when you ask the same model again.",
+    how: "Per strength, fit a variance-components model with a random intercept for model identity; ICC = between-model variance \u00f7 total variance \u2014 the share of variation that is stable rather than run-to-run noise.",
+    read: "0 = nothing repeats; 1 = perfectly reproducible. Observed: <b>ICC \u2264 0.004</b> on all 24 strengths \u2014 essentially none of a model's profile repeats."
+  },
+  cohend: {
+    term: "Cohen's d (standardized gap)",
+    what: "The size of the gap between two models on a strength, expressed in standard-deviation units so it's comparable across strengths.",
+    how: "For each model pair on each strength: <code>(mean_A \u2212 mean_B) \u00f7 pooled SD</code>. Computed for all 144 model-pair \u00d7 strength comparisons.",
+    read: "Rules of thumb: 0.2 small, 0.5 medium, 0.8 large. The largest gap anywhere here is <b>0.156</b> \u2014 smaller than 'small.'"
+  },
+  sesoi: {
+    term: "Smallest gap worth caring about",
+    what: "The line \u2014 fixed <em>before</em> seeing the data \u2014 for how large a difference has to be to count as meaningful.",
+    how: "Set a priori at Cohen's d = <b>0.50</b> (a medium effect). Gaps below this are treated as practically zero.",
+    read: "Choosing the threshold in advance prevents reverse-engineering 'significance' after the fact, and gives the equivalence test (next) something concrete to test against."
+  },
+  tost: {
+    term: "Equivalence test (TOST)",
+    what: "A test for <b>sameness</b>, not just a failure to find a difference. An ordinary t-test that finds 'no difference' is inconclusive; this positively confirms equivalence.",
+    how: "Two One-Sided Tests check whether the difference lies entirely within \u00b10.50 d (the bound above). If <em>both</em> one-sided tests are significant, the two models are declared statistically equivalent on that strength.",
+    read: "All 24 strengths passed \u2014 so the models are confirmed the same within the pre-set bound, a stronger claim than 'we didn't detect a difference.'"
+  },
+  eta2: {
+    term: "\u03b7\u00b2 \u2014 variance explained by model",
+    what: "Of all the variation in a response-style habit, the share explained by <b>which model</b> you asked.",
+    how: "One-way ANOVA with model as the factor; <code>\u03b7\u00b2 = between-model sum of squares \u00f7 total sum of squares</code>.",
+    read: "0 = model identity explains nothing; 1 = it explains everything. Style habits: \u03b7\u00b2 \u2248 <b>.25\u2013.35</b>. Average rating (level): \u03b7\u00b2 \u2248 <b>.001</b> \u2014 the split that defines the whole finding."
+  },
+  dispersion: {
+    term: "Spread (response dispersion)",
+    what: "How widely a model uses the rating scale within one sitting.",
+    how: "Standard deviation of that run's 96 individual item answers (on the 1\u20135 scale).",
+    read: "Higher = the model ranges from low to high freely; lower = it clusters. A stable, model-specific habit."
+  },
+  midpoint: {
+    term: "Middle answers (midpoint use)",
+    what: "How often a model retreats to the neutral middle of the scale.",
+    how: "Proportion of the 96 item answers equal to <b>3</b>, per run; averaged over runs.",
+    read: "Claude \u2248 43%; the others far less. Part of each model's scale-use fingerprint."
+  },
+  extremity: {
+    term: "Extremes (extreme responding)",
+    what: "How often a model commits to the ends of the scale.",
+    how: "Proportion of the 96 item answers equal to <b>1 or 5</b>, per run; averaged over runs.",
+    read: "GPT-5.5 and Gemini \u2248 22%; Claude \u2248 4%. A sharp, reliable difference."
+  },
+  level: {
+    term: "Average rating (level)",
+    what: "A model's overall mean rating \u2014 how high or low it scores itself on the whole.",
+    how: "Mean of all 96 item answers in a run; averaged over runs.",
+    read: "All four sit \u2248 3.0 (the midpoint). On <em>this</em> measure the models are nearly identical (\u03b7\u00b2 \u2248 .001)."
+  },
+  framing_sd: {
+    term: "Profile flatness by framing",
+    what: "Whether changing the framing (self / neutral / human) produces any real profile structure.",
+    how: "Within each framing, average to one profile and take the between-strength SD. Compare it to the <b>sampling-noise floor</b> \u2014 the SD you'd expect if the true profile were flat and only random sampling moved it (\u2248 0.054).",
+    read: "Self 0.014 \u00b7 neutral 0.013 \u00b7 human 0.015 \u2014 all <em>below</em> the noise floor. No framing recovers a real profile, including the 'answer as a human' one."
+  }
+};
+
+(function(){
+  const mpop = document.getElementById('methodpop');
+  if(!mpop) return;
+  function showMethod(key, x, y){
+    const m = METHODS[key]; if(!m) return;
+    mpop.innerHTML =
+      '<div class="mp-head"><span class="mp-term">'+m.term+'</span><button class="mp-x" aria-label="Close">\u2715</button></div>'+
+      '<div class="mp-body">'+
+        '<div class="mp-row"><span class="mp-k">What it is</span><span class="mp-v">'+m.what+'</span></div>'+
+        '<div class="mp-row"><span class="mp-k">How it\u2019s computed</span><span class="mp-v">'+m.how+'</span></div>'+
+        '<div class="mp-row"><span class="mp-k">How to read it</span><span class="mp-v">'+m.read+'</span></div>'+
+      '</div>';
+    mpop.classList.add('on');
+    const r = mpop.getBoundingClientRect();
+    let px = x - r.width/2, py = y + 16;
+    if(px + r.width > innerWidth - 12) px = innerWidth - 12 - r.width;
+    if(px < 12) px = 12;
+    if(py + r.height > innerHeight - 12) py = Math.max(12, y - r.height - 16);
+    mpop.style.left = px+'px'; mpop.style.top = py+'px';
+  }
+  function hideMethod(){ mpop.classList.remove('on'); }
+  document.addEventListener('click', function(e){
+    const t = e.target.closest('.mterm');
+    if(t){ e.preventDefault(); e.stopPropagation(); showMethod(t.dataset.m, e.clientX, e.clientY); return; }
+    if(e.target.closest('.mp-x')){ hideMethod(); return; }
+    if(!e.target.closest('.method-pop')) hideMethod();
+  });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') hideMethod(); });
+  window.addEventListener('resize', hideMethod);
+})();
+
+</script>
+</body>
+</html>

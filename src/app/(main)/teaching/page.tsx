@@ -108,6 +108,31 @@ export default function TeachingPage() {
         </section>
 
         <section>
+          <h2>Case studies</h2>
+          <div className="rule" />
+          <p>
+            Interactive teaching cases built from real study data — read the
+            argument, then poke at the figures.
+          </p>
+          <div className="gallery">
+            <a
+              className="card"
+              href="/teaching/ai-character-case.html"
+              target="_blank"
+              rel="noopener"
+            >
+              <h3>Do Frontier AI Models Have Personality?</h3>
+              <p>
+                Ask a frontier model who it is once and it answers vivid and
+                distinct; ask it a thousand times and Claude, GPT, Gemini, and
+                DeepSeek melt into a nearly identical average.
+              </p>
+              <span className="src">interactive case · live charts →</span>
+            </a>
+          </div>
+        </section>
+
+        <section>
           <h2>Courses</h2>
           <div className="rule" />
           <CourseList items={COURSES} />
