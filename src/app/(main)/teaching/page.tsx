@@ -130,6 +130,13 @@ export default function TeachingPage() {
               <span className="src">interactive case · live charts →</span>
             </a>
           </div>
+          <p className="muted" style={{ marginTop: 14 }}>
+            Companion{" "}
+            <a href="/teaching/methods-note.pdf" target="_blank" rel="noopener">
+              methods note (PDF)
+            </a>{" "}
+            — how the study was designed, scored, and analysed.
+          </p>
         </section>
 
         <section>
