@@ -6,6 +6,7 @@ import { SITE_NAME, SITE_AFFILIATION } from "@/lib/site";
 
 const TABS = [
   { href: "/", label: "Home" },
+  { href: "/football", label: "College Football" },
   { href: "/about", label: "About" },
   { href: "/research", label: "Research" },
   { href: "/teaching", label: "Teaching" },

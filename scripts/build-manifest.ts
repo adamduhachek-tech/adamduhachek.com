@@ -30,6 +30,18 @@ interface SourceArticle {
   construct?: string;
   primaryViz?: string;
   path?: string;
+  /** Collection an article belongs to. Absent = the main well-being gallery;
+   *  "football" = the College Football section. Keeps genres separate. */
+  collection?: string;
+  /** Human display date (e.g. "November 23, 2026"), shown on collection
+   *  index pages. Only used where a collection surfaces dates. */
+  date?: string;
+  /** Optional explicit tag overrides. When present, they win over the inferred
+   *  tags — used for articles that fall outside the well-being taxonomy (e.g.
+   *  a non-survey prediction post that should carry no topic facets). */
+  subtopics?: string[];
+  scope?: string[];
+  sources?: string[];
 }
 
 /** Strip scripts/styles/SVG and tags, then estimate reading minutes at the
@@ -64,15 +76,17 @@ function main() {
     });
     return {
       slug: a.slug,
+      collection: a.collection ?? null,
+      date: a.date ?? null,
       title: a.title,
       snippet: a.dek ?? null,
       dataset: a.dataset ?? null,
       construct: a.construct ?? null,
       primaryViz: a.primaryViz ?? null,
       readMinutes: readMinutesFor(a.slug),
-      subtopics: tags.subtopics,
-      scope: tags.scope,
-      sources: tags.sources,
+      subtopics: a.subtopics ?? tags.subtopics,
+      scope: a.scope ?? tags.scope,
+      sources: a.sources ?? tags.sources,
     };
   });
 

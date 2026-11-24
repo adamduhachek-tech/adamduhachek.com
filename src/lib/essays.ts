@@ -6,6 +6,8 @@ import type { Subtopic, Scope, Source } from "@/lib/taxonomy";
  *  produced by `npm run manifest` from src/data/essays.json + the essay HTML. */
 export interface ManifestEntry {
   slug: string;
+  collection: string | null;
+  date: string | null;
   title: string;
   snippet: string | null;
   dataset: string | null;
@@ -26,6 +28,10 @@ const manifest = manifestData as Manifest;
 
 export interface Essay {
   slug: string;
+  /** The collection an essay belongs to; null = the main well-being gallery. */
+  collection: string | null;
+  /** Human display date (e.g. "November 23, 2026"), where a collection uses it. */
+  date: string | null;
   /** The self-contained essay, served untouched from /public. */
   url: string;
   title: string;
@@ -42,6 +48,8 @@ export interface Essay {
 function toEssay(e: ManifestEntry): Essay {
   return {
     slug: e.slug,
+    collection: e.collection ?? null,
+    date: e.date ?? null,
     url: `/essays/${e.slug}/index.html`,
     title: e.title,
     description: e.snippet ?? null,
@@ -58,6 +66,16 @@ function toEssay(e: ManifestEntry): Essay {
 /** Every essay, in the curated narrative order of the manifest. */
 export function listEssays(): Essay[] {
   return manifest.essays.map(toEssay);
+}
+
+/** Essays in the main well-being gallery (no collection). */
+export function listWellbeingEssays(): Essay[] {
+  return listEssays().filter((e) => !e.collection);
+}
+
+/** Essays in a named collection (e.g. "football"), in manifest order. */
+export function listEssaysInCollection(collection: string): Essay[] {
+  return listEssays().filter((e) => e.collection === collection);
 }
 
 export function getEssay(slug: string): Essay | null {

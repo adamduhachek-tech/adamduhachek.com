@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A model says the playoff committee will leave four teams out of its top 25. Their résumés say they belong.</title>
+<meta name="description" content="A model trained on every College Football Playoff committee ranking since 2014 predicts the committee will leave UTSA, Louisiana Tech, New Mexico and North Dakota State out of its top 25 — four teams whose résumés say they belong. Posted before the committee speaks, with a hashed prediction file anyone can check afterward.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f4; --paper:#ffffff; --surface:#f3efe7;
+  --ink:#1b2130; --ink-mid:#495061; --ink-faint:#7b8398;
+  --navy:#16233f; --accent:#9b2335; --accent-soft:#f4e6e8; --gold:#b07c2e;
+  --line:#e7e2d6; --line-soft:#efeae0;
+  --serif:"Source Serif 4", Georgia, "Iowan Old Style", Cambria, "Times New Roman", serif;
+  --sans:system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --maxw:716px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#14161c; --paper:#1b1e26; --surface:#22262f;
+    --ink:#e7e2d6; --ink-mid:#b9bfca; --ink-faint:#8b93a6;
+    --navy:#9fb2d4; --accent:#d96a78; --accent-soft:#3a2228; --gold:#d9b05e;
+    --line:#2a2f3a; --line-soft:#242a34;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.66 var(--serif);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:54px 22px 96px}
+h1{
+  font:700 clamp(29px,4.4vw,41px)/1.12 var(--serif);
+  color:var(--navy); letter-spacing:-.014em; text-wrap:balance;
+  margin:0 0 .5rem;
+}
+h2{
+  font:700 clamp(21px,2.6vw,26px)/1.22 var(--serif);
+  color:var(--navy); letter-spacing:-.01em; text-wrap:balance;
+  margin:2.4rem 0 .75rem;
+}
+p{margin:0 0 1.15rem; color:var(--ink)}
+a{color:var(--accent); text-decoration-thickness:1px; text-underline-offset:2px; overflow-wrap:anywhere}
+a:hover{color:var(--navy)}
+em{font-style:italic}
+
+.dateline{
+  font:italic 400 15.5px/1.55 var(--serif); color:var(--ink-mid);
+  margin:0 0 1.9rem; padding-top:.9rem; position:relative;
+}
+.dateline::before{
+  content:""; position:absolute; top:0; left:0; width:52px; height:3px;
+  background:var(--accent);
+}
+
+.bio{
+  font:italic 400 15px/1.6 var(--serif); color:var(--ink-faint);
+  margin:2.8rem 0 0; padding-top:1.1rem; border-top:1px solid var(--line);
+}
+
+/* Five-teams-to-watch table */
+table.watch{
+  width:100%; border-collapse:collapse; margin:1.5rem 0 1.9rem;
+  font-family:var(--sans);
+}
+table.watch th, table.watch td{
+  padding:11px 10px; border-bottom:1px solid var(--line); text-align:left;
+}
+table.watch thead th{
+  font:700 11px/1.3 var(--mono); letter-spacing:.07em; text-transform:uppercase;
+  color:var(--ink-faint); border-bottom:2px solid var(--navy); vertical-align:bottom;
+}
+table.watch td{ font:400 16px/1.4 var(--serif); color:var(--ink) }
+table.watch td:first-child{ font-weight:600; color:var(--navy) }
+table.watch .num{ text-align:right; font-variant-numeric:tabular-nums; font-family:var(--mono); font-size:14.5px }
+table.watch tbody tr:last-child td{ border-bottom:none }
+
+/* Predicted top 25 */
+ol.ranks{
+  margin:1.2rem 0 1.4rem; padding:0; list-style:none;
+  counter-reset:rank;
+  columns:2; column-gap:40px;
+}
+@media (max-width:560px){ ol.ranks{columns:1} }
+ol.ranks li{
+  counter-increment:rank; position:relative;
+  padding:7px 0 7px 42px; margin:0;
+  border-bottom:1px solid var(--line-soft);
+  break-inside:avoid; font-size:17px;
+}
+ol.ranks li::before{
+  content:counter(rank); position:absolute; left:0; top:7px;
+  width:30px; text-align:right;
+  font:700 13px/1.5 var(--mono); color:var(--accent);
+  font-variant-numeric:tabular-nums;
+}
+
+/* File + fingerprint */
+ul.fileinfo{
+  list-style:none; margin:1.2rem 0 1.4rem; padding:16px 18px;
+  background:var(--surface); border:1px solid var(--line); border-radius:8px;
+  font-family:var(--mono);
+}
+ul.fileinfo li{
+  font:400 13.5px/1.7 var(--mono); color:var(--ink-mid);
+  overflow-wrap:anywhere; margin:0;
+}
+ul.fileinfo li + li{ margin-top:8px }
+ul.fileinfo code{
+  font-family:var(--mono); font-size:13px; color:var(--ink);
+  background:transparent; padding:0;
+}
+code{
+  font-family:var(--mono); font-size:.86em;
+  background:var(--accent-soft); color:var(--ink);
+  padding:.08em .34em; border-radius:4px; overflow-wrap:anywhere;
+}
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1>A model says the playoff committee will leave four teams out of its top 25. Their résumés say they belong.</h1>
+<p class="dateline"><em>Posted November 23, 2026, the night before the committee's release.</em></p>
+<p>When the College Football Playoff committee announces its rankings Tuesday night, UTSA, Louisiana Tech, New Mexico and North Dakota State will probably not be on the list. Judged only on what they have done on the field this season, all four would be.</p>
+<p>That is the forecast of a statistical model built to predict the committee's behavior, and it is being published here before the committee speaks, so that anyone can check it afterward.</p>
+<h2>Five teams to watch</h2>
+<p>A ranking built on résumé alone and the model's prediction of the committee agree on the top 14 teams. They part ways lower down, on five teams from outside the four Power conferences:</p>
+<table class="watch"><thead><tr><th>Team</th><th class="num">On résumé alone</th><th class="num">Predicted committee rank</th></tr></thead><tbody><tr><td>Boise State</td><td class="num">16</td><td class="num">23</td></tr><tr><td>UTSA</td><td class="num">18</td><td class="num">Unranked</td></tr><tr><td>Louisiana Tech</td><td class="num">21</td><td class="num">Unranked</td></tr><tr><td>New Mexico</td><td class="num">24</td><td class="num">Unranked</td></tr><tr><td>North Dakota State</td><td class="num">25</td><td class="num">Unranked</td></tr></tbody></table>
+<p>Why would the model expect that? Because it learned from the committee itself.</p>
+<h2>The project behind the prediction</h2>
+<p>This forecast comes from a study of every ranking the committee has issued: 72 of them, from 2014 through 2025. The study asks a question fans have argued about for a decade. When two teams have the same résumé, does it matter which conference they play in?</p>
+<p>To keep the answer honest, the method was written down and frozen before the analysis was allowed to see which conference each team belonged to. The analysis then ran once, and a second program, written independently, had to reproduce the result.</p>
+<p>The early finding: the committee has ranked teams from the smaller conferences well below Power-conference teams with the same résumé, by about eight positions on average. Follow-up checks suggest that up to about half of that gap could be the committee correctly reading records that flatter weaker schedules. The rest is harder to explain. The full results will be published here in the coming weeks.</p>
+<p>The model that produced tonight's forecast uses the same ingredients: each team's record, schedule strength, quality wins, bad losses and scoring margins through Sunday's games, weighted the way the committee has weighted them for 12 years. It predicts what the committee will do, not what it should do.</p>
+<h2>The predicted top 25</h2>
+<ol class="ranks">
+  <li>Georgia</li>
+  <li>Utah</li>
+  <li>Miami</li>
+  <li>Notre Dame</li>
+  <li>Texas</li>
+  <li>Wake Forest</li>
+  <li>Texas Tech</li>
+  <li>Alabama</li>
+  <li>UCLA</li>
+  <li>Tennessee</li>
+  <li>BYU</li>
+  <li>Indiana</li>
+  <li>Oregon</li>
+  <li>Iowa</li>
+  <li>USC</li>
+  <li>Houston</li>
+  <li>Louisville</li>
+  <li>Ohio State</li>
+  <li>Arizona</li>
+  <li>Ole Miss</li>
+  <li>Liberty</li>
+  <li>Oklahoma</li>
+  <li>Boise State</li>
+  <li>Florida</li>
+  <li>Oklahoma State</li>
+</ol>
+<p>The model is least sure about the edge of the top 12, the cut line for the playoff field. It gives BYU a 73% chance of landing inside it, Indiana 58%, Oregon 34% and Iowa 30%.</p>
+<h2>Keeping score</h2>
+<p>One week settles little. If the committee ranks UTSA 18th, that does not overturn 12 seasons of rankings. If it leaves all four teams out, that does not prove it was wrong to.</p>
+<p>But a forecast is only worth something if it can fail in public. The complete prediction file was published on GitHub at 8:29 p.m. Eastern on November 23, with a fingerprint that changes if the file is altered:</p>
+<ul class="fileinfo">
+  <li>File: <a href="https://gist.github.com/adamduhachek-tech/818743e9c7db68cd2229a7dfc9cb954c" target="_blank" rel="noopener noreferrer">https://gist.github.com/adamduhachek-tech/818743e9c7db68cd2229a7dfc9cb954c</a></li>
+  <li>SHA-256: <code>52bd1d530c693d6808d0c90efc8f7c3bb6ffc44969122521f4ed40b74eb52b2c</code></li>
+</ul>
+<p>The score goes up here after the release, and a new prediction will be posted before each remaining ranking this season.</p>
+<p class="bio"><em>Adam Duhachek is the Bielinski Family Faculty Scholar and Professor of Marketing at the University of Illinois Chicago, where he studies how reputation and brand shape judgment.</em></p>
+</main>
+</body>
+</html>
