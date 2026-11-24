@@ -1,8 +1,24 @@
 {
-  "generatedAt": "2026-06-18T05:43:42.149Z",
+  "generatedAt": "2026-11-24T02:21:40.442Z",
   "essays": [
     {
+      "slug": "cfp-prediction-2026-11-23",
+      "collection": "football",
+      "date": "November 23, 2026",
+      "title": "A model says the playoff committee will leave four teams out of its top 25. Their résumés say they belong.",
+      "snippet": "A model trained on every College Football Playoff committee ranking since 2014 predicts the committee will leave UTSA, Louisiana Tech, New Mexico and North Dakota State out of its top 25 — four teams whose résumés say they belong. Posted before the committee speaks, with a hashed prediction file anyone can check afterward.",
+      "dataset": "CFP committee rankings, 2014–2025",
+      "construct": "predicted committee rank vs résumé-only rank",
+      "primaryViz": "ranking",
+      "readMinutes": 3,
+      "subtopics": [],
+      "scope": [],
+      "sources": []
+    },
+    {
       "slug": "the-scissors",
+      "collection": null,
+      "date": null,
       "title": "The Scissors",
       "snippet": "Two ways of measuring a life are coming apart: the rating people give it holds or climbs while the daily feel of it sinks. Across the Gallup World Poll, the GSS, and the Values Surveys, the gap between the evaluative and experiential blades keeps widening.",
       "dataset": "Gallup World Poll 2006–2025 + GSS 1972–2024 + EVS–WVS",
@@ -24,6 +40,8 @@
     },
     {
       "slug": "plateau-in-the-tail",
+      "collection": null,
+      "date": null,
       "title": "The Plateau Is in the Tail, Not the Mean",
       "snippet": "For more than a decade, social science fought over whether money stops buying happiness around $75,000. Re-run the question on 1.8 million Gallup interviews — the same survey the fight began on — and the answer is that everyone was staring at the wrong line.",
       "dataset": "Gallup US Daily ('Motherlode' extract), 2009–2017 (affect items 2009–2012)",
@@ -42,6 +60,8 @@
     },
     {
       "slug": "money-buys-calm-not-joy",
+      "collection": null,
+      "date": null,
       "title": "Money Buys Calm, Not Joy",
       "snippet": "Across the income ladder, how people rate their lives climbs steeply while daily enjoyment plateaus above poverty and stress barely moves — what money most clearly buys is freedom from worry.",
       "dataset": "Gallup US Daily ('Motherlode' extract), 2008–2012",
@@ -61,6 +81,8 @@
     },
     {
       "slug": "income-life-vs-mood",
+      "collection": null,
+      "date": null,
       "title": "Money Moves Your Life Rating More Than Your Mood",
       "snippet": "Inside almost every country, richer people both rate their lives higher and feel better day to day — but the life-rating slope is steeper than the mood slope in 96% of countries, and the gap widens with development.",
       "dataset": "Gallup World Poll, 2005–2020 (155 countries)",
@@ -80,6 +102,8 @@
     },
     {
       "slug": "the-great-convergence",
+      "collection": null,
+      "date": null,
       "title": "The Great Convergence",
       "snippet": "Since 1981 national life satisfaction grew more alike: the post-communist world climbed ~2 points out of its mid-1990s trough (Albania +2.4, Ukraine +2.2) while some wealthy nations slipped, and the cross-country spread fell 49%.",
       "dataset": "Integrated EVS-WVS (Values Surveys), 1981-2022 (S017)",
@@ -98,6 +122,8 @@
     },
     {
       "slug": "the-changing-recipe",
+      "collection": null,
+      "date": null,
       "title": "The Changing Recipe of a Good Life",
       "snippet": "Run the same model of life satisfaction in poor and rich countries and the ingredients shift: financial satisfaction’s grip eases, the sense of freedom nearly doubles in weight (0.14→0.27), and the pull of relative income rank fades to zero.",
       "dataset": "Integrated EVS-WVS (Values Surveys), 1981-2022 (S017)",
@@ -116,6 +142,8 @@
     },
     {
       "slug": "the-freedom-to-be-happy",
+      "collection": null,
+      "date": null,
       "title": "The Freedom to Be Happy",
       "snippet": "Across 100+ countries and 40 years of the Values Surveys, the sense of freedom and control over one’s life predicts life satisfaction better than income or health — a within-country coefficient of 0.30, and r=0.77 across 107 national averages.",
       "dataset": "Integrated EVS-WVS (Values Surveys), 1981-2022 (S017)",
@@ -135,6 +163,8 @@
     },
     {
       "slug": "marriage-premium",
+      "collection": null,
+      "date": null,
       "title": "Does the Ring Still Matter?",
       "snippet": "For fifty years, married Americans have reported more happiness than everyone else — a gap that has barely budged, and that survives even after you account for who tends to marry.",
       "dataset": "General Social Survey, 1972–2024 (weight wtssps)",
@@ -153,6 +183,8 @@
     },
     {
       "slug": "the-mood-that-didnt-lift",
+      "collection": null,
+      "date": null,
       "title": "The Mood That Didn't Lift",
       "snippet": "From 2006 to 2025 the world's life-rating climbed back to a record high, but daily negative emotion stayed elevated — and peaked in 2022, not 2020. The recovery reached the ladder, not the day.",
       "dataset": "Gallup World Poll, 2006–2025 (population-weighted)",
@@ -171,6 +203,8 @@
     },
     {
       "slug": "worst-year",
+      "collection": null,
+      "date": null,
       "title": "2020 Was Not the End",
       "snippet": "Re-examined across the full 2017–2025 arc, 2020's shock looks different: the world's life-rating recovered past its pre-pandemic baseline (+0.41 ladder points) while daily distress only half receded — and the worst year for negative emotion was 2022, not 2020.",
       "dataset": "Gallup World Poll, 2017–2025 (115-country fixed panel)",
@@ -189,6 +223,8 @@
     },
     {
       "slug": "despair-felt-and-fatal",
+      "collection": null,
+      "date": null,
       "title": "Despair, Felt and Fatal",
       "snippet": "Deaths of despair gave America a mortality map. Buried in 1,769,079 Gallup interviews is the question that map raises: which feeling lives in the places where people die? Not sadness. Not worry. Pain — and a future that looks shorter than the present.",
       "dataset": "Gallup US Daily ('Motherlode' extract), 2008–2012 + county despair-mortality join (1,341 counties)",
@@ -208,6 +244,8 @@
     },
     {
       "slug": "young-and-less-happy",
+      "collection": null,
+      "date": null,
       "title": "Young and Less Happy",
       "snippet": "In the GSS, happiness has always risen gently with age. Over the past decade the youngest adults fell to a 50-year low — 1.80 in 2021, 1.91 in 2024 — pulling away from everyone else.",
       "dataset": "General Social Survey, 1972–2024",
@@ -226,6 +264,8 @@
     },
     {
       "slug": "the-u-curve-inverts",
+      "collection": null,
+      "date": null,
       "title": "The U-Curve Inverts",
       "snippet": "The midlife dip and old-age rebound was a 20th-century pattern. In the rich world the young have lost their lead: the young-minus-old life-rating gap swung from +0.46 to −0.06 as the young fell and the old held.",
       "dataset": "Gallup World Poll 2010–2025 + GSS",
@@ -247,6 +287,8 @@
     },
     {
       "slug": "global-ageing-and-happiness",
+      "collection": null,
+      "date": null,
       "title": "The Two Clocks of Growing Old",
       "snippet": "As people age worldwide, the mind's agitations fall — stress peaks in midlife and anger hits a lifetime low by 65+ — while pain (18%→47%), sadness and health limits climb. Whether old-age worry eases or deepens is sorted by money: 0.31 in rich countries vs 0.47 in poor.",
       "dataset": "Gallup World Poll, 2005–2020 (165 countries, 2.28M interviews)",
@@ -267,6 +309,8 @@
     },
     {
       "slug": "long-retreat-of-trust",
+      "collection": null,
+      "date": null,
       "title": "The Long Retreat of Trust",
       "snippet": "The share of Americans who say most people can be trusted has nearly halved since 1972 — 47% to 25% — while the durable happiness gap between trusters and the wary held firm.",
       "dataset": "General Social Survey, 1972–2024",
@@ -285,6 +329,8 @@
     },
     {
       "slug": "fifty-years-of-evenings",
+      "collection": null,
+      "date": null,
       "title": "Fifty Years of American Evenings",
       "snippet": "Since 1974 the General Social Survey has asked the same four questions: how often do you spend an evening with relatives, with friends, with neighbors, at a bar? The company thinned. The glow stayed. And the people who still gather now look happier, relative to those who don’t, than they did when the asking began.",
       "dataset": "General Social Survey, 1974–2024 (weight wtssps)",
@@ -303,6 +349,8 @@
     },
     {
       "slug": "someone-to-count-on",
+      "collection": null,
+      "date": null,
       "title": "Someone to Count On",
       "snippet": "Having someone to count on is worth about 1.5 ladder points — one of the largest gaps in well-being — and a generous welfare state, far from substituting for it, makes that private safety net matter more, not less.",
       "dataset": "Gallup World Poll, 2005–2020 (155 countries)",
@@ -322,6 +370,8 @@
     },
     {
       "slug": "the-pew-not-the-prayer",
+      "collection": null,
+      "date": null,
       "title": "The Pew, Not the Prayer",
       "snippet": "Religion is good for happiness — but it's the showing up, not the believing, that does the work: attendance carries roughly twice the happiness of private prayer or belief, and survives when both are entered together.",
       "dataset": "General Social Survey, 1972–2024 (weight wtssps)",
@@ -340,6 +390,8 @@
     },
     {
       "slug": "losing-my-religion",
+      "collection": null,
+      "date": null,
       "title": "Losing My Religion",
       "snippet": "Americans leave the faith they were raised in at four times the rate they did fifty years ago — and what that costs in happiness depends less on where you started than on where you stand now.",
       "dataset": "General Social Survey, 1972–2022 (weight wtssps)",
@@ -359,6 +411,8 @@
     },
     {
       "slug": "does-generosity-pay",
+      "collection": null,
+      "date": null,
       "title": "Does Generosity Pay — Everywhere?",
       "snippet": "Across 155 countries, people who give — money, time, or a hand to a stranger — rate their lives higher and feel better day to day; the link holds in rich countries and poor ones alike, and is strongest for giving money.",
       "dataset": "Gallup World Poll, 2005–2020 (155 countries)",
@@ -378,6 +432,8 @@
     },
     {
       "slug": "alone",
+      "collection": null,
+      "date": null,
       "title": "Alone",
       "snippet": "Half a century of GSS data traces a quiet, broad withdrawal from in-person life — neighbors most of all — and the steep happiness gap that separates the connected from the isolated.",
       "dataset": "General Social Survey, 1974–2024",
@@ -396,6 +452,8 @@
     },
     {
       "slug": "out-of-reach",
+      "collection": null,
+      "date": null,
       "title": "Out of Reach — When the American Dream Stopped Feeling Possible",
       "snippet": "The belief that the system gives you a fair shot has quietly collapsed — agreement fell from 78% in 2000 to 45% in 2024 — and that belief is worth real happiness.",
       "dataset": "General Social Survey, 1987–2024 (weight wtssps)",
@@ -414,6 +472,8 @@
     },
     {
       "slug": "the-optimism-gap",
+      "collection": null,
+      "date": null,
       "title": "The Optimism Gap",
       "snippet": "Americans disagree enormously about how much better their lives will get — and the least hopeful group is the white working class, not the poor of color.",
       "dataset": "Gallup US Daily, 2008–2017 (unweighted)",
@@ -434,6 +494,8 @@
     },
     {
       "slug": "the-satisfaction-treadmill",
+      "collection": null,
+      "date": null,
       "title": "The Satisfaction Treadmill",
       "snippet": "Real family incomes rose about a third from 1972 to 2022, but Americans' satisfaction with their finances never followed — the share 'pretty well satisfied' fell from 33% to 23%, and beneath the flat average the top and bottom thirds pulled apart from 0.43 to 0.62 points.",
       "dataset": "General Social Survey, 1972-2024 (wtssps)",
@@ -453,6 +515,8 @@
     },
     {
       "slug": "flip-counties-felt-it-first",
+      "collection": null,
+      "date": null,
       "title": "The Flip Counties Felt It First",
       "snippet": "In the 223 counties that voted for Barack Obama in 2012 and Donald Trump in 2016, people rated their day-to-day lives almost exactly like residents of similar counties that never flipped. What sagged, years before any ballots were cast, was the future.",
       "dataset": "Gallup US Daily ('Motherlode' extract), 2008–2016 (2017 coda) + MIT/MEDSL county election join",
@@ -472,6 +536,8 @@
     },
     {
       "slug": "feeling-behind",
+      "collection": null,
+      "date": null,
       "title": "Feeling Behind",
       "snippet": "Financial satisfaction tracks where Americans think they rank more than the dollars they actually have: the perceived-rank gradient spans a full point and saturates at the top, and adding rank to a model collapses the income effect by about 61%.",
       "dataset": "General Social Survey, 1972-2024 (wtssps)",
@@ -491,6 +557,8 @@
     },
     {
       "slug": "keeping-up-with-the-county",
+      "collection": null,
+      "date": null,
       "title": "Keeping Up With the County",
       "snippet": "Take two Americans on the same paycheck and drop one in a richer county — the comparison drags down the middle, barely touches the rich, and slightly lifts the poor.",
       "dataset": "Gallup US Daily, 2008–2017 (unweighted) + county income context",
@@ -510,6 +578,8 @@
     },
     {
       "slug": "geography-of-american-thriving",
+      "collection": null,
+      "date": null,
       "title": "The Geography of American Thriving",
       "snippet": "Across 2.46 million interviews, the share of Americans 'thriving' in how they rate their lives spans about 19 points between states — and at the county level it tracks income, rurality, and deaths of despair.",
       "dataset": "Gallup US Daily ('Motherlode' extract), 2008–2017",
@@ -530,6 +600,8 @@
     },
     {
       "slug": "happiness-moved-inside-borders",
+      "collection": null,
+      "date": null,
       "title": "Happiness Moved Inside Borders",
       "snippet": "From 2006 to 2019 the world grew happier and nations grew more alike — but inside 39 of 42 countries, the distance between the happiest and unhappiest citizens widened.",
       "dataset": "Gallup World Poll, 2006–2019 (42-country balanced panel)",
@@ -548,6 +620,8 @@
     },
     {
       "slug": "black-white-two-measures",
+      "collection": null,
+      "date": null,
       "title": "Lower on the Ladder, Lighter in the Day",
       "snippet": "Ask whether Black or white Americans are happier and the honest answer is: by which measure? They rate their current lives slightly lower, yet report calmer days — less worry and less stress — at every income level, and most among the affluent.",
       "dataset": "GSS 1972–2024 (wtssps) + Gallup US Daily 2008–2017 (unweighted)",
@@ -569,6 +643,8 @@
     },
     {
       "slug": "gender-gap-two-ways",
+      "collection": null,
+      "date": null,
       "title": "The Gender Well-Being Paradox, Measured Two Ways",
       "snippet": "Across 155 countries, women rate their lives at least as high as men in nine of every ten places — yet report more daily worry, sadness, and stress. Two gender gaps, pointing opposite ways.",
       "dataset": "Gallup World Poll, 2005–2020 (155 countries)",
@@ -588,6 +664,8 @@
     },
     {
       "slug": "out-of-place",
+      "collection": null,
+      "date": null,
       "title": "Out of Place — The Geography of the LGBT Well-Being Gap",
       "snippet": "Daily distress runs high for LGBT Americans everywhere, but how poorly they rate their lives widens where the county climate turns hostile — and in those same places, fewer people say they are LGBT at all, so the widening gap is a lower bound.",
       "dataset": "Gallup US Daily, 2012–2017 (unweighted) + county/state context",
@@ -608,6 +686,8 @@
     },
     {
       "slug": "feeling-rich-being-rich",
+      "collection": null,
+      "date": null,
       "title": "Feeling Rich Is Not the Same as Being Rich",
       "snippet": "Money buys the feeling of enough everywhere and never stops — but Central Asia feels richer than its GDP, southern Africa poorer, and the countries that rate their lives best are not the ones that feel paid.",
       "dataset": "Gallup World Poll, 2016–2020 (147–150 countries; enough_money coda 2013–15)",
@@ -626,6 +706,8 @@
     },
     {
       "slug": "faith-where-its-normative",
+      "collection": null,
+      "date": null,
       "title": "Faith Pays Off Where Faith Is the Norm",
       "snippet": "Being religious lifts your life rating only a little — and no more in devout societies than secular ones — but faith's experiential dividends, less daily distress and more felt support, swell sharply where religion is the social norm.",
       "dataset": "Gallup World Poll, 2005–2020 (153 countries)",
@@ -646,6 +728,8 @@
     },
     {
       "slug": "whose-america-is-thriving",
+      "collection": null,
+      "date": null,
       "title": "Whose America Is Thriving? Whoever Just Won",
       "snippet": "Across a decade of daily interviews, Americans rated their own lives higher when their party held the White House — and the partisan gap flipped sign at each handover. Both sides do it; it is the winning that moves the mood.",
       "dataset": "Gallup US Daily, 2008–2017 (unweighted)",
@@ -666,6 +750,8 @@
     },
     {
       "slug": "closing-the-scissors",
+      "collection": null,
+      "date": null,
       "title": "Closing the Scissors",
       "snippet": "What actually lifts a life? Run the horse race across the GSS, Gallup World, and the Values Surveys and the same answer recurs: perceived freedom, health, and connection rival or beat income — and income barely touches the daily-emotion blade at all.",
       "dataset": "GSS + Gallup World Poll + EVS–WVS",
@@ -690,6 +776,8 @@
     },
     {
       "slug": "community-and-the-isolated",
+      "collection": null,
+      "date": null,
       "title": "Does Community Substitute for Connection?",
       "snippet": "Fifty years of social-capital theory promised that civic-rich places would matter most for people with the thinnest personal ties — or, in the rival telling, least. In 921,639 Gallup interviews, the answer is sharper than either story: the gap barely moves at all.",
       "dataset": "Gallup US Daily ('Motherlode' extract), 2008–2012 + JEC county social-capital index",
@@ -709,6 +797,8 @@
     },
     {
       "slug": "female-happiness-paradox",
+      "collection": null,
+      "date": null,
       "title": "The Paradox That Didn't Hold",
       "snippet": "In the 1970s American women called themselves happier than men. A famous study watched that lead vanish — extend the data eighteen more years and the decline doesn't continue, it dissolves into noise.",
       "dataset": "General Social Survey, 1972–2024 (weight wtssps)",
@@ -727,6 +817,8 @@
     },
     {
       "slug": "religion-conditional-dividend",
+      "collection": null,
+      "date": null,
       "title": "Religion's Conditional Dividend",
       "snippet": "Across 143 countries, faith tracks higher life evaluation and better days — but mainly where life is hard. As nations grow richer and safer, the religious advantage bends toward zero.",
       "dataset": "Gallup World Poll, 2009–2019 (143 countries)",
@@ -746,6 +838,8 @@
     },
     {
       "slug": "the-post-communist-mood",
+      "collection": null,
+      "date": null,
       "title": "The Post-Communist Mood",
       "snippet": "After 1989, life satisfaction across the former Eastern bloc collapsed to a 1999 trough (~5.7), then recovered and converged toward the West — the cross-country spread shrank as Romania (+1.6) and the Baltics climbed.",
       "dataset": "European Values Study (EVS), 1981–2017",
@@ -764,6 +858,8 @@
     },
     {
       "slug": "left-right-and-content",
+      "collection": null,
+      "date": null,
       "title": "Left, Right, and Content",
       "snippet": "Across Europe, the further right people place themselves, the more satisfied with life they report — a clean gradient from 6.85 (far left) to 7.42 (far right), and it survives adjustment for who sits where.",
       "dataset": "European Values Study (EVS), 1981–2017",
@@ -783,6 +879,8 @@
     },
     {
       "slug": "the-autonomy-engine",
+      "collection": null,
+      "date": null,
       "title": "The Autonomy Engine",
       "snippet": "The feeling of freedom and control over your own life is Europe's strongest correlate of life satisfaction — stronger than health — positive in almost every country, and it rose most in the post-communist East.",
       "dataset": "European Values Study (EVS), 1981–2017",
@@ -801,6 +899,8 @@
     },
     {
       "slug": "the-family-premium-in-europe",
+      "collection": null,
+      "date": null,
       "title": "The Family Premium in Secular Europe",
       "snippet": "In secular, low-fertility Europe marriage still carries a clear life-satisfaction premium (married 7.25 vs widowed 6.31) — but having children does not: the satisfaction line stays flat from zero kids to four.",
       "dataset": "European Values Study (EVS), 1981–2017",
@@ -819,6 +919,8 @@
     },
     {
       "slug": "map-of-european-contentment",
+      "collection": null,
+      "date": null,
       "title": "The Map of European Contentment",
       "snippet": "A 2017 map of European life satisfaction: a Nordic and Alpine peak (Switzerland 8.0, Norway 8.0, Finland 7.9) above a still-lagging East (Ukraine and Bulgaria 6.2) — and the same geography largely repeats for freedom and health.",
       "dataset": "European Values Study (EVS), 2017 wave",
@@ -838,6 +940,8 @@
     },
     {
       "slug": "the-happiness-gap",
+      "collection": null,
+      "date": null,
       "title": "Fifty Years of a Partisan Happiness Gap",
       "snippet": "In the General Social Survey, U.S. conservatives have reported being very happy more often than liberals in 31 of 33 years since 1974 — a ~7-point gap that runs through happiness and mental health, but not physical health.",
       "dataset": "General Social Survey, 1974–2024 (wtssps)",
@@ -857,6 +961,8 @@
     },
     {
       "slug": "the-measure-makes-the-map",
+      "collection": null,
+      "date": null,
       "title": "Three Ways to Rank a Continent",
       "snippet": "Rank Europe by how people rate their lives, by how their week felt, and by whether life feels worthwhile, and you draw three different maps. Meaning refuses to follow satisfaction — Kosovo is 21st of 29 on life-rating but first in Europe on meaning.",
       "dataset": "European Social Survey, round 6 (2012)",
@@ -876,6 +982,8 @@
     },
     {
       "slug": "right-and-content-worldwide",
+      "collection": null,
+      "date": null,
       "title": "The World Is a Little Happier on the Right",
       "snippet": "Across the Values Surveys, people who place themselves on the political right report higher life satisfaction than those on the left in 89 of 99 countries — a near-universal gap of about half a point, holding rich and poor, free and unfree.",
       "dataset": "Integrated EVS–WVS Values Surveys, 1981–2022",
@@ -896,6 +1004,8 @@
     },
     {
       "slug": "felt-and-rated-in-europe",
+      "collection": null,
+      "date": null,
       "title": "The Continent's Quiet Scissors",
       "snippet": "How Europeans rate their lives and how their week actually felt mostly agree (r=0.86) — but the calm-and-anxiety dimension pulls apart (r=0.50), and a few countries feel notably better or worse than their life-rating predicts.",
       "dataset": "European Social Survey, round 6 (2012)",
@@ -915,6 +1025,8 @@
     },
     {
       "slug": "what-explains-the-gap",
+      "collection": null,
+      "date": null,
       "title": "Can Marriage and Church Explain It?",
       "snippet": "The conservative happiness advantage in the GSS is about 7 points. Adjust step by step for marriage, churchgoing, income and health and ~75% dissolves — religion does the most work, income almost none — but a stubborn quarter (1.8 points) survives every control.",
       "dataset": "General Social Survey, 1974–2024 (wtssps)",
@@ -936,6 +1048,8 @@
     },
     {
       "slug": "religion-buys-meaning-not-mood",
+      "collection": null,
+      "date": null,
       "title": "What Faith Pays For in Secular Europe",
       "snippet": "Adjusted within country for age, income and gender, religious attendance in Europe tracks more meaning (+0.36 SD never→daily), a worthwhile life and a higher life-rating — but not a calmer or less-depressed week. Faith buys purpose, not mood.",
       "dataset": "European Social Survey, round 6 (2012)",

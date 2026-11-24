@@ -3,6 +3,20 @@
  "description": "A data-journalism book in charts. Across fifty years of America and twenty years of the world, an evaluative “upper blade” — how people rate their lives — holds or rises while an experiential “lower blade” — how their days feel, and how connected and hopeful they are — falls and, since 2020, has not recovered. Each chapter is hand-built in D3 from four survey backbones (GSS, Gallup US Daily, Gallup World Poll 2005–2025, and the Integrated EVS–WVS Values Surveys); every figure is computed by a reproducible script and traced in claims.json.",
  "articles": [
   {
+   "slug": "cfp-prediction-2026-11-23",
+   "collection": "football",
+   "date": "November 23, 2026",
+   "title": "A model says the playoff committee will leave four teams out of its top 25. Their résumés say they belong.",
+   "dek": "A model trained on every College Football Playoff committee ranking since 2014 predicts the committee will leave UTSA, Louisiana Tech, New Mexico and North Dakota State out of its top 25 — four teams whose résumés say they belong. Posted before the committee speaks, with a hashed prediction file anyone can check afterward.",
+   "dataset": "CFP committee rankings, 2014–2025",
+   "construct": "predicted committee rank vs résumé-only rank",
+   "primaryViz": "ranking",
+   "path": "cfp-prediction-2026-11-23.html",
+   "subtopics": [],
+   "scope": [],
+   "sources": []
+  },
+  {
    "slug": "the-scissors",
    "title": "The Scissors",
    "dek": "Two ways of measuring a life are coming apart: the rating people give it holds or climbs while the daily feel of it sinks. Across the Gallup World Poll, the GSS, and the Values Surveys, the gap between the evaluative and experiential blades keeps widening.",

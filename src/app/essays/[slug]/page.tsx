@@ -51,11 +51,16 @@ export default async function EssayPage({
   const essay = getEssay(slug);
   if (!essay) notFound();
 
+  const back =
+    essay.collection === "football"
+      ? { href: "/football", label: "College Football" }
+      : { href: "/", label: "Essays" };
+
   return (
     <main id="content">
       <header className="article-chrome">
-        <Link href="/" className="back-link">
-          <span aria-hidden="true">←</span> Essays
+        <Link href={back.href} className="back-link">
+          <span aria-hidden="true">←</span> {back.label}
         </Link>
         <span className="article-chrome-title">{essay.title}</span>
         <ShareBar title={essay.title} description={essay.description} />

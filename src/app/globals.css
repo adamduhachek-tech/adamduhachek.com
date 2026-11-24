@@ -166,6 +166,16 @@ footer a{color:var(--ink-mid)}
 .essay-tag{display:inline-flex;align-items:center;font:600 10.5px/1.4 var(--sans);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-mid);border:1px solid color-mix(in srgb,var(--chip-color,var(--line)) 45%,var(--line));border-left:3px solid var(--chip-color,var(--line));border-radius:3px;padding:2px 7px}
 .no-results{padding:48px 0 60px;color:var(--ink-mid);font-style:italic}
 
+/* College Football — article index list */
+.post-list{list-style:none;padding:0;margin:26px 0 40px;max-width:46rem}
+.post-row{display:block;padding:24px 0;border-top:1px solid var(--line)}
+.post-list li:last-child .post-row{border-bottom:1px solid var(--line)}
+.post-row:hover{text-decoration:none}
+.post-title{font:700 clamp(21px,2.6vw,25px)/1.25 var(--serif);color:var(--navy);margin:0 0 7px;letter-spacing:-.01em}
+.post-row:hover .post-title{color:var(--accent)}
+.post-dek{font:400 15.5px/1.6 var(--sans);color:var(--ink-mid);margin:0 0 11px}
+.post-meta{font:700 11.5px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+
 /* Staggered first-paint reveal */
 @media (prefers-reduced-motion: no-preference){
   .essay-cell{animation:card-rise .5s cubic-bezier(.2,.7,.3,1) both;animation-delay:calc(var(--stagger,0) * 45ms)}
