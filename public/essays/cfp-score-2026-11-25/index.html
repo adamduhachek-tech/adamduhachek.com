@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The committee left all four teams out, and then went further</title>
+<meta name="description" content="The College Football Playoff committee left UTSA, Louisiana Tech, New Mexico and North Dakota State out of its top 25 — and every team from outside the Power conferences and Notre Dame. Scoring the November 23 model prediction against the result: 22 of 25 correct, and the conference-aware model (0.94) clearly beat the conference-blind one (0.81).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf8f4; --paper:#ffffff; --surface:#f3efe7;
+  --ink:#1b2130; --ink-mid:#495061; --ink-faint:#7b8398;
+  --navy:#16233f; --accent:#9b2335; --accent-soft:#f4e6e8; --gold:#b07c2e;
+  --line:#e7e2d6; --line-soft:#efeae0;
+  --serif:"Source Serif 4", Georgia, "Iowan Old Style", Cambria, "Times New Roman", serif;
+  --sans:system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --maxw:716px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#14161c; --paper:#1b1e26; --surface:#22262f;
+    --ink:#e7e2d6; --ink-mid:#b9bfca; --ink-faint:#8b93a6;
+    --navy:#9fb2d4; --accent:#d96a78; --accent-soft:#3a2228; --gold:#d9b05e;
+    --line:#2a2f3a; --line-soft:#242a34;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--bg);-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font:19px/1.66 var(--serif);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:54px 22px 96px}
+h1{ font:700 clamp(29px,4.4vw,41px)/1.12 var(--serif); color:var(--navy); letter-spacing:-.014em; text-wrap:balance; margin:0 0 .5rem; }
+h2{ font:700 clamp(21px,2.6vw,26px)/1.22 var(--serif); color:var(--navy); letter-spacing:-.01em; text-wrap:balance; margin:2.4rem 0 .75rem; }
+p{margin:0 0 1.15rem; color:var(--ink)}
+a{color:var(--accent); text-decoration-thickness:1px; text-underline-offset:2px; overflow-wrap:anywhere}
+a:hover{color:var(--navy)}
+em{font-style:italic}
+strong{font-weight:700; color:var(--navy)}
+
+.dateline{ font:italic 400 15.5px/1.55 var(--serif); color:var(--ink-mid); margin:0 0 1.9rem; padding-top:.9rem; position:relative; }
+.dateline::before{ content:""; position:absolute; top:0; left:0; width:52px; height:3px; background:var(--accent); }
+.dateline a{color:var(--accent)} .dateline a:hover{color:var(--navy)}
+
+.bio{ font:italic 400 15px/1.6 var(--serif); color:var(--ink-faint); margin:2.8rem 0 0; padding-top:1.1rem; border-top:1px solid var(--line); }
+
+/* Scored table */
+table.watch{ width:100%; border-collapse:collapse; margin:1.5rem 0 1.9rem; font-family:var(--sans); }
+table.watch th, table.watch td{ padding:11px 9px; border-bottom:1px solid var(--line); text-align:left; }
+table.watch thead th{ font:700 11px/1.3 var(--mono); letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); border-bottom:2px solid var(--navy); vertical-align:bottom; }
+table.watch td{ font:400 16px/1.4 var(--serif); color:var(--ink) }
+table.watch td:first-child{ font-weight:600; color:var(--navy) }
+table.watch .num{ text-align:right; font-variant-numeric:tabular-nums; font-family:var(--mono); font-size:14px }
+table.watch tbody tr:last-child td{ border-bottom:none }
+
+/* Normal bullet list (e.g. the scorecard) */
+ul.bullets{ margin:1.15rem 0 1.5rem; padding:0; list-style:none; }
+ul.bullets li{ position:relative; padding:0 0 0 1.4rem; margin:0 0 .7rem; line-height:1.55; }
+ul.bullets li::before{ content:""; position:absolute; left:.2rem; top:.62em; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+
+/* Ordered list (shared template; unused here but kept for the series) */
+ol.ranks{ margin:1.2rem 0 1.4rem; padding:0; list-style:none; counter-reset:rank; columns:2; column-gap:40px; }
+@media (max-width:560px){ ol.ranks{columns:1} }
+ol.ranks li{ counter-increment:rank; position:relative; padding:7px 0 7px 42px; margin:0; border-bottom:1px solid var(--line-soft); break-inside:avoid; font-size:17px; }
+ol.ranks li::before{ content:counter(rank); position:absolute; left:0; top:7px; width:30px; text-align:right; font:700 13px/1.5 var(--mono); color:var(--accent); font-variant-numeric:tabular-nums; }
+
+code{ font-family:var(--mono); font-size:.86em; background:var(--accent-soft); color:var(--ink); padding:.08em .34em; border-radius:4px; overflow-wrap:anywhere; }
+</style>
+</head>
+<body>
+<main class="wrap">
+<h1>The committee left all four teams out, and then went further</h1>
+<p class="dateline"><em>Posted November 25, 2026. This scores the prediction <a href="/essays/cfp-prediction-2026-11-23">published here on November 23</a>, before the committee's release.</em></p>
+<p>On Monday night a statistical model predicted that the College Football Playoff committee would leave UTSA, Louisiana Tech, New Mexico and North Dakota State out of its top 25, even though their results this season would put all four in.</p>
+<p>On Tuesday night the committee left all four out. It also left out everyone like them. Its top 25 contains no team from outside the four Power conferences and Notre Dame.</p>
+<h2>The five teams, scored</h2>
+<table class="watch"><thead><tr><th>Team</th><th class="num">On résumé alone</th><th class="num">Model predicted</th><th class="num">Committee</th></tr></thead><tbody><tr><td>Boise State</td><td class="num">16</td><td class="num">23</td><td class="num">Unranked</td></tr><tr><td>UTSA</td><td class="num">18</td><td class="num">Unranked</td><td class="num">Unranked</td></tr><tr><td>Louisiana Tech</td><td class="num">21</td><td class="num">Unranked</td><td class="num">Unranked</td></tr><tr><td>New Mexico</td><td class="num">24</td><td class="num">Unranked</td><td class="num">Unranked</td></tr><tr><td>North Dakota State</td><td class="num">25</td><td class="num">Unranked</td><td class="num">Unranked</td></tr></tbody></table>
+<p>The model was built from 12 years of the committee's own rankings, so it already expected these teams to be marked down. The committee marked them down more than its own history suggested. The model had two teams from the smaller conferences holding on to a place, Boise State at 23 and Liberty at 21. Neither made it.</p>
+<h2>The full scorecard</h2>
+<ul class="bullets">
+  <li><strong>Top 12:</strong> 11 of 12 correct. The model had Indiana in the last spot; the committee chose Oregon. The model's top 11 were the committee's top 11, in a different order.</li>
+  <li><strong>Top 25:</strong> 22 of 25 correct. The committee ranked Missouri, Washington and Nebraska where the model had Liberty, Boise State and Oklahoma State.</li>
+  <li><strong>Overall order:</strong> on a scale where 1.0 is a perfect match, the model scored 0.94. A version of the same model that ignores conference scored 0.81.</li>
+</ul>
+<p>That last comparison is the one that matters for the study. The two versions use identical information about what each team did on the field. The only difference is that one knows which conference a team plays in. Knowing the conference made the prediction markedly better, and on the study's main score the gap between the two was decisive.</p>
+<h2>Where the model missed</h2>
+<p>Its largest errors were Tennessee, which it placed 10th and the committee placed 5th, and Oklahoma, which it placed 22nd and the committee placed 17th. Miami and Texas Tech each landed four places lower than predicted.</p>
+<p>One pattern is worth watching in the weeks ahead. Six of the seven ranked SEC teams finished above where the model put them. That is a single week and could easily be chance, which is why it will be tracked rather than interpreted.</p>
+<h2>What this does and does not show</h2>
+<p>The committee behaved this week as it has for 12 years, and somewhat more so. That is not proof that it was wrong. A team from a smaller conference with a strong record has usually played a weaker schedule, and part of any markdown may be a fair reading of that. Separating the fair part from the rest is what the larger study is for.</p>
+<p>The committee's ranking was checked against two published reports and the official data feed, which agree on all 25 positions. The prediction file and its fingerprint are <a href="https://gist.github.com/adamduhachek-tech/818743e9c7db68cd2229a7dfc9cb954c" target="_blank" rel="noopener noreferrer">on GitHub</a>, timestamped 23 hours before the release.</p>
+<p>The next prediction goes up before the committee's ranking on December 1.</p>
+</main>
+</body>
+</html>

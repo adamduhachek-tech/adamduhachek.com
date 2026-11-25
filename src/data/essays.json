@@ -3,6 +3,20 @@
  "description": "A data-journalism book in charts. Across fifty years of America and twenty years of the world, an evaluative “upper blade” — how people rate their lives — holds or rises while an experiential “lower blade” — how their days feel, and how connected and hopeful they are — falls and, since 2020, has not recovered. Each chapter is hand-built in D3 from four survey backbones (GSS, Gallup US Daily, Gallup World Poll 2005–2025, and the Integrated EVS–WVS Values Surveys); every figure is computed by a reproducible script and traced in claims.json.",
  "articles": [
   {
+   "slug": "cfp-score-2026-11-25",
+   "collection": "football",
+   "date": "November 25, 2026",
+   "title": "The committee left all four teams out, and then went further",
+   "dek": "The playoff committee left all four flagged teams out of its top 25 — and every team from outside the Power conferences and Notre Dame. Scoring the November 23 prediction against the result: 22 of 25 correct, and the model that knows each team's conference (0.94) clearly beat the one that doesn't (0.81).",
+   "dataset": "CFP committee rankings, 2014–2025",
+   "construct": "model prediction vs actual committee rank",
+   "primaryViz": "scorecard",
+   "path": "cfp-score-2026-11-25.html",
+   "subtopics": [],
+   "scope": [],
+   "sources": []
+  },
+  {
    "slug": "cfp-prediction-2026-11-23",
    "collection": "football",
    "date": "November 23, 2026",
