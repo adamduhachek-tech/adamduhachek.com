@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T04:43:27.773Z",
+  "generatedAt": "2026-11-25T22:58:17.924Z",
   "essays": [
     {
       "slug": "cfp-score-2026-11-25",
@@ -10,7 +10,7 @@
       "dataset": "CFP committee rankings, 2014–2025",
       "construct": "model prediction vs actual committee rank",
       "primaryViz": "scorecard",
-      "readMinutes": 3,
+      "readMinutes": 4,
       "subtopics": [],
       "scope": [],
       "sources": []
