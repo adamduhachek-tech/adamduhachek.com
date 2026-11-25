@@ -1,6 +1,20 @@
 {
-  "generatedAt": "2026-11-24T02:21:40.442Z",
+  "generatedAt": "2026-11-25T04:43:27.773Z",
   "essays": [
+    {
+      "slug": "cfp-score-2026-11-25",
+      "collection": "football",
+      "date": "November 25, 2026",
+      "title": "The committee left all four teams out, and then went further",
+      "snippet": "The playoff committee left all four flagged teams out of its top 25 — and every team from outside the Power conferences and Notre Dame. Scoring the November 23 prediction against the result: 22 of 25 correct, and the model that knows each team's conference (0.94) clearly beat the one that doesn't (0.81).",
+      "dataset": "CFP committee rankings, 2014–2025",
+      "construct": "model prediction vs actual committee rank",
+      "primaryViz": "scorecard",
+      "readMinutes": 3,
+      "subtopics": [],
+      "scope": [],
+      "sources": []
+    },
     {
       "slug": "cfp-prediction-2026-11-23",
       "collection": "football",
